@@ -41,7 +41,9 @@ public class MailServerFunctions
         OnlineMarketingConsult = 16,
         BuildTrust = 17,
         Investor = 18,
-        MoneyHack = 19
+        MoneyHack = 19,
+        JobOffer = 20,
+        SellingProducts = 21
     };
 
     public MailServerFunctions()
@@ -88,6 +90,7 @@ public class MailServerFunctions
             settings.ResponseOpeningOilAndGas = new List<string>() { "" };
             settings.ResponseOpeningOilAndGasQuestionList = new List<string> { "" };
             settings.ResponseOpeningPolice = new List<string>() { "" };
+            settings.ResponseOpeningJobOffer = new List<string>() { "" };
 
             //Continued responses
             settings.ResponseContinuedAtmCard = new List<string>() { "" };
@@ -106,6 +109,7 @@ public class MailServerFunctions
             settings.ResponseContinuedMoneyStorage = new List<string>() { "" };
             settings.ResponseContinuedOilAndGas = new List<string>() { "" };
             settings.ResponseContinuedPolice = new List<string>() { "" };
+            settings.ResponseContinuedJobOffer = new List<string>() { "" };
 
             string json = new JavaScriptSerializer().Serialize(settings);
             File.WriteAllText(settingFileLocation, JsonHelper.FormatJson(json));
@@ -447,11 +451,11 @@ public class MailServerFunctions
     private string AttemptToFindPersonName(string body)
     {
         string rtn = String.Empty;
-        string regards = "Regards;Yours Faithfully;Yours Truely;Best,;My Best,;My best to you;All best,;All the best;Best wishes;Bests,;Best Regards;Rgds;Warm Regards;Warmest Regards;Warmly,;Take care;Looking forward,;Rushing,;In haste,;Be well,;Peace,;Yours Truly;Very truely yours;Sincerely;Sincerely yours;See you around;With love,;Lots of love,;Warm wishes,;Take care;Many thanks,;Thanks,;Your beloved sister;";
+        string regards = "Regards;Yours Faithfully;Yours Truely;Best,;Yours in Services;My Best,;My best to you;All best,;All the best;Best wishes;Bests,;Best Regards;Rgds;Warm Regards;Warmest Regards;Warmly,;Take care;Looking forward,;Rushing,;In haste,;Be well,;Peace,;Yours Truly;Very truely yours;Sincerely;Sincerely yours;See you around;With love,;Lots of love,;Warm wishes,;Take care;Remain Blessed;Many thanks,;Thanks,;Your beloved sister;";
 
         string[] lineSplit = body.Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
         string[] regardsSplit = regards.ToUpper().Split(new string[] { ";" }, StringSplitOptions.RemoveEmptyEntries);
-        for (int i = 0; i < lineSplit.Count(); i++)
+        for (int i = lineSplit.Count() - 1; i >= 0; i--)
         {
             lineSplit[i] = lineSplit[i].Trim();
             for (int j = 0; j < regardsSplit.Count(); j++)
@@ -460,8 +464,11 @@ public class MailServerFunctions
                 {
                     if (lineSplit.Count() - 1 > i)
                     {
-                        rtn = lineSplit[i + 1];
-                        break;
+                        if (lineSplit[i + 1].Length < 30 && lineSplit[i + 1].Count(f => f == ' ') <= 4) //Do not take the entire next sentence if there is a sentence that ends with "Thanks,"
+                        {
+                            rtn = lineSplit[i + 1];
+                            break;
+                        }
                     }
                 }
                 if (regardsSplit[j].EndsWith(","))
@@ -488,6 +495,9 @@ public class MailServerFunctions
         if (rtn.EndsWith(",") || rtn.EndsWith(".") || rtn.EndsWith("!"))
             rtn = rtn.Substring(0, rtn.Length - 1);
 
+        if (rtn.Length > 30 && rtn.Count(f => f == ' ') > 4)
+            rtn = String.Empty;
+
         return rtn;
     }
     public string GetResponseForType(ref MailStorage currentMessage, List<MailStorage> pastMessages)
@@ -502,84 +512,89 @@ public class MailServerFunctions
         string preProcessedBody = currentMessage.SubjectLine + " " + currentMessage.EmailBodyPlain.Replace("\r\n"," ");
 
         //Types of emails
-        if (currentMessage.MessageType == (int)EmailType.Unknown)
+        if (currentMessage.SubjectLine.Contains("Test ") || currentMessage.SubjectLine.Contains(" Test"))
         {
-            if (currentMessage.SubjectLine.Contains("Test ") || currentMessage.SubjectLine.Contains(" Test"))
-            {
-                type = EmailType.Test;
-            }
-            else if ((preProcessedBody.Trim() == String.Empty || (preProcessedBody.Length < 40 && (preProcessedBody.ToUpper().Contains("ATTACHMENT") || preProcessedBody.ToUpper().Contains("FILE")))) && currentMessage.NumberOfAttachments > 0)
-            {
-                type = EmailType.BlankWithAttachment;
-            }
-            else if (preProcessedBody.Trim().ToUpper().Contains("ILLUMINATI") || preProcessedBody.Trim().ToUpper().Contains("ILUMINATI"))
-            {
-                type = EmailType.Illuminati;
-            }
-            else if (preProcessedBody.Trim().ToUpper().Contains("DIED AFTER") || preProcessedBody.Trim().ToUpper().Contains("CANCER DIAG") || preProcessedBody.Trim().ToUpper().Contains("WITH CANCER") || preProcessedBody.Trim().ToUpper().Contains("MY CANCER") || preProcessedBody.Trim().ToUpper().Contains("HUSBAND DIED") || preProcessedBody.Trim().ToUpper().Contains("WIFE DIED") || preProcessedBody.Trim().ToUpper().Contains("CHILD DIED") || preProcessedBody.Trim().ToUpper().Contains("SON DIED") || preProcessedBody.Trim().ToUpper().Contains("DAUGHTER DIED"))
-            {
-                type = EmailType.DeathOrDying;
-            }
-            else if (preProcessedBody.Trim().ToUpper().Contains("OIL AND GAS") || preProcessedBody.Trim().ToUpper().Contains("GAS AND OIL"))
-            {
-                type = EmailType.OilAndGas;
-            }
-            else if (preProcessedBody.Trim().ToUpper().Contains("KEEP MY MONEY") || preProcessedBody.Trim().ToUpper().Contains("STORE MY MONEY") || preProcessedBody.Trim().ToUpper().Contains("KEEP THE MONEY SAFE") || preProcessedBody.Trim().ToUpper().Contains("KEEP THE MONEY SAVE") || preProcessedBody.Trim().ToUpper().Contains("RECEIVE THE FUND AND KEEP IT"))
-            {
-                type = EmailType.MoneyStorage;
-            }
-            else if (preProcessedBody.Trim().ToUpper().Contains("WEB DESIGN") || preProcessedBody.Trim().ToUpper().Contains("DEVELOPMENT FIRM"))
-            {
-                type = EmailType.SellingServices;
-            }
-            else if (preProcessedBody.Trim().ToUpper().Contains("ONLINE MARKETING CONSULT"))
-            {
-                type = EmailType.OnlineMarketingConsult;
-            }
-            else if (preProcessedBody.Trim().ToUpper().Contains("FINANCIAL ASSISTANCE") || preProcessedBody.Trim().ToUpper().Contains("LOAN"))
-            {
-                type = EmailType.LoanOffer;
-            }
-            else if (preProcessedBody.Trim().ToUpper().Contains("LOTTERY") || preProcessedBody.Trim().ToUpper().Contains("POWER BALL") || preProcessedBody.Trim().ToUpper().Contains("POWERBALL"))
-            {
-                type = EmailType.Lottery;
-            }
-            else if (preProcessedBody.Trim().ToUpper().Contains("CONSIGNMENT"))
-            {
-                type = EmailType.ConsignmentBox;
-            }
-            else if (preProcessedBody.Trim().ToUpper().Contains("POLICE"))
-            {
-                type = EmailType.Police;
-            }
-            else if (preProcessedBody.Trim().ToUpper().Contains("ATM BLANK CARD"))
-            {
-                type = EmailType.MoneyHack;
-            }
-            else if (preProcessedBody.Trim().ToUpper().Contains("ATM CARD") || preProcessedBody.Trim().ToUpper().Contains("ATMCARD") || preProcessedBody.Trim().ToUpper().Contains("ATM CREDIT CARD"))
-            {
-                type = EmailType.AtmCard;
-            }
-            else if (preProcessedBody.Trim().ToUpper().Contains("INHERITENCE") || preProcessedBody.Trim().ToUpper().Contains("INHERIT"))
-            {
-                type = EmailType.Inheritance;
-            }
-            else if (preProcessedBody.Trim().ToUpper().Contains("BENEFICIARY"))
-            {
-                type = EmailType.Beneficiary;
-            }
-            else if (preProcessedBody.Trim().ToUpper().Contains("INVESTOR"))
-            {
-                type = EmailType.Investor;
-            }
-            else if (preProcessedBody.Trim().ToUpper().Contains("PAYMENT") || preProcessedBody.Trim().ToUpper().Contains("MONEYGRAM") || preProcessedBody.Trim().ToUpper().Contains("WESTERN UNION") || preProcessedBody.Trim().ToUpper().Contains("TRANSFER THE FUND"))
-            {
-                type = EmailType.GenericPayment;
-            }
-            else if (preProcessedBody.Trim().ToUpper().Contains("LIKE TO KNOW YOU MORE") || preProcessedBody.Trim().ToUpper().Contains("GET TO KNOW YOU") || preProcessedBody.Trim().ToUpper().Contains("BUILD TRUST") || preProcessedBody.Trim().ToUpper().Contains("I SEE YOU AS SOMEONE I CAN WORK WITH"))
-            {
-                type = EmailType.BuildTrust;
-            }
+            type = EmailType.Test;
+        }
+        else if ((preProcessedBody.Trim() == String.Empty || (preProcessedBody.Length < 40 && (preProcessedBody.ToUpper().Contains("ATTACHMENT") || preProcessedBody.ToUpper().Contains("FILE")))) && currentMessage.NumberOfAttachments > 0)
+        {
+            type = EmailType.BlankWithAttachment;
+        }
+        else if (preProcessedBody.Trim().ToUpper().Contains("ILLUMINATI") || preProcessedBody.Trim().ToUpper().Contains("ILUMINATI"))
+        {
+            type = EmailType.Illuminati;
+        }
+        else if (preProcessedBody.Trim().ToUpper().Contains("DIED AFTER") || preProcessedBody.Trim().ToUpper().Contains("CANCER DIAG") || preProcessedBody.Trim().ToUpper().Contains("WITH CANCER") || preProcessedBody.Trim().ToUpper().Contains("MY CANCER") || preProcessedBody.Trim().ToUpper().Contains("HUSBAND DIED") || preProcessedBody.Trim().ToUpper().Contains("WIFE DIED") || preProcessedBody.Trim().ToUpper().Contains("CHILD DIED") || preProcessedBody.Trim().ToUpper().Contains("SON DIED") || preProcessedBody.Trim().ToUpper().Contains("DAUGHTER DIED"))
+        {
+            type = EmailType.DeathOrDying;
+        }
+        else if (preProcessedBody.Trim().ToUpper().Contains("OIL AND GAS") || preProcessedBody.Trim().ToUpper().Contains("GAS AND OIL"))
+        {
+            type = EmailType.OilAndGas;
+        }
+        else if (preProcessedBody.Trim().ToUpper().Contains("KEEP MY MONEY") || preProcessedBody.Trim().ToUpper().Contains("ABANDONED SUM") || preProcessedBody.Trim().ToUpper().Contains("MOVE THE SUM") || preProcessedBody.Trim().ToUpper().Contains("STORE MY MONEY") || preProcessedBody.Trim().ToUpper().Contains("KEEP THE MONEY SAFE") || preProcessedBody.Trim().ToUpper().Contains("KEEP THE MONEY SAVE") || preProcessedBody.Trim().ToUpper().Contains("RECEIVE THE FUND AND KEEP IT") || preProcessedBody.Trim().ToUpper().Contains("RECEIVE THE MONEY"))
+        {
+            type = EmailType.MoneyStorage;
+        }
+        else if (preProcessedBody.Trim().ToUpper().Contains("JOB OFFER") || preProcessedBody.Trim().ToUpper().Contains("POSITION IN COMPANY") || preProcessedBody.Trim().ToUpper().Contains("POSITION IN OUR COMPANY"))
+        {
+            type = EmailType.JobOffer;
+        }
+        else if (preProcessedBody.Trim().ToUpper().Contains("WEB DESIGN") || preProcessedBody.Trim().ToUpper().Contains("DEVELOPMENT FIRM"))
+        {
+            type = EmailType.SellingServices;
+        }
+        else if (preProcessedBody.Trim().ToUpper().Contains("ONLINE MARKETING CONSULT"))
+        {
+            type = EmailType.OnlineMarketingConsult;
+        }
+        else if (preProcessedBody.Trim().ToUpper().Contains("FINANCIAL ASSISTANCE") || preProcessedBody.Trim().ToUpper().Contains("FINANCIAL HELP") || preProcessedBody.Trim().ToUpper().Contains("LOAN") || preProcessedBody.Trim().ToUpper().Contains("APPLY FOR CASH"))
+        {
+            type = EmailType.LoanOffer;
+        }
+        else if (preProcessedBody.Trim().ToUpper().Contains("LOTTERY") || preProcessedBody.Trim().ToUpper().Contains("POWER BALL") || preProcessedBody.Trim().ToUpper().Contains("POWERBALL") || preProcessedBody.Trim().ToUpper().Contains("WINNER"))
+        {
+            type = EmailType.Lottery;
+        }
+        else if (preProcessedBody.Trim().ToUpper().Contains("CONSIGNMENT") || preProcessedBody.Trim().ToUpper().Contains("TRUNK BOX"))
+        {
+            type = EmailType.ConsignmentBox;
+        }
+        else if (preProcessedBody.Trim().ToUpper().Contains("POLICE"))
+        {
+            type = EmailType.Police;
+        }
+        else if (preProcessedBody.Trim().ToUpper().Contains("ATM BLANK CARD"))
+        {
+            type = EmailType.MoneyHack;
+        }
+        else if (preProcessedBody.Trim().ToUpper().Contains("ATM CARD") || preProcessedBody.Trim().ToUpper().Contains("ATMCARD") || preProcessedBody.Trim().ToUpper().Contains("ATM CREDIT CARD") || preProcessedBody.Trim().ToUpper().Contains("BANK CHEQUE"))
+        {
+            type = EmailType.AtmCard;
+        }
+        else if (preProcessedBody.Trim().ToUpper().Contains("INHERITENCE") || preProcessedBody.Trim().ToUpper().Contains("INHERIT"))
+        {
+            type = EmailType.Inheritance;
+        }
+        else if (preProcessedBody.Trim().ToUpper().Contains("BENEFICIARY") || preProcessedBody.Trim().ToUpper().Contains("NEXT OF KIN") || preProcessedBody.Trim().ToUpper().Contains("DONATING") || preProcessedBody.Trim().ToUpper().Contains("DONATION") || preProcessedBody.Trim().ToUpper().Contains("DON ATION") || preProcessedBody.Trim().ToUpper().Contains("TRANSFER TO YOUR ACCOUNT") || preProcessedBody.Trim().ToUpper().Contains("TO YOUR BANK ACCOUNT"))
+        {
+            type = EmailType.Beneficiary;
+        }
+        else if (preProcessedBody.Trim().ToUpper().Contains("INVESTOR") || preProcessedBody.Trim().ToUpper().Contains("PROFIT SHARING") || preProcessedBody.Trim().ToUpper().Contains("INVESTMENT"))
+        {
+            type = EmailType.Investor;
+        }
+        else if (preProcessedBody.Trim().ToUpper().Contains("PAYMENT") || preProcessedBody.Trim().ToUpper().Contains("MONEYGRAM") || preProcessedBody.Trim().ToUpper().Contains("WESTERN UNION") || preProcessedBody.Trim().ToUpper().Contains("TRANSFER THE FUND"))
+        {
+            type = EmailType.GenericPayment;
+        }
+        else if (preProcessedBody.Trim().ToUpper().Contains("LIKE TO KNOW YOU MORE") || preProcessedBody.Trim().ToUpper().Contains("GET TO KNOW YOU") || preProcessedBody.Trim().ToUpper().Contains("BUILD TRUST") || preProcessedBody.Trim().ToUpper().Contains("I SEE YOU AS SOMEONE I CAN WORK WITH") || preProcessedBody.Trim().ToUpper().Contains("I WILL TELL YOU MORE ABOUT MYSELF") || preProcessedBody.Trim().ToUpper().Contains("GET TO KNOW EACHOTHER") || preProcessedBody.Trim().ToUpper().Contains("GET TO KNOW EACH OTHER") || preProcessedBody.Trim().ToUpper().Contains("LONGTERM RELATIONSHIP") || preProcessedBody.Trim().ToUpper().Contains("LONG TERM RELATIONSHIP"))
+        {
+            type = EmailType.BuildTrust;
+        }
+        else if (preProcessedBody.Trim().ToUpper().Contains("BOX")) //If no other hits then just look for the word BOX
+        {
+            type = EmailType.ConsignmentBox;
         }
 
         currentMessage.MessageType = (int)type;
@@ -731,6 +746,12 @@ public class MailServerFunctions
                 else
                     rtnResponse = GetRandomOpeningResponseForMoneyHack(rand, greeting, name);
                 break;
+            case EmailType.JobOffer:
+                if (pastMessages.Count() > 0)
+                    rtnResponse = GetRandomContinuedResponseForJobOffer(rand, greeting, name, currentMessage);
+                else
+                    rtnResponse = GetRandomOpeningResponseForJobOffer(rand, greeting, name);
+                break;
         }
 
         if(!String.IsNullOrEmpty(rtnResponse))
@@ -793,7 +814,7 @@ public class MailServerFunctions
     }
     private string GetRandomOpeningResponseForIlluminati(Random rand, string greetings, string name, MailStorage currentMessage)
     {
-        return greetings + " " + name + ". " + SettingPostProcessing(settings.ResponseOpeningIlluminati[rand.Next(0, settings.ResponseOpeningIlluminati.Count())], new List<string> { "|introduction|" }, new List<string> { GetRandomInroduction(rand) });
+        return greetings + " " + name + ". " + SettingPostProcessing(settings.ResponseOpeningIlluminati[rand.Next(0, settings.ResponseOpeningIlluminati.Count())], new List<string> { "|introduction|", "|Environment.NewLine|" }, new List<string> { GetRandomInroduction(rand), Environment.NewLine });
     }
     private string GetRandomOpeningResponseForConsignmentBox(Random rand, string greetings, string name, string attachmentType)
     {
@@ -812,7 +833,7 @@ public class MailServerFunctions
     }
     private string GetRandomOpeningResponseForDeathOrDying(Random rand, string greetings, string name)
     {
-        return greetings + " " + name + ". " + SettingPostProcessing(settings.ResponseOpeningDeathOrDying[rand.Next(0, settings.ResponseOpeningDeathOrDying.Count())], new List<string> { "|introduction|" }, new List<string> { GetRandomInroduction(rand) });
+        return greetings + " " + name + ". " + SettingPostProcessing(settings.ResponseOpeningDeathOrDying[rand.Next(0, settings.ResponseOpeningDeathOrDying.Count())], new List<string> { "|introduction|", "|Environment.NewLine|" }, new List<string> { GetRandomInroduction(rand), Environment.NewLine });
     }
     private string GetRandomOpeningResponseForLoanOffer(Random rand, string greetings, string name)
     {
@@ -887,6 +908,10 @@ public class MailServerFunctions
 
         return lst[rand.Next(0, lst.Count())];
     }
+    private string GetRandomOpeningResponseForJobOffer(Random rand, string greetings, string name)
+    {
+        return greetings + " " + name + ". " + SettingPostProcessing(settings.ResponseOpeningJobOffer[rand.Next(0, settings.ResponseOpeningJobOffer.Count())], new List<string> { "|GetRandomAcquaintance|" }, new List<string> { GetRandomAcquaintance(rand) });
+    }
     //Continued Responses
     private string GetRandomContinuedResponseTest(Random rand)
     {
@@ -924,7 +949,7 @@ public class MailServerFunctions
     }
     private string GetRandomContinuedResponseForIlluminati(Random rand, string greetings, string name, MailStorage currentMessage)
     {
-        return greetings + " " + name + ". " + SettingPostProcessing(settings.ResponseContinuedIlluminati[rand.Next(0, settings.ResponseContinuedIlluminati.Count())], new List<string> { "|GetRandomAcquaintance|" }, new List<string> { GetRandomAcquaintance(rand) });
+        return greetings + " " + name + ". " + SettingPostProcessing(settings.ResponseContinuedIlluminati[rand.Next(0, settings.ResponseContinuedIlluminati.Count())], new List<string> { "|GetRandomAcquaintance|", "|Environment.NewLine|" }, new List<string> { GetRandomAcquaintance(rand), Environment.NewLine });
     }
     private string GetRandomContinuedResponseForConsignmentBox(Random rand, string greetings, string name, string attachmentType)
     {
@@ -984,6 +1009,10 @@ public class MailServerFunctions
     private string GetRandomContinuedResponseForBuildTrust(Random rand, string greetings, string name, MailStorage currentMessage)
     {
         return greetings + " " + name + ". " + SettingPostProcessing(settings.ResponseContinuedBuildTrust[rand.Next(0, settings.ResponseContinuedBuildTrust.Count())], new List<string> { "|GetRandomAcquaintance|", "|GetListOfAcquaintance|", "|GetRandomLocation|" }, new List<string> { GetRandomAcquaintance(rand), GetListOfAcquaintance(rand, 2), GetRandomLocation(rand) });
+    }
+    private string GetRandomContinuedResponseForJobOffer(Random rand, string greetings, string name, MailStorage currentMessage)
+    {
+        return greetings + " " + name + ". " + SettingPostProcessing(settings.ResponseContinuedJobOffer[rand.Next(0, settings.ResponseContinuedJobOffer.Count())], new List<string> { "|GetRandomAcquaintance|", "|GetListOfAcquaintance|" }, new List<string> { GetRandomAcquaintance(rand), GetListOfAcquaintance(rand, 2) });
     }
 
     //Supporting Random lists
