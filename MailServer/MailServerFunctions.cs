@@ -91,7 +91,7 @@ public class MailServerFunctions
             settings.ResponseOpeningMoneyStorage = new List<string>() { "" };
             settings.ResponseOpeningOilAndGas = new List<string>() { "" };
             settings.ResponseOpeningOilAndGasQuestionList = new List<string> { "" };
-            settings.ResponseOpeningPolice = new List<string>() { "" };
+            settings.ResponseOpeningPolice = new List<string>() { "I swear I didn't do it! Your looking for |GetRandomAcquaintance| I think they are heading to |GetRandomLocation| with a bunch of stolen |GetRandomProduct| that they bought with fake |GetRandomPaymentMethod|. |GetRandomFollowupLine|" };
             settings.ResponseOpeningJobOffer = new List<string>() { "" };
             settings.ResponseOpeningSellingProducts = new List<string>() { "" };
 
@@ -369,12 +369,14 @@ public class MailServerFunctions
                 }
 
                 //If no Plain text was included convert the HTML to plain text
-                if (String.IsNullOrEmpty(storageObj.EmailBodyPlain) && String.IsNullOrEmpty(storageObj.EmailBodyPlain))
+                if (String.IsNullOrEmpty(storageObj.EmailBodyPlain) && !String.IsNullOrEmpty(storageObj.EmailBodyHtml))
                 {
                     HtmlConvert convert = new HtmlConvert();
                     storageObj.EmailBodyPlain = convert.ConvertHtml(storageObj.EmailBodyHtml);
                 }
 
+                //Parse the body looking for their name, if a name is not found we generate a random one.
+                //TODO Add more name searching methods
                 string name = AttemptToFindPersonName(storageObj.EmailBodyPlain);
                 if (!String.IsNullOrEmpty(name))
                     storageObj.PersonName = name;
@@ -393,6 +395,7 @@ public class MailServerFunctions
                     storageObj.AtachmentTypes += v.FileExtension + ",";
                 }
 
+                //Some of the scammers like to use an invalid email to send the message then instruct you to email them with the email in the message (Maybe to avoid getting the mailbox shutdown) so try to find the email address they want you to send to
                 string newEmailAddress = AttemptToFindReplyToEmailAddress(storageObj.EmailBodyPlain).Trim();
                 if (!String.IsNullOrEmpty(newEmailAddress))
                 {
@@ -449,450 +452,6 @@ public class MailServerFunctions
         return response;
     }
 
-    //Helper functions
-    private string SettingPostProcessing(string text, List<string> placeholder, List<string> replacement, Random rand)
-    {
-        if (placeholder.Count() != replacement.Count())
-            throw new Exception("Setting Post Process counts do not match");
-
-        placeholder.Add("|introduction|");
-        replacement.Add(GetRandomInroduction(rand));
-        placeholder.Add("|Environment.NewLine|");
-        replacement.Add(Environment.NewLine);
-        placeholder.Add("|GetRandomAcquaintance|");
-        replacement.Add(GetRandomAcquaintance(rand));
-        placeholder.Add("|GetRandomFollowupLine|");
-        replacement.Add(GetRandomFollowupLine(rand));
-        placeholder.Add("|GetRandomLocation|");
-        replacement.Add(GetRandomLocation(rand));
-        placeholder.Add("|GetRandomProduct|");
-        replacement.Add(GetRandomProduct(rand));
-        placeholder.Add("|GetRandomPaymentMethod|");
-        replacement.Add(GetRandomPaymentMethod(rand));
-
-        for (int i = 0; i < placeholder.Count(); i++)
-        {
-            text = text.Replace(placeholder[i], replacement[i]);
-        }
-
-        return text;
-    }
-    private string AttemptToFindPersonName(string body)
-    {
-        string rtn = String.Empty;
-        string regards = "Regards;Yours Faithfully;Yours Truely;Best,;Yours in Services;My Best,;My best to you;All best,;All the best;Best wishes;Bests,;Best Regards;Rgds;Warm Regards;Warmest Regards;Warmly,;Take care;Looking forward,;Rushing,;In haste,;Be well,;Peace,;Yours Truly;Very truely yours;Sincerely;Sincerely yours;See you around;With love,;Lots of love,;Warm wishes,;Take care;Remain Blessed;Many thanks,;Thanks,;Your beloved sister;";
-
-        string[] lineSplit = body.Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
-        string[] regardsSplit = regards.ToUpper().Split(new string[] { ";" }, StringSplitOptions.RemoveEmptyEntries);
-        for (int i = lineSplit.Count() - 1; i >= 0; i--)
-        {
-            lineSplit[i] = lineSplit[i].Trim();
-            for (int j = 0; j < regardsSplit.Count(); j++)
-            {
-                if (lineSplit[i].ToUpper() == regardsSplit[j] || lineSplit[i].ToUpper() + "," == regardsSplit[j]) //Then name should be on next line
-                {
-                    if (lineSplit.Count() - 1 > i)
-                    {
-                        if (lineSplit[i + 1].Length < 30 && lineSplit[i + 1].Count(f => f == ' ') <= 4) //Do not take the entire next sentence if there is a sentence that ends with "Thanks,"
-                        {
-                            rtn = lineSplit[i + 1];
-                            break;
-                        }
-                    }
-                }
-                if (regardsSplit[j].EndsWith(","))
-                {
-                    if (lineSplit[i].ToUpper().StartsWith(regardsSplit[j])) //Name might be following the regards
-                    {
-                        string[] sentenceSplit = lineSplit[i].Split(new string[] { " " }, StringSplitOptions.RemoveEmptyEntries);
-                        string[] tempRegardsSplit = regardsSplit[i].Split(new string[] { " " }, StringSplitOptions.RemoveEmptyEntries);
-
-                        if (sentenceSplit.Count() - tempRegardsSplit.Count() < 5)
-                        {
-                            rtn = lineSplit[i].Replace(regardsSplit[i],"");
-                        }
-                    }
-                }
-            }
-
-            if (!String.IsNullOrEmpty(rtn))
-                break;
-        }
-
-        if (rtn.StartsWith(",") || rtn.StartsWith("."))
-            rtn = rtn.Substring(1);
-        if (rtn.EndsWith(",") || rtn.EndsWith(".") || rtn.EndsWith("!"))
-            rtn = rtn.Substring(0, rtn.Length - 1);
-
-        if (rtn.Length > 30 && rtn.Count(f => f == ' ') > 4)
-            rtn = String.Empty;
-
-        return rtn;
-    }
-    private string AttemptToFindReplyToEmailAddress(string body)
-    {
-        string replyToEmailAddress = String.Empty;
-        string lineKeywordList = "EMAIL;EMAIL ADDRESS;EMAILADDRESS;MAILBOX;MAIL BOX;GMAIL;YAHOO;MSN;OUTLOOK;HOTMAIL;MY EMAIL;MY EMAIL ADDRESS;MAIL;MY MAIL;MY MAIL ADDRESS;";
-
-        string[] lineSplit = body.Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
-        string[] lineKeywordSplit = lineKeywordList.ToUpper().Split(new string[] { ";" }, StringSplitOptions.RemoveEmptyEntries);
-
-        for (int i = lineSplit.Count() - 1; i >= 0; i--)
-        {
-            lineSplit[i] = lineSplit[i].Trim().ToUpper();
-            
-            for (int j = 0; j < lineKeywordSplit.Count(); j++)
-            {
-                if (lineSplit[i].StartsWith(lineKeywordSplit[j].Trim().ToUpper()))
-                {
-                    //Check the same line for something like "Email: somethin@gmail.com"
-                    //Start by checking for ":" as the seperator
-                    string[] tempSplit = lineSplit[i].Split(new string[] { ":" }, StringSplitOptions.RemoveEmptyEntries);
-                    for (int k = 0; k < tempSplit.Count(); k++)
-                    {
-                        if (tempSplit[k].Contains("@"))
-                        {
-                            if (IsValidEmail(tempSplit[k]))
-                            {
-                                replyToEmailAddress = tempSplit[k];
-                                return replyToEmailAddress;
-                            }
-                        }
-                    }
-                    tempSplit = lineSplit[i].Split(new string[] { "-" }, StringSplitOptions.RemoveEmptyEntries);
-                    for (int k = 0; k < tempSplit.Count(); k++)
-                    {
-                        if (tempSplit[k].Contains("@"))
-                        {
-                            if (IsValidEmail(tempSplit[k]))
-                            {
-                                replyToEmailAddress = tempSplit[k];
-                                return replyToEmailAddress;
-                            }
-                        }
-                    }
-                    tempSplit = lineSplit[i].Split(new string[] { ";" }, StringSplitOptions.RemoveEmptyEntries);
-                    for (int k = 0; k < tempSplit.Count(); k++)
-                    {
-                        if (tempSplit[k].Contains("@"))
-                        {
-                            if (IsValidEmail(tempSplit[k]))
-                            {
-                                replyToEmailAddress = tempSplit[k];
-                                return replyToEmailAddress;
-                            }
-                        }
-                    }
-                    tempSplit = lineSplit[i].Split(new string[] { "=" }, StringSplitOptions.RemoveEmptyEntries);
-                    for (int k = 0; k < tempSplit.Count(); k++)
-                    {
-                        if (tempSplit[k].Contains("@"))
-                        {
-                            if (IsValidEmail(tempSplit[k]))
-                            {
-                                replyToEmailAddress = tempSplit[k];
-                                return replyToEmailAddress;
-                            }
-                        }
-                    }
-                    //Check the next line for the email address
-                    if (lineSplit.Count() > i + 1)
-                    {
-                        //Split the next line on spaces and look for any words that have an @ symbol in it
-                        tempSplit = lineSplit[i].Split(new string[] { " " }, StringSplitOptions.RemoveEmptyEntries);
-                        for (int k = 0; k < tempSplit.Count(); k++)
-                        {
-                            if (tempSplit[k].Contains("@"))
-                            {
-                                if (IsValidEmail(tempSplit[k]))
-                                {
-                                    replyToEmailAddress = tempSplit[k];
-                                    return replyToEmailAddress;
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        return replyToEmailAddress;
-    }
-    public bool IsValidEmail(string email)
-    {
-        try
-        {
-            var addr = new System.Net.Mail.MailAddress(email.Trim());
-            return addr.Address.Trim().ToUpper() == email.Trim().ToUpper();
-        }
-        catch
-        {
-            return false;
-        }
-    }
-    public string GetResponseForType(ref MailStorage currentMessage, List<MailStorage> pastMessages)
-    {
-        Random rand = new Random();
-        EmailType type = EmailType.Unknown;
-        string rtnResponse = String.Empty;
-        string attachmentType = "File";
-        string name = String.Empty;
-        string greeting = String.Empty;
-        string signOff = String.Empty;
-        string preProcessedBody = currentMessage.SubjectLine + " " + currentMessage.EmailBodyPlain.Replace("\r\n"," ");
-
-        //Types of emails
-        if (currentMessage.SubjectLine.Contains("Test ") || currentMessage.SubjectLine.Contains(" Test"))
-        {
-            type = EmailType.Test;
-        }
-        else if ((preProcessedBody.Trim() == String.Empty || (preProcessedBody.Length < 40 && (preProcessedBody.ToUpper().Contains("ATTACHMENT") || preProcessedBody.ToUpper().Contains("FILE")))) && currentMessage.NumberOfAttachments > 0)
-        {
-            type = EmailType.BlankWithAttachment;
-        }
-        else if (preProcessedBody.Trim().ToUpper().Contains("ILLUMINATI") || preProcessedBody.Trim().ToUpper().Contains("ILUMINATI"))
-        {
-            type = EmailType.Illuminati;
-        }
-        else if (preProcessedBody.Trim().ToUpper().Contains("DIED AFTER") || preProcessedBody.Trim().ToUpper().Contains("CANCER DIAG") || preProcessedBody.Trim().ToUpper().Contains("WITH CANCER") || preProcessedBody.Trim().ToUpper().Contains("MY CANCER") || preProcessedBody.Trim().ToUpper().Contains("HUSBAND DIED") || preProcessedBody.Trim().ToUpper().Contains("WIFE DIED") || preProcessedBody.Trim().ToUpper().Contains("CHILD DIED") || preProcessedBody.Trim().ToUpper().Contains("SON DIED") || preProcessedBody.Trim().ToUpper().Contains("DAUGHTER DIED"))
-        {
-            type = EmailType.DeathOrDying;
-        }
-        else if (preProcessedBody.Trim().ToUpper().Contains("OIL AND GAS") || preProcessedBody.Trim().ToUpper().Contains("GAS AND OIL"))
-        {
-            type = EmailType.OilAndGas;
-        }
-        else if (preProcessedBody.Trim().ToUpper().Contains("KEEP MY MONEY") || preProcessedBody.Trim().ToUpper().Contains("ABANDONED SUM") || preProcessedBody.Trim().ToUpper().Contains("MOVE THE SUM") || preProcessedBody.Trim().ToUpper().Contains("STORE MY MONEY") || preProcessedBody.Trim().ToUpper().Contains("KEEP THE MONEY SAFE") || preProcessedBody.Trim().ToUpper().Contains("KEEP THE MONEY SAVE") || preProcessedBody.Trim().ToUpper().Contains("RECEIVE THE FUND AND KEEP IT") || preProcessedBody.Trim().ToUpper().Contains("RECEIVE THE MONEY"))
-        {
-            type = EmailType.MoneyStorage;
-        }
-        else if (preProcessedBody.Trim().ToUpper().Contains("JOB OFFER") || preProcessedBody.Trim().ToUpper().Contains("POSITION IN COMPANY") || preProcessedBody.Trim().ToUpper().Contains("POSITION IN OUR COMPANY"))
-        {
-            type = EmailType.JobOffer;
-        }
-        else if (preProcessedBody.Trim().ToUpper().Contains("WEB DESIGN") || preProcessedBody.Trim().ToUpper().Contains("DEVELOPMENT FIRM"))
-        {
-            type = EmailType.SellingServices;
-        }
-        else if (preProcessedBody.Trim().ToUpper().Contains("ONLINE MARKETING CONSULT"))
-        {
-            type = EmailType.OnlineMarketingConsult;
-        }
-        else if (preProcessedBody.Trim().ToUpper().Contains("FINANCIAL ASSISTANCE") || preProcessedBody.Trim().ToUpper().Contains("FINANCIAL HELP") || preProcessedBody.Trim().ToUpper().Contains("LOAN") || preProcessedBody.Trim().ToUpper().Contains("APPLY FOR CASH"))
-        {
-            type = EmailType.LoanOffer;
-        }
-        else if (preProcessedBody.Trim().ToUpper().Contains("LOTTERY") || preProcessedBody.Trim().ToUpper().Contains("POWER BALL") || preProcessedBody.Trim().ToUpper().Contains("POWERBALL") || preProcessedBody.Trim().ToUpper().Contains("WINNER"))
-        {
-            type = EmailType.Lottery;
-        }
-        else if (preProcessedBody.Trim().ToUpper().Contains("CONSIGNMENT") || preProcessedBody.Trim().ToUpper().Contains("TRUNK BOX"))
-        {
-            type = EmailType.ConsignmentBox;
-        }
-        else if (preProcessedBody.Trim().ToUpper().Contains("POLICE"))
-        {
-            type = EmailType.Police;
-        }
-        else if (preProcessedBody.Trim().ToUpper().Contains("ATM BLANK CARD"))
-        {
-            type = EmailType.MoneyHack;
-        }
-        else if (preProcessedBody.Trim().ToUpper().Contains("ATM CARD") || preProcessedBody.Trim().ToUpper().Contains("ATMCARD") || preProcessedBody.Trim().ToUpper().Contains("ATM CREDIT CARD") || preProcessedBody.Trim().ToUpper().Contains("BANK CHEQUE"))
-        {
-            type = EmailType.AtmCard;
-        }
-        else if (preProcessedBody.Trim().ToUpper().Contains("INHERITENCE") || preProcessedBody.Trim().ToUpper().Contains("INHERIT"))
-        {
-            type = EmailType.Inheritance;
-        }
-        else if (preProcessedBody.Trim().ToUpper().Contains("BENEFICIARY") || preProcessedBody.Trim().ToUpper().Contains("NEXT OF KIN") || preProcessedBody.Trim().ToUpper().Contains("DONATING") || preProcessedBody.Trim().ToUpper().Contains("DONATION") || preProcessedBody.Trim().ToUpper().Contains("DON ATION") || preProcessedBody.Trim().ToUpper().Contains("TRANSFER TO YOUR ACCOUNT") || preProcessedBody.Trim().ToUpper().Contains("TO YOUR BANK ACCOUNT"))
-        {
-            type = EmailType.Beneficiary;
-        }
-        else if (preProcessedBody.Trim().ToUpper().Contains("INVESTOR") || preProcessedBody.Trim().ToUpper().Contains("PROFIT SHARING") || preProcessedBody.Trim().ToUpper().Contains("INVESTMENT"))
-        {
-            type = EmailType.Investor;
-        }
-        else if (preProcessedBody.Trim().ToUpper().Contains("PAYMENT") || preProcessedBody.Trim().ToUpper().Contains("MONEYGRAM") || preProcessedBody.Trim().ToUpper().Contains("WESTERN UNION") || preProcessedBody.Trim().ToUpper().Contains("TRANSFER THE FUND"))
-        {
-            type = EmailType.GenericPayment;
-        }
-        else if (preProcessedBody.Trim().ToUpper().Contains("LIKE TO KNOW YOU MORE") || preProcessedBody.Trim().ToUpper().Contains("GET TO KNOW YOU") || preProcessedBody.Trim().ToUpper().Contains("BUILD TRUST") || preProcessedBody.Trim().ToUpper().Contains("I SEE YOU AS SOMEONE I CAN WORK WITH") || preProcessedBody.Trim().ToUpper().Contains("I WILL TELL YOU MORE ABOUT MYSELF") || preProcessedBody.Trim().ToUpper().Contains("GET TO KNOW EACHOTHER") || preProcessedBody.Trim().ToUpper().Contains("GET TO KNOW EACH OTHER") || preProcessedBody.Trim().ToUpper().Contains("LONGTERM RELATIONSHIP") || preProcessedBody.Trim().ToUpper().Contains("LONG TERM RELATIONSHIP"))
-        {
-            type = EmailType.BuildTrust;
-        }
-        else if (preProcessedBody.Trim().ToUpper().Contains("MANUFACTURER OF LED"))
-        {
-            type = EmailType.SellingProducts;
-        }
-        else if (preProcessedBody.Trim().ToUpper().Contains("BOX")) //If no other hits then just look for the word BOX
-        {
-            type = EmailType.ConsignmentBox;
-        }
-
-        currentMessage.MessageType = (int)type;
-
-        //Determine attachment type
-        if (currentMessage.AtachmentTypes.ToUpper().Contains("PDF"))
-        {
-            attachmentType = "PDF";
-        }
-        else if (currentMessage.AtachmentTypes.ToUpper().Contains("DOC") || currentMessage.AtachmentTypes.ToUpper().Contains("RTF"))
-        {
-            attachmentType = "Word";
-        }
-        else if (currentMessage.AtachmentTypes.ToUpper().Contains("PNG") || currentMessage.AtachmentTypes.ToUpper().Contains("JPG") || currentMessage.AtachmentTypes.ToUpper().Contains("JPEG") || currentMessage.AtachmentTypes.ToUpper().Contains("BMP") || currentMessage.AtachmentTypes.ToUpper().Contains("GIF") || currentMessage.AtachmentTypes.ToUpper().Contains("TIFF"))
-        {
-            attachmentType = "Image";
-        }
-        if (String.IsNullOrEmpty(currentMessage.PersonName))
-        {
-            for (int i = pastMessages.Count() - 1; i > 0; i--)
-            {
-                if (!String.IsNullOrEmpty(pastMessages[i].PersonName))
-                {
-                    name = pastMessages[i].PersonName;
-                    break;
-                }
-            }
-        }
-        else
-        {
-            name = currentMessage.PersonName;
-        }
-        if (String.IsNullOrEmpty(name))
-        {
-            name = GetRandomName(rand);
-        }
-
-        currentMessage.PersonName = name;
-        greeting = GetRandomGreeting(rand);
-        signOff = GetRandomSignOff(rand);
-
-        switch (type)
-        {
-            case EmailType.Test:
-                if(pastMessages.Count() > 0)
-                    rtnResponse = GetRandomOpeningResponseTest(rand);
-                else
-                    rtnResponse = GetRandomContinuedResponseTest(rand);
-                break;
-            case EmailType.BlankWithAttachment:
-                if (pastMessages.Count() > 0)
-                    rtnResponse = GetRandomOpeningResponseForBlankEmailWithAttachment(rand, greeting, attachmentType);
-                else
-                    rtnResponse = GetRandomContinuedResponseForBlankEmailWithAttachment(rand, greeting, attachmentType);
-                break;
-            case EmailType.Inheritance:
-                if (pastMessages.Count() > 0)
-                    rtnResponse = GetRandomContinuedResponseForInheritance(rand, greeting, name, currentMessage);
-                else
-                    rtnResponse = GetRandomOpeningResponseForInheritance(rand, greeting, name, attachmentType, currentMessage, pastMessages);
-                break;
-            case EmailType.Beneficiary:
-                if (pastMessages.Count() > 0)
-                    rtnResponse = GetRandomContinuedResponseForBeneficiary(rand, greeting, name, currentMessage);
-                else
-                    rtnResponse = GetRandomOpeningResponseForBeneficiary(rand, greeting, name);
-                break;
-            case EmailType.Lottery:
-                if (pastMessages.Count() > 0)
-                    rtnResponse = GetRandomContinuedResponseForLottery(rand, greeting, name, currentMessage);
-                else
-                    rtnResponse = GetRandomOpeningResponseForLottery(rand, greeting);
-                break;
-            case EmailType.OilAndGas:
-                if (pastMessages.Count() > 0)
-                    rtnResponse = GetRandomContinuedResponseForOilAndGas(rand, greeting, name, currentMessage);
-                else
-                    rtnResponse = GetRandomOpeningResponseForOilAndGas(rand, greeting, name, currentMessage);
-                break;
-            case EmailType.Illuminati:
-                if (pastMessages.Count() > 0)
-                    rtnResponse = GetRandomContinuedResponseForIlluminati(rand, greeting, name, currentMessage);
-                else
-                    rtnResponse = GetRandomOpeningResponseForIlluminati(rand, greeting, name, currentMessage);
-                break;
-            case EmailType.ConsignmentBox:
-                if (pastMessages.Count() > 0)
-                    rtnResponse = GetRandomContinuedResponseForConsignmentBox(rand, greeting, name, attachmentType);
-                else
-                    rtnResponse = GetRandomOpeningResponseForConsignmentBox(rand, greeting, name, attachmentType);
-                break;
-            case EmailType.DeathOrDying:
-                if (pastMessages.Count() > 0)
-                    rtnResponse = GetRandomContinuedResponseForDeathOrDying(rand, greeting, name, currentMessage);
-                else
-                    rtnResponse = GetRandomOpeningResponseForDeathOrDying(rand, greeting, name);
-                break;
-            case EmailType.LoanOffer:
-                if (pastMessages.Count() > 0)
-                    rtnResponse = GetRandomContinuedResponseForLoanOffer(rand, greeting, name, currentMessage);
-                else
-                    rtnResponse = GetRandomOpeningResponseForLoanOffer(rand, greeting, name);
-                break;
-            case EmailType.MoneyStorage:
-                if (pastMessages.Count() > 0)
-                    rtnResponse = GetRandomContinuedResponseForMoneyStorage(rand, greeting, name, currentMessage);
-                else
-                    rtnResponse = GetRandomOpeningResponseForMoneyStorage(rand, greeting, name);
-                break;
-            case EmailType.AtmCard:
-                if (pastMessages.Count() > 0)
-                    rtnResponse = GetRandomContinuedResponseForAtmCard(rand, greeting, name, currentMessage);
-                else
-                    rtnResponse = GetRandomOpeningResponseForAtmCard(rand, greeting, name);
-                break;
-            case EmailType.Police:
-                if (pastMessages.Count() > 0)
-                    rtnResponse = GetRandomContinuedResponseForPolice(rand, greeting, name, currentMessage);
-                else
-                    rtnResponse = GetRandomOpeningResponseForPolice(rand, greeting, name);
-                break;
-            case EmailType.GenericPayment:
-                if (pastMessages.Count() > 0)
-                    rtnResponse = GetRandomContinuedResponseForGenericPayment(rand, greeting, name, currentMessage);
-                else
-                    rtnResponse = GetRandomOpeningResponseForGenericPayment(rand, greeting, name);
-                break;
-            case EmailType.SellingServices:
-                rtnResponse = GetRandomResponseForSellingServices(rand, greeting, name);
-                break;
-            case EmailType.OnlineMarketingConsult:
-                rtnResponse = "No";
-                break;
-            case EmailType.BuildTrust:
-                if (pastMessages.Count() > 0)
-                    rtnResponse = GetRandomContinuedResponseForBuildTrust(rand, greeting, name, currentMessage);
-                else
-                    rtnResponse = GetRandomOpeningResponseForBuildTrust(rand, greeting, name);
-                break;
-            case EmailType.Investor:
-                if (pastMessages.Count() > 0)
-                    rtnResponse = GetRandomContinuedResponseForInvestor(rand, greeting, name, currentMessage);
-                else
-                    rtnResponse = GetRandomOpeningResponseForInvestor(rand, greeting, name);
-                break;
-            case EmailType.MoneyHack:
-                if (pastMessages.Count() > 0)
-                    rtnResponse = GetRandomContinuedResponseForMoneyHack(rand, greeting, name, currentMessage);
-                else
-                    rtnResponse = GetRandomOpeningResponseForMoneyHack(rand, greeting, name);
-                break;
-            case EmailType.JobOffer:
-                if (pastMessages.Count() > 0)
-                    rtnResponse = GetRandomContinuedResponseForJobOffer(rand, greeting, name, currentMessage);
-                else
-                    rtnResponse = GetRandomOpeningResponseForJobOffer(rand, greeting, name);
-                break;
-        }
-
-        if(!String.IsNullOrEmpty(rtnResponse))
-            rtnResponse += Environment.NewLine + Environment.NewLine + signOff + ", " + MyName;
-
-        return rtnResponse;
-    }
     //Opening Responses
     private string GetRandomOpeningResponseTest(Random rand)
     {
@@ -910,7 +469,6 @@ public class MailServerFunctions
         string response = String.Empty;
         string introduction = String.Empty;
         string followup = String.Empty;
-        bool isMale = true;
 
         response += greetings + " " + name + ", ";
 
@@ -1050,6 +608,7 @@ public class MailServerFunctions
     {
         return greetings + " " + name + ". " + SettingPostProcessing(settings.ResponseOpeningSellingProducts[rand.Next(0, settings.ResponseOpeningSellingProducts.Count())], new List<string> {  }, new List<string> {  }, rand);
     }
+
     //Continued Responses
     private string GetRandomContinuedResponseTest(Random rand)
     {
@@ -1317,14 +876,448 @@ public class MailServerFunctions
         return lst[rand.Next(0, lst.Count())];
     }
 
-    private string GetRandomOpeningResponseForXXXXXX(Random rand, string greetings, string name, string attamentType, MailStorage currentMessage, List<MailStorage> pastMessages)
+    //Helper functions
+    private string SettingPostProcessing(string text, List<string> placeholder, List<string> replacement, Random rand)
     {
-        List<string> lst = new List<string>
-        {
-            greetings + " " + name + ", Example",
-            greetings + " " + name + ", Test"
-        };
+        if (placeholder.Count() != replacement.Count())
+            throw new Exception("Setting Post Process counts do not match");
 
-        return lst[rand.Next(0, lst.Count())];
+        placeholder.Add("|introduction|");
+        replacement.Add(GetRandomInroduction(rand));
+        placeholder.Add("|Environment.NewLine|");
+        replacement.Add(Environment.NewLine);
+        placeholder.Add("|GetRandomAcquaintance|");
+        replacement.Add(GetRandomAcquaintance(rand));
+        placeholder.Add("|GetRandomFollowupLine|");
+        replacement.Add(GetRandomFollowupLine(rand));
+        placeholder.Add("|GetRandomLocation|");
+        replacement.Add(GetRandomLocation(rand));
+        placeholder.Add("|GetRandomProduct|");
+        replacement.Add(GetRandomProduct(rand));
+        placeholder.Add("|GetRandomPaymentMethod|");
+        replacement.Add(GetRandomPaymentMethod(rand));
+
+        for (int i = 0; i < placeholder.Count(); i++)
+        {
+            text = text.Replace(placeholder[i], replacement[i]);
+        }
+
+        return text;
+    }
+    private string AttemptToFindPersonName(string body)
+    {
+        string rtn = String.Empty;
+        string regards = "Regards;Yours Faithfully;Yours Truely;Best,;Yours in Services;My Best,;My best to you;All best,;All the best;Best wishes;Bests,;Best Regards;Rgds;Warm Regards;Warmest Regards;Warmly,;Take care;Looking forward,;Rushing,;In haste,;Be well,;Peace,;Yours Truly;Very truely yours;Sincerely;Sincerely yours;See you around;With love,;Lots of love,;Warm wishes,;Take care;Remain Blessed;Many thanks,;Thanks,;Your beloved sister;";
+
+        string[] lineSplit = body.Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
+        string[] regardsSplit = regards.ToUpper().Split(new string[] { ";" }, StringSplitOptions.RemoveEmptyEntries);
+        for (int i = lineSplit.Count() - 1; i >= 0; i--)
+        {
+            lineSplit[i] = lineSplit[i].Trim();
+            for (int j = 0; j < regardsSplit.Count(); j++)
+            {
+                if (lineSplit[i].ToUpper() == regardsSplit[j] || lineSplit[i].ToUpper() + "," == regardsSplit[j]) //Then name should be on next line
+                {
+                    if (lineSplit.Count() - 1 > i)
+                    {
+                        if (lineSplit[i + 1].Length < 30 && lineSplit[i + 1].Count(f => f == ' ') <= 4) //Do not take the entire next sentence if there is a sentence that ends with "Thanks,"
+                        {
+                            rtn = lineSplit[i + 1];
+                            break;
+                        }
+                    }
+                }
+                if (regardsSplit[j].EndsWith(","))
+                {
+                    if (lineSplit[i].ToUpper().StartsWith(regardsSplit[j])) //Name might be following the regards
+                    {
+                        string[] sentenceSplit = lineSplit[i].Split(new string[] { " " }, StringSplitOptions.RemoveEmptyEntries);
+                        string[] tempRegardsSplit = regardsSplit[i].Split(new string[] { " " }, StringSplitOptions.RemoveEmptyEntries);
+
+                        if (sentenceSplit.Count() - tempRegardsSplit.Count() < 5)
+                        {
+                            rtn = lineSplit[i].Replace(regardsSplit[i], "");
+                        }
+                    }
+                }
+            }
+
+            if (!String.IsNullOrEmpty(rtn))
+                break;
+        }
+
+        if (rtn.StartsWith(",") || rtn.StartsWith("."))
+            rtn = rtn.Substring(1);
+        if (rtn.EndsWith(",") || rtn.EndsWith(".") || rtn.EndsWith("!"))
+            rtn = rtn.Substring(0, rtn.Length - 1);
+
+        if (rtn.Length > 30 && rtn.Count(f => f == ' ') > 4)
+            rtn = String.Empty;
+
+        return rtn;
+    }
+    private string AttemptToFindReplyToEmailAddress(string body)
+    {
+        string replyToEmailAddress = String.Empty;
+        string lineKeywordList = "EMAIL;EMAIL ADDRESS;EMAILADDRESS;MAILBOX;MAIL BOX;GMAIL;YAHOO;MSN;OUTLOOK;HOTMAIL;MY EMAIL;MY EMAIL ADDRESS;MAIL;MY MAIL;MY MAIL ADDRESS;";
+
+        string[] lineSplit = body.Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
+        string[] lineKeywordSplit = lineKeywordList.ToUpper().Split(new string[] { ";" }, StringSplitOptions.RemoveEmptyEntries);
+
+        for (int i = lineSplit.Count() - 1; i >= 0; i--)
+        {
+            lineSplit[i] = lineSplit[i].Trim().ToUpper();
+
+            for (int j = 0; j < lineKeywordSplit.Count(); j++)
+            {
+                if (lineSplit[i].StartsWith(lineKeywordSplit[j].Trim().ToUpper()))
+                {
+                    //Check the same line for something like "Email: somethin@gmail.com"
+                    //Start by checking for ":" as the seperator
+                    string[] tempSplit = lineSplit[i].Split(new string[] { ":" }, StringSplitOptions.RemoveEmptyEntries);
+                    for (int k = 0; k < tempSplit.Count(); k++)
+                    {
+                        if (tempSplit[k].Contains("@"))
+                        {
+                            if (IsValidEmail(tempSplit[k]))
+                            {
+                                replyToEmailAddress = tempSplit[k];
+                                return replyToEmailAddress;
+                            }
+                        }
+                    }
+                    tempSplit = lineSplit[i].Split(new string[] { "-" }, StringSplitOptions.RemoveEmptyEntries);
+                    for (int k = 0; k < tempSplit.Count(); k++)
+                    {
+                        if (tempSplit[k].Contains("@"))
+                        {
+                            if (IsValidEmail(tempSplit[k]))
+                            {
+                                replyToEmailAddress = tempSplit[k];
+                                return replyToEmailAddress;
+                            }
+                        }
+                    }
+                    tempSplit = lineSplit[i].Split(new string[] { ";" }, StringSplitOptions.RemoveEmptyEntries);
+                    for (int k = 0; k < tempSplit.Count(); k++)
+                    {
+                        if (tempSplit[k].Contains("@"))
+                        {
+                            if (IsValidEmail(tempSplit[k]))
+                            {
+                                replyToEmailAddress = tempSplit[k];
+                                return replyToEmailAddress;
+                            }
+                        }
+                    }
+                    tempSplit = lineSplit[i].Split(new string[] { "=" }, StringSplitOptions.RemoveEmptyEntries);
+                    for (int k = 0; k < tempSplit.Count(); k++)
+                    {
+                        if (tempSplit[k].Contains("@"))
+                        {
+                            if (IsValidEmail(tempSplit[k]))
+                            {
+                                replyToEmailAddress = tempSplit[k];
+                                return replyToEmailAddress;
+                            }
+                        }
+                    }
+                    //Check the next line for the email address
+                    if (lineSplit.Count() > i + 1)
+                    {
+                        //Split the next line on spaces and look for any words that have an @ symbol in it
+                        tempSplit = lineSplit[i].Split(new string[] { " " }, StringSplitOptions.RemoveEmptyEntries);
+                        for (int k = 0; k < tempSplit.Count(); k++)
+                        {
+                            if (tempSplit[k].Contains("@"))
+                            {
+                                if (IsValidEmail(tempSplit[k]))
+                                {
+                                    replyToEmailAddress = tempSplit[k];
+                                    return replyToEmailAddress;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        return replyToEmailAddress;
+    }
+    public bool IsValidEmail(string email)
+    {
+        try
+        {
+            var addr = new System.Net.Mail.MailAddress(email.Trim());
+            return addr.Address.Trim().ToUpper() == email.Trim().ToUpper();
+        }
+        catch
+        {
+            return false;
+        }
+    }
+    public string GetResponseForType(ref MailStorage currentMessage, List<MailStorage> pastMessages)
+    {
+        Random rand = new Random();
+        EmailType type = EmailType.Unknown;
+        string rtnResponse = String.Empty;
+        string attachmentType = "File";
+        string name = String.Empty;
+        string greeting = String.Empty;
+        string signOff = String.Empty;
+        string preProcessedBody = currentMessage.SubjectLine + " " + currentMessage.EmailBodyPlain.Replace("\r\n", " ");
+
+        //Types of emails
+        if (currentMessage.SubjectLine.Contains("Test ") || currentMessage.SubjectLine.Contains(" Test"))
+        {
+            type = EmailType.Test;
+        }
+        else if ((preProcessedBody.Trim() == String.Empty || (preProcessedBody.Length < 40 && (preProcessedBody.ToUpper().Contains("ATTACHMENT") || preProcessedBody.ToUpper().Contains("FILE")))) && currentMessage.NumberOfAttachments > 0)
+        {
+            type = EmailType.BlankWithAttachment;
+        }
+        else if (preProcessedBody.Trim().ToUpper().Contains("ILLUMINATI") || preProcessedBody.Trim().ToUpper().Contains("ILUMINATI"))
+        {
+            type = EmailType.Illuminati;
+        }
+        else if (preProcessedBody.Trim().ToUpper().Contains("DIED AFTER") || preProcessedBody.Trim().ToUpper().Contains("CANCER DIAG") || preProcessedBody.Trim().ToUpper().Contains("WITH CANCER") || preProcessedBody.Trim().ToUpper().Contains("MY CANCER") || preProcessedBody.Trim().ToUpper().Contains("HUSBAND DIED") || preProcessedBody.Trim().ToUpper().Contains("WIFE DIED") || preProcessedBody.Trim().ToUpper().Contains("CHILD DIED") || preProcessedBody.Trim().ToUpper().Contains("SON DIED") || preProcessedBody.Trim().ToUpper().Contains("DAUGHTER DIED"))
+        {
+            type = EmailType.DeathOrDying;
+        }
+        else if (preProcessedBody.Trim().ToUpper().Contains("OIL AND GAS") || preProcessedBody.Trim().ToUpper().Contains("GAS AND OIL"))
+        {
+            type = EmailType.OilAndGas;
+        }
+        else if (preProcessedBody.Trim().ToUpper().Contains("KEEP MY MONEY") || preProcessedBody.Trim().ToUpper().Contains("ABANDONED SUM") || preProcessedBody.Trim().ToUpper().Contains("MOVE THE SUM") || preProcessedBody.Trim().ToUpper().Contains("STORE MY MONEY") || preProcessedBody.Trim().ToUpper().Contains("KEEP THE MONEY SAFE") || preProcessedBody.Trim().ToUpper().Contains("KEEP THE MONEY SAVE") || preProcessedBody.Trim().ToUpper().Contains("RECEIVE THE FUND AND KEEP IT") || preProcessedBody.Trim().ToUpper().Contains("RECEIVE THE MONEY"))
+        {
+            type = EmailType.MoneyStorage;
+        }
+        else if (preProcessedBody.Trim().ToUpper().Contains("JOB OFFER") || preProcessedBody.Trim().ToUpper().Contains("POSITION IN COMPANY") || preProcessedBody.Trim().ToUpper().Contains("POSITION IN OUR COMPANY"))
+        {
+            type = EmailType.JobOffer;
+        }
+        else if (preProcessedBody.Trim().ToUpper().Contains("WEB DESIGN") || preProcessedBody.Trim().ToUpper().Contains("DEVELOPMENT FIRM"))
+        {
+            type = EmailType.SellingServices;
+        }
+        else if (preProcessedBody.Trim().ToUpper().Contains("ONLINE MARKETING CONSULT"))
+        {
+            type = EmailType.OnlineMarketingConsult;
+        }
+        else if (preProcessedBody.Trim().ToUpper().Contains("FINANCIAL ASSISTANCE") || preProcessedBody.Trim().ToUpper().Contains("FINANCIAL HELP") || preProcessedBody.Trim().ToUpper().Contains("LOAN") || preProcessedBody.Trim().ToUpper().Contains("APPLY FOR CASH"))
+        {
+            type = EmailType.LoanOffer;
+        }
+        else if (preProcessedBody.Trim().ToUpper().Contains("LOTTERY") || preProcessedBody.Trim().ToUpper().Contains("POWER BALL") || preProcessedBody.Trim().ToUpper().Contains("POWERBALL") || preProcessedBody.Trim().ToUpper().Contains("WINNER"))
+        {
+            type = EmailType.Lottery;
+        }
+        else if (preProcessedBody.Trim().ToUpper().Contains("CONSIGNMENT") || preProcessedBody.Trim().ToUpper().Contains("TRUNK BOX"))
+        {
+            type = EmailType.ConsignmentBox;
+        }
+        else if (preProcessedBody.Trim().ToUpper().Contains("POLICE"))
+        {
+            type = EmailType.Police;
+        }
+        else if (preProcessedBody.Trim().ToUpper().Contains("ATM BLANK CARD"))
+        {
+            type = EmailType.MoneyHack;
+        }
+        else if (preProcessedBody.Trim().ToUpper().Contains("ATM CARD") || preProcessedBody.Trim().ToUpper().Contains("ATMCARD") || preProcessedBody.Trim().ToUpper().Contains("ATM CREDIT CARD") || preProcessedBody.Trim().ToUpper().Contains("BANK CHEQUE"))
+        {
+            type = EmailType.AtmCard;
+        }
+        else if (preProcessedBody.Trim().ToUpper().Contains("INHERITENCE") || preProcessedBody.Trim().ToUpper().Contains("INHERIT"))
+        {
+            type = EmailType.Inheritance;
+        }
+        else if (preProcessedBody.Trim().ToUpper().Contains("BENEFICIARY") || preProcessedBody.Trim().ToUpper().Contains("NEXT OF KIN") || preProcessedBody.Trim().ToUpper().Contains("DONATING") || preProcessedBody.Trim().ToUpper().Contains("DONATION") || preProcessedBody.Trim().ToUpper().Contains("DON ATION") || preProcessedBody.Trim().ToUpper().Contains("TRANSFER TO YOUR ACCOUNT") || preProcessedBody.Trim().ToUpper().Contains("TO YOUR BANK ACCOUNT"))
+        {
+            type = EmailType.Beneficiary;
+        }
+        else if (preProcessedBody.Trim().ToUpper().Contains("INVESTOR") || preProcessedBody.Trim().ToUpper().Contains("PROFIT SHARING") || preProcessedBody.Trim().ToUpper().Contains("INVESTMENT"))
+        {
+            type = EmailType.Investor;
+        }
+        else if (preProcessedBody.Trim().ToUpper().Contains("PAYMENT") || preProcessedBody.Trim().ToUpper().Contains("MONEYGRAM") || preProcessedBody.Trim().ToUpper().Contains("WESTERN UNION") || preProcessedBody.Trim().ToUpper().Contains("TRANSFER THE FUND"))
+        {
+            type = EmailType.GenericPayment;
+        }
+        else if (preProcessedBody.Trim().ToUpper().Contains("LIKE TO KNOW YOU MORE") || preProcessedBody.Trim().ToUpper().Contains("GET TO KNOW YOU") || preProcessedBody.Trim().ToUpper().Contains("BUILD TRUST") || preProcessedBody.Trim().ToUpper().Contains("I SEE YOU AS SOMEONE I CAN WORK WITH") || preProcessedBody.Trim().ToUpper().Contains("I WILL TELL YOU MORE ABOUT MYSELF") || preProcessedBody.Trim().ToUpper().Contains("GET TO KNOW EACHOTHER") || preProcessedBody.Trim().ToUpper().Contains("GET TO KNOW EACH OTHER") || preProcessedBody.Trim().ToUpper().Contains("LONGTERM RELATIONSHIP") || preProcessedBody.Trim().ToUpper().Contains("LONG TERM RELATIONSHIP"))
+        {
+            type = EmailType.BuildTrust;
+        }
+        else if (preProcessedBody.Trim().ToUpper().Contains("MANUFACTURER OF LED"))
+        {
+            type = EmailType.SellingProducts;
+        }
+        else if (preProcessedBody.Trim().ToUpper().Contains("BOX")) //If no other hits then just look for the word BOX
+        {
+            type = EmailType.ConsignmentBox;
+        }
+
+        currentMessage.MessageType = (int)type;
+
+        //Determine attachment type
+        if (currentMessage.AtachmentTypes.ToUpper().Contains("PDF"))
+        {
+            attachmentType = "PDF";
+        }
+        else if (currentMessage.AtachmentTypes.ToUpper().Contains("DOC") || currentMessage.AtachmentTypes.ToUpper().Contains("RTF"))
+        {
+            attachmentType = "Word";
+        }
+        else if (currentMessage.AtachmentTypes.ToUpper().Contains("PNG") || currentMessage.AtachmentTypes.ToUpper().Contains("JPG") || currentMessage.AtachmentTypes.ToUpper().Contains("JPEG") || currentMessage.AtachmentTypes.ToUpper().Contains("BMP") || currentMessage.AtachmentTypes.ToUpper().Contains("GIF") || currentMessage.AtachmentTypes.ToUpper().Contains("TIFF"))
+        {
+            attachmentType = "Image";
+        }
+        if (String.IsNullOrEmpty(currentMessage.PersonName))
+        {
+            for (int i = pastMessages.Count() - 1; i > 0; i--)
+            {
+                if (!String.IsNullOrEmpty(pastMessages[i].PersonName))
+                {
+                    name = pastMessages[i].PersonName;
+                    break;
+                }
+            }
+        }
+        else
+        {
+            name = currentMessage.PersonName;
+        }
+        if (String.IsNullOrEmpty(name))
+        {
+            name = GetRandomName(rand);
+        }
+
+        currentMessage.PersonName = name;
+        greeting = GetRandomGreeting(rand);
+        signOff = GetRandomSignOff(rand);
+
+        switch (type)
+        {
+            case EmailType.Test:
+                if (pastMessages.Count() > 0)
+                    rtnResponse = GetRandomOpeningResponseTest(rand);
+                else
+                    rtnResponse = GetRandomContinuedResponseTest(rand);
+                break;
+            case EmailType.BlankWithAttachment:
+                if (pastMessages.Count() > 0)
+                    rtnResponse = GetRandomOpeningResponseForBlankEmailWithAttachment(rand, greeting, attachmentType);
+                else
+                    rtnResponse = GetRandomContinuedResponseForBlankEmailWithAttachment(rand, greeting, attachmentType);
+                break;
+            case EmailType.Inheritance:
+                if (pastMessages.Count() > 0)
+                    rtnResponse = GetRandomContinuedResponseForInheritance(rand, greeting, name, currentMessage);
+                else
+                    rtnResponse = GetRandomOpeningResponseForInheritance(rand, greeting, name, attachmentType, currentMessage, pastMessages);
+                break;
+            case EmailType.Beneficiary:
+                if (pastMessages.Count() > 0)
+                    rtnResponse = GetRandomContinuedResponseForBeneficiary(rand, greeting, name, currentMessage);
+                else
+                    rtnResponse = GetRandomOpeningResponseForBeneficiary(rand, greeting, name);
+                break;
+            case EmailType.Lottery:
+                if (pastMessages.Count() > 0)
+                    rtnResponse = GetRandomContinuedResponseForLottery(rand, greeting, name, currentMessage);
+                else
+                    rtnResponse = GetRandomOpeningResponseForLottery(rand, greeting);
+                break;
+            case EmailType.OilAndGas:
+                if (pastMessages.Count() > 0)
+                    rtnResponse = GetRandomContinuedResponseForOilAndGas(rand, greeting, name, currentMessage);
+                else
+                    rtnResponse = GetRandomOpeningResponseForOilAndGas(rand, greeting, name, currentMessage);
+                break;
+            case EmailType.Illuminati:
+                if (pastMessages.Count() > 0)
+                    rtnResponse = GetRandomContinuedResponseForIlluminati(rand, greeting, name, currentMessage);
+                else
+                    rtnResponse = GetRandomOpeningResponseForIlluminati(rand, greeting, name, currentMessage);
+                break;
+            case EmailType.ConsignmentBox:
+                if (pastMessages.Count() > 0)
+                    rtnResponse = GetRandomContinuedResponseForConsignmentBox(rand, greeting, name, attachmentType);
+                else
+                    rtnResponse = GetRandomOpeningResponseForConsignmentBox(rand, greeting, name, attachmentType);
+                break;
+            case EmailType.DeathOrDying:
+                if (pastMessages.Count() > 0)
+                    rtnResponse = GetRandomContinuedResponseForDeathOrDying(rand, greeting, name, currentMessage);
+                else
+                    rtnResponse = GetRandomOpeningResponseForDeathOrDying(rand, greeting, name);
+                break;
+            case EmailType.LoanOffer:
+                if (pastMessages.Count() > 0)
+                    rtnResponse = GetRandomContinuedResponseForLoanOffer(rand, greeting, name, currentMessage);
+                else
+                    rtnResponse = GetRandomOpeningResponseForLoanOffer(rand, greeting, name);
+                break;
+            case EmailType.MoneyStorage:
+                if (pastMessages.Count() > 0)
+                    rtnResponse = GetRandomContinuedResponseForMoneyStorage(rand, greeting, name, currentMessage);
+                else
+                    rtnResponse = GetRandomOpeningResponseForMoneyStorage(rand, greeting, name);
+                break;
+            case EmailType.AtmCard:
+                if (pastMessages.Count() > 0)
+                    rtnResponse = GetRandomContinuedResponseForAtmCard(rand, greeting, name, currentMessage);
+                else
+                    rtnResponse = GetRandomOpeningResponseForAtmCard(rand, greeting, name);
+                break;
+            case EmailType.Police:
+                if (pastMessages.Count() > 0)
+                    rtnResponse = GetRandomContinuedResponseForPolice(rand, greeting, name, currentMessage);
+                else
+                    rtnResponse = GetRandomOpeningResponseForPolice(rand, greeting, name);
+                break;
+            case EmailType.GenericPayment:
+                if (pastMessages.Count() > 0)
+                    rtnResponse = GetRandomContinuedResponseForGenericPayment(rand, greeting, name, currentMessage);
+                else
+                    rtnResponse = GetRandomOpeningResponseForGenericPayment(rand, greeting, name);
+                break;
+            case EmailType.SellingServices:
+                rtnResponse = GetRandomResponseForSellingServices(rand, greeting, name);
+                break;
+            case EmailType.OnlineMarketingConsult:
+                rtnResponse = "No";
+                break;
+            case EmailType.BuildTrust:
+                if (pastMessages.Count() > 0)
+                    rtnResponse = GetRandomContinuedResponseForBuildTrust(rand, greeting, name, currentMessage);
+                else
+                    rtnResponse = GetRandomOpeningResponseForBuildTrust(rand, greeting, name);
+                break;
+            case EmailType.Investor:
+                if (pastMessages.Count() > 0)
+                    rtnResponse = GetRandomContinuedResponseForInvestor(rand, greeting, name, currentMessage);
+                else
+                    rtnResponse = GetRandomOpeningResponseForInvestor(rand, greeting, name);
+                break;
+            case EmailType.MoneyHack:
+                if (pastMessages.Count() > 0)
+                    rtnResponse = GetRandomContinuedResponseForMoneyHack(rand, greeting, name, currentMessage);
+                else
+                    rtnResponse = GetRandomOpeningResponseForMoneyHack(rand, greeting, name);
+                break;
+            case EmailType.JobOffer:
+                if (pastMessages.Count() > 0)
+                    rtnResponse = GetRandomContinuedResponseForJobOffer(rand, greeting, name, currentMessage);
+                else
+                    rtnResponse = GetRandomOpeningResponseForJobOffer(rand, greeting, name);
+                break;
+        }
+
+        if (!String.IsNullOrEmpty(rtnResponse))
+            rtnResponse += Environment.NewLine + Environment.NewLine + signOff + ", " + MyName;
+
+        return rtnResponse;
     }
 }

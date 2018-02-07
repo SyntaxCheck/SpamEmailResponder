@@ -579,37 +579,6 @@ public class EmailMessage
                                 attch.FileException = exception;
                                 attch.ParentZipName = zipName;
 
-                                if (attch.FileName.ToLower().EndsWith(".xml") || attch.ContentType == "text/xml" || attch.ContentType == "application/xml" || attch.ContentType == "application/x-xml")
-                                {
-                                    try
-                                    {
-                                        if (attch.FileBytes.Count() > 0)
-                                        {
-                                            //For CCD Document Try to replace the stylesheet
-                                            string tempXml = Encoding.UTF8.GetString(attch.FileBytes);
-
-                                            if (tempXml.IndexOf("xml-stylesheet") > 0)
-                                            {
-                                                //replace whole line with no stylesheet search for <? through ?>
-                                                int startPos = tempXml.IndexOf("<?");
-                                                int endPos = tempXml.IndexOf("?>");
-                                                if (startPos > 0 || endPos > 0)
-                                                {
-                                                    tempXml = tempXml.Replace(tempXml.Substring(startPos, (endPos - startPos) + 2), "<?xml version=\"1.0\" encoding=\"iso-8859-1\"?>");
-                                                }
-                                            }
-
-                                            XmlDocument xmlTest = new XmlDocument();
-                                            xmlTest.LoadXml(tempXml);
-                                            attch.ValidXML = true;
-                                        }
-                                    }
-                                    catch (XmlException)
-                                    {
-                                        attch.ValidXML = false;
-                                    }
-                                }
-
                                 fileAttachments.Add(attch);
                                 attch = null;
                             }
