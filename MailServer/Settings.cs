@@ -3,7 +3,7 @@
 public class Settings
 {
     private string emailAddress, password, myName;
-    private List<string> names, greeting, signoff, introduction, introductionOpening, introductionClosing, personDescriptionMale, personDescriptionFemale, memory, followupLine, acquaintance, locations;
+    private List<string> names, greeting, signoff, introduction, introductionOpening, introductionClosing, personDescriptionMale, personDescriptionFemale, memory, followupLine, acquaintance, locations, products, paymentMethods;
     private List<string> responseOpeningBlankEmailWithAttachment, responseOpeningLottery, responseOpeningOilAndGas, responseOpeningOilAndGasQuestionList, responseOpeningIlluminati, responseOpeningConsignmentBox, responseOpeningDeathOrDying, responseOpeningLoanOffer, responseOpeningMoneyStorage, responseOpeningAtmCard, responseOpeningPolice, responseOpeningGenericPayment, responseOpeningInvestor, responseOpeningMoneyHack, responseOpeningJobOffer, responseOpeningSellingProducts;
     private List<string> responseContinuedBlankEmailWithAttachment, responseContinuedLottery, responseContinuedOilAndGas, responseContinuedIlluminati, responseContinuedConsignmentBox, responseContinuedDeathOrDying, responseContinuedLoanOffer, responseContinuedMoneyStorage, responseContinuedAtmCard, responseContinuedPolice, responseContinuedGenericPayment, responseContinuedInvestor, responseContinuedMoneyHack, responseContinuedBuildTrust, responseContinuedInheritance, responseContinuedBeneficiary, responseContinuedJobOffer, responseContinuedSellingProducts;
 
@@ -28,6 +28,11 @@ public class Settings
         get { return acquaintance; }
         set { acquaintance = value; }
     }
+    public List<string> PaymentMethods
+    {
+        get { return paymentMethods; }
+        set { paymentMethods = value; }
+    }
     public List<string> FollowupLine
     {
         get { return followupLine; }
@@ -42,6 +47,11 @@ public class Settings
     {
         get { return introduction; }
         set { introduction = value; }
+    }
+    public List<string> Products
+    {
+        get { return products; }
+        set { products = value; }
     }
     public List<string> IntroductionClosing
     {
