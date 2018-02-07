@@ -4,8 +4,8 @@ public class Settings
 {
     private string emailAddress, password, myName;
     private List<string> names, greeting, signoff, introduction, introductionOpening, introductionClosing, personDescriptionMale, personDescriptionFemale, memory, followupLine, acquaintance, locations;
-    private List<string> responseOpeningBlankEmailWithAttachment, responseOpeningLottery, responseOpeningOilAndGas, responseOpeningOilAndGasQuestionList, responseOpeningIlluminati, responseOpeningConsignmentBox, responseOpeningDeathOrDying, responseOpeningLoanOffer, responseOpeningMoneyStorage, responseOpeningAtmCard, responseOpeningPolice, responseOpeningGenericPayment, responseOpeningInvestor, responseOpeningMoneyHack, responseOpeningJobOffer;
-    private List<string> responseContinuedBlankEmailWithAttachment, responseContinuedLottery, responseContinuedOilAndGas, responseContinuedIlluminati, responseContinuedConsignmentBox, responseContinuedDeathOrDying, responseContinuedLoanOffer, responseContinuedMoneyStorage, responseContinuedAtmCard, responseContinuedPolice, responseContinuedGenericPayment, responseContinuedInvestor, responseContinuedMoneyHack, responseContinuedBuildTrust, responseContinuedInheritance, responseContinuedBeneficiary, responseContinuedJobOffer;
+    private List<string> responseOpeningBlankEmailWithAttachment, responseOpeningLottery, responseOpeningOilAndGas, responseOpeningOilAndGasQuestionList, responseOpeningIlluminati, responseOpeningConsignmentBox, responseOpeningDeathOrDying, responseOpeningLoanOffer, responseOpeningMoneyStorage, responseOpeningAtmCard, responseOpeningPolice, responseOpeningGenericPayment, responseOpeningInvestor, responseOpeningMoneyHack, responseOpeningJobOffer, responseOpeningSellingProducts;
+    private List<string> responseContinuedBlankEmailWithAttachment, responseContinuedLottery, responseContinuedOilAndGas, responseContinuedIlluminati, responseContinuedConsignmentBox, responseContinuedDeathOrDying, responseContinuedLoanOffer, responseContinuedMoneyStorage, responseContinuedAtmCard, responseContinuedPolice, responseContinuedGenericPayment, responseContinuedInvestor, responseContinuedMoneyHack, responseContinuedBuildTrust, responseContinuedInheritance, responseContinuedBeneficiary, responseContinuedJobOffer, responseContinuedSellingProducts;
 
     #region Get/sets
     public string EmailAddress
@@ -242,6 +242,16 @@ public class Settings
     {
         get { return responseContinuedJobOffer; }
         set { responseContinuedJobOffer = value; }
+    }
+    public List<string> ResponseContinuedSellingProducts
+    {
+        get { return responseContinuedSellingProducts; }
+        set { responseContinuedSellingProducts = value; }
+    }
+    public List<string> ResponseOpeningSellingProducts
+    {
+        get { return responseOpeningSellingProducts; }
+        set { responseOpeningSellingProducts = value; }
     }
 
     #endregion

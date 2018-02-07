@@ -91,6 +91,7 @@ public class MailServerFunctions
             settings.ResponseOpeningOilAndGasQuestionList = new List<string> { "" };
             settings.ResponseOpeningPolice = new List<string>() { "" };
             settings.ResponseOpeningJobOffer = new List<string>() { "" };
+            settings.ResponseOpeningSellingProducts = new List<string>() { "" };
 
             //Continued responses
             settings.ResponseContinuedAtmCard = new List<string>() { "" };
@@ -110,6 +111,7 @@ public class MailServerFunctions
             settings.ResponseContinuedOilAndGas = new List<string>() { "" };
             settings.ResponseContinuedPolice = new List<string>() { "" };
             settings.ResponseContinuedJobOffer = new List<string>() { "" };
+            settings.ResponseContinuedSellingProducts = new List<string>() { "" };
 
             string json = new JavaScriptSerializer().Serialize(settings);
             File.WriteAllText(settingFileLocation, JsonHelper.FormatJson(json));
@@ -377,7 +379,8 @@ public class MailServerFunctions
 
                 foreach (var v in msg.FromAddress)
                 {
-                    storageObj.ToAddress += v.ToString() + ";";
+                    if(msg.FromAddress.Count() > 1 && !v.ToString().Trim().ToLower().EndsWith(".ocn.ne.jp")) //Often times they include multiple email addresses, the ocn.ne.jp ones tend to get rejected so exclude that email in the reply if it is not the only address
+                        storageObj.ToAddress += v.ToString() + ";";
                 }
                 foreach (var v in msg.ReplyTo)
                 {
@@ -386,6 +389,15 @@ public class MailServerFunctions
                 foreach(var v in msg.FileAttachments)
                 {
                     storageObj.AtachmentTypes += v.FileExtension + ",";
+                }
+
+                string newEmailAddress = AttemptToFindReplyToEmailAddress(storageObj.EmailBodyPlain).Trim();
+                if (!String.IsNullOrEmpty(newEmailAddress))
+                {
+                    if (!storageObj.ToAddress.Trim().ToUpper().Contains(newEmailAddress.ToUpper()) && !settings.EmailAddress.ToUpper().Contains(newEmailAddress.ToUpper()))
+                    {
+                        storageObj.ToAddress += newEmailAddress + ";";
+                    }
                 }
 
                 //Get list of previous messages in the thread
@@ -499,6 +511,107 @@ public class MailServerFunctions
             rtn = String.Empty;
 
         return rtn;
+    }
+    private string AttemptToFindReplyToEmailAddress(string body)
+    {
+        string replyToEmailAddress = String.Empty;
+        string lineKeywordList = "EMAIL;EMAIL ADDRESS;EMAILADDRESS;MAILBOX;MAIL BOX;GMAIL;YAHOO;MSN;OUTLOOK;HOTMAIL;MY EMAIL;MY EMAIL ADDRESS;";
+
+        string[] lineSplit = body.Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
+        string[] lineKeywordSplit = lineKeywordList.ToUpper().Split(new string[] { ";" }, StringSplitOptions.RemoveEmptyEntries);
+
+        for (int i = lineSplit.Count() - 1; i >= 0; i--)
+        {
+            lineSplit[i] = lineSplit[i].Trim().ToUpper();
+            
+            for (int j = 0; j < lineKeywordSplit.Count(); j++)
+            {
+                if (lineSplit[i].StartsWith(lineKeywordSplit[j].Trim().ToUpper()))
+                {
+                    //Check the same line for something like "Email: somethin@gmail.com"
+                    //Start by checking for ":" as the seperator
+                    string[] tempSplit = lineSplit[i].Split(new string[] { ":" }, StringSplitOptions.RemoveEmptyEntries);
+                    for (int k = 0; k < tempSplit.Count(); k++)
+                    {
+                        if (tempSplit[k].Contains("@"))
+                        {
+                            if (IsValidEmail(tempSplit[k]))
+                            {
+                                replyToEmailAddress = tempSplit[k];
+                                return replyToEmailAddress;
+                            }
+                        }
+                    }
+                    tempSplit = lineSplit[i].Split(new string[] { "-" }, StringSplitOptions.RemoveEmptyEntries);
+                    for (int k = 0; k < tempSplit.Count(); k++)
+                    {
+                        if (tempSplit[k].Contains("@"))
+                        {
+                            if (IsValidEmail(tempSplit[k]))
+                            {
+                                replyToEmailAddress = tempSplit[k];
+                                return replyToEmailAddress;
+                            }
+                        }
+                    }
+                    tempSplit = lineSplit[i].Split(new string[] { ";" }, StringSplitOptions.RemoveEmptyEntries);
+                    for (int k = 0; k < tempSplit.Count(); k++)
+                    {
+                        if (tempSplit[k].Contains("@"))
+                        {
+                            if (IsValidEmail(tempSplit[k]))
+                            {
+                                replyToEmailAddress = tempSplit[k];
+                                return replyToEmailAddress;
+                            }
+                        }
+                    }
+                    tempSplit = lineSplit[i].Split(new string[] { "=" }, StringSplitOptions.RemoveEmptyEntries);
+                    for (int k = 0; k < tempSplit.Count(); k++)
+                    {
+                        if (tempSplit[k].Contains("@"))
+                        {
+                            if (IsValidEmail(tempSplit[k]))
+                            {
+                                replyToEmailAddress = tempSplit[k];
+                                return replyToEmailAddress;
+                            }
+                        }
+                    }
+                    //Check the next line for the email address
+                    if (lineSplit.Count() > i + 1)
+                    {
+                        //Split the next line on spaces and look for any words that have an @ symbol in it
+                        tempSplit = lineSplit[i].Split(new string[] { " " }, StringSplitOptions.RemoveEmptyEntries);
+                        for (int k = 0; k < tempSplit.Count(); k++)
+                        {
+                            if (tempSplit[k].Contains("@"))
+                            {
+                                if (IsValidEmail(tempSplit[k]))
+                                {
+                                    replyToEmailAddress = tempSplit[k];
+                                    return replyToEmailAddress;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        return replyToEmailAddress;
+    }
+    public bool IsValidEmail(string email)
+    {
+        try
+        {
+            var addr = new System.Net.Mail.MailAddress(email.Trim());
+            return addr.Address.Trim().ToUpper() == email.Trim().ToUpper();
+        }
+        catch
+        {
+            return false;
+        }
     }
     public string GetResponseForType(ref MailStorage currentMessage, List<MailStorage> pastMessages)
     {
@@ -912,6 +1025,10 @@ public class MailServerFunctions
     {
         return greetings + " " + name + ". " + SettingPostProcessing(settings.ResponseOpeningJobOffer[rand.Next(0, settings.ResponseOpeningJobOffer.Count())], new List<string> { "|GetRandomAcquaintance|" }, new List<string> { GetRandomAcquaintance(rand) });
     }
+    private string GetRandomOpeningResponseForSellingProducts(Random rand, string greetings, string name)
+    {
+        return greetings + " " + name + ". " + SettingPostProcessing(settings.ResponseOpeningSellingProducts[rand.Next(0, settings.ResponseOpeningSellingProducts.Count())], new List<string> { "|GetRandomAcquaintance|" }, new List<string> { GetRandomAcquaintance(rand) });
+    }
     //Continued Responses
     private string GetRandomContinuedResponseTest(Random rand)
     {
@@ -1013,6 +1130,10 @@ public class MailServerFunctions
     private string GetRandomContinuedResponseForJobOffer(Random rand, string greetings, string name, MailStorage currentMessage)
     {
         return greetings + " " + name + ". " + SettingPostProcessing(settings.ResponseContinuedJobOffer[rand.Next(0, settings.ResponseContinuedJobOffer.Count())], new List<string> { "|GetRandomAcquaintance|", "|GetListOfAcquaintance|" }, new List<string> { GetRandomAcquaintance(rand), GetListOfAcquaintance(rand, 2) });
+    }
+    private string GetRandomContinuedResponseForSellingProducts(Random rand, string greetings, string name, MailStorage currentMessage)
+    {
+        return greetings + " " + name + ". " + SettingPostProcessing(settings.ResponseContinuedSellingProducts[rand.Next(0, settings.ResponseContinuedSellingProducts.Count())], new List<string> { "|GetRandomAcquaintance|", "|GetListOfAcquaintance|" }, new List<string> { GetRandomAcquaintance(rand), GetListOfAcquaintance(rand, 2) });
     }
 
     //Supporting Random lists

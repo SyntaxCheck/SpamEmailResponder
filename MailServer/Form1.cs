@@ -248,6 +248,9 @@ namespace MailServer
             tbxOutput.Text = String.Empty;
 
             dgvPastEmail.Rows.Clear();
+            dgvPastEmail.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
+            dgvPastEmail.DefaultCellStyle.WrapMode = DataGridViewTriState.True;
+
             foreach (MailStorage ms2 in previousMessagesInThread)
             {
                 dgvPastEmail.Rows.Add(ms2.SubjectLine, ms2.ToAddress, ms2.DateReceived, ms2.EmailBodyPlain);
@@ -334,6 +337,11 @@ namespace MailServer
                 processTimer.Start();
                 processTimer.Interval = 300000;
             }
+        }
+
+        private void dgvPastEmail_CellContentDoubleClick(object sender, DataGridViewCellEventArgs e)
+        {
+            string myValue = dgvPastEmail[e.ColumnIndex, e.RowIndex].Value.ToString();
         }
     }
 }
