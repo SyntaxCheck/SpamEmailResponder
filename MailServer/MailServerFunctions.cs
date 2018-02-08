@@ -453,11 +453,12 @@ public class MailServerFunctions
 
         return lst[rand.Next(0, lst.Count())];
     }
-    private string GetRandomOpeningResponseForBeneficiary(Random rand, string greetings, string name)
+    private string GetRandomOpeningResponseForBeneficiary(Random rand, string greetings, string name, MailStorage currentMessage)
     {
         string response = String.Empty;
         string introduction = String.Empty;
         string followup = String.Empty;
+        string directResponse = HandleDirectQuestions(MakeEmailEasierToRead(currentMessage.EmailBodyPlain), currentMessage, rand);
 
         response += greetings + " " + name + ", ";
 
@@ -466,7 +467,7 @@ public class MailServerFunctions
         //Closing Followup line
         followup = GetRandomFollowupLine(rand);
 
-        response += introduction + Environment.NewLine + Environment.NewLine + followup;
+        response += directResponse + introduction + Environment.NewLine + Environment.NewLine + followup;
 
         return response;
     }
@@ -474,15 +475,18 @@ public class MailServerFunctions
     {
         return greetings + ". " + SettingPostProcessing(settings.ResponseOpeningBlankEmailWithAttachment[rand.Next(0, settings.ResponseOpeningBlankEmailWithAttachment.Count())], new List<string> { "|attachmentType|" }, new List<string> { attachmentType }, rand);
     }
-    private string GetRandomOpeningResponseForLottery(Random rand, string greetings)
+    private string GetRandomOpeningResponseForLottery(Random rand, string greetings, MailStorage currentMessage)
     {
-        return greetings + ". " + SettingPostProcessing(settings.ResponseOpeningLottery[rand.Next(0, settings.ResponseOpeningLottery.Count())], new List<string> { "|GetListOfAcquaintance|" }, new List<string> { GetListOfAcquaintance(rand,5) }, rand);
+        string directResponse = HandleDirectQuestions(MakeEmailEasierToRead(currentMessage.EmailBodyPlain), currentMessage, rand);
+
+        return greetings + ". " + directResponse + SettingPostProcessing(settings.ResponseOpeningLottery[rand.Next(0, settings.ResponseOpeningLottery.Count())], new List<string> { "|GetListOfAcquaintance|" }, new List<string> { GetListOfAcquaintance(rand,5) }, rand);
     }
     private string GetRandomOpeningResponseForOilAndGas(Random rand, string greetings, string name, MailStorage currentMessage)
     {
         string rtn = String.Empty;
+        string directResponse = HandleDirectQuestions(MakeEmailEasierToRead(currentMessage.EmailBodyPlain), currentMessage, rand);
 
-        rtn = greetings + ". " + SettingPostProcessing(settings.ResponseOpeningOilAndGas[rand.Next(0, settings.ResponseOpeningOilAndGas.Count())], new List<string> { "|GetListOfAcquaintance|" }, new List<string> { GetListOfAcquaintance(rand, 5) }, rand);
+        rtn = greetings + ". " + directResponse + SettingPostProcessing(settings.ResponseOpeningOilAndGas[rand.Next(0, settings.ResponseOpeningOilAndGas.Count())], new List<string> { "|GetListOfAcquaintance|" }, new List<string> { GetListOfAcquaintance(rand, 5) }, rand);
 
         if (currentMessage.EmailBodyPlain.ToUpper().Contains("LOW PRICE") || currentMessage.EmailBodyPlain.ToUpper().Contains("LOW RATE") || currentMessage.EmailBodyPlain.ToUpper().Contains("CHEAP") || currentMessage.EmailBodyPlain.ToUpper().Contains("DISCOUNT") || currentMessage.EmailBodyPlain.ToUpper().Contains("A GOOD PRICE"))
         {
@@ -495,11 +499,14 @@ public class MailServerFunctions
     }
     private string GetRandomOpeningResponseForIlluminati(Random rand, string greetings, string name, MailStorage currentMessage)
     {
-        return greetings + " " + name + ". " + SettingPostProcessing(settings.ResponseOpeningIlluminati[rand.Next(0, settings.ResponseOpeningIlluminati.Count())], new List<string> {  }, new List<string> {  }, rand);
+        string directResponse = HandleDirectQuestions(MakeEmailEasierToRead(currentMessage.EmailBodyPlain), currentMessage, rand);
+
+        return greetings + " " + name + ". " + directResponse + SettingPostProcessing(settings.ResponseOpeningIlluminati[rand.Next(0, settings.ResponseOpeningIlluminati.Count())], new List<string> {  }, new List<string> {  }, rand);
     }
-    private string GetRandomOpeningResponseForConsignmentBox(Random rand, string greetings, string name, string attachmentType)
+    private string GetRandomOpeningResponseForConsignmentBox(Random rand, string greetings, string name, string attachmentType, MailStorage currentMessage)
     {
         string attachmentIncludedText = String.Empty;
+        string directResponse = HandleDirectQuestions(MakeEmailEasierToRead(currentMessage.EmailBodyPlain), currentMessage, rand);
 
         if (attachmentType == "Image")
         {
@@ -510,39 +517,55 @@ public class MailServerFunctions
             attachmentIncludedText = " I have noticed that no image file was included. Could you send me a picture of my consignment package so that I can trust you do in fact have it? I do not know what my package is supposed to look like but just to verify you have it.";
         }
 
-        return greetings + " " + name + ". " + SettingPostProcessing(settings.ResponseOpeningConsignmentBox[rand.Next(0, settings.ResponseOpeningConsignmentBox.Count())], new List<string> { "|attachmentIncludedText|" }, new List<string> { attachmentIncludedText }, rand);
+        return greetings + " " + name + ". " + directResponse + SettingPostProcessing(settings.ResponseOpeningConsignmentBox[rand.Next(0, settings.ResponseOpeningConsignmentBox.Count())], new List<string> { "|attachmentIncludedText|" }, new List<string> { attachmentIncludedText }, rand);
     }
-    private string GetRandomOpeningResponseForDeathOrDying(Random rand, string greetings, string name)
+    private string GetRandomOpeningResponseForDeathOrDying(Random rand, string greetings, string name, MailStorage currentMessage)
     {
-        return greetings + " " + name + ". " + SettingPostProcessing(settings.ResponseOpeningDeathOrDying[rand.Next(0, settings.ResponseOpeningDeathOrDying.Count())], new List<string> {  }, new List<string> {  }, rand);
+        string directResponse = HandleDirectQuestions(MakeEmailEasierToRead(currentMessage.EmailBodyPlain), currentMessage, rand);
+
+        return greetings + " " + name + ". " + directResponse + SettingPostProcessing(settings.ResponseOpeningDeathOrDying[rand.Next(0, settings.ResponseOpeningDeathOrDying.Count())], new List<string> {  }, new List<string> {  }, rand);
     }
-    private string GetRandomOpeningResponseForLoanOffer(Random rand, string greetings, string name)
+    private string GetRandomOpeningResponseForLoanOffer(Random rand, string greetings, string name, MailStorage currentMessage)
     {
-        return greetings + " " + name + ". " + SettingPostProcessing(settings.ResponseOpeningLoanOffer[rand.Next(0, settings.ResponseOpeningLoanOffer.Count())], new List<string> {  }, new List<string> {  }, rand);
+        string directResponse = HandleDirectQuestions(MakeEmailEasierToRead(currentMessage.EmailBodyPlain), currentMessage, rand);
+
+        return greetings + " " + name + ". " + directResponse + SettingPostProcessing(settings.ResponseOpeningLoanOffer[rand.Next(0, settings.ResponseOpeningLoanOffer.Count())], new List<string> {  }, new List<string> {  }, rand);
     }
-    private string GetRandomOpeningResponseForMoneyStorage(Random rand, string greetings, string name)
+    private string GetRandomOpeningResponseForMoneyStorage(Random rand, string greetings, string name, MailStorage currentMessage)
     {
-        return greetings + " " + name + ". " + SettingPostProcessing(settings.ResponseOpeningMoneyStorage[rand.Next(0, settings.ResponseOpeningMoneyStorage.Count())], new List<string> {  }, new List<string> {  }, rand);
+        string directResponse = HandleDirectQuestions(MakeEmailEasierToRead(currentMessage.EmailBodyPlain), currentMessage, rand);
+
+        return greetings + " " + name + ". " + directResponse + SettingPostProcessing(settings.ResponseOpeningMoneyStorage[rand.Next(0, settings.ResponseOpeningMoneyStorage.Count())], new List<string> {  }, new List<string> {  }, rand);
     }
-    private string GetRandomOpeningResponseForAtmCard(Random rand, string greetings, string name)
+    private string GetRandomOpeningResponseForAtmCard(Random rand, string greetings, string name, MailStorage currentMessage)
     {
-        return greetings + " " + name + ". " + SettingPostProcessing(settings.ResponseOpeningAtmCard[rand.Next(0, settings.ResponseOpeningAtmCard.Count())], new List<string> {  }, new List<string> {  }, rand);
+        string directResponse = HandleDirectQuestions(MakeEmailEasierToRead(currentMessage.EmailBodyPlain), currentMessage, rand);
+
+        return greetings + " " + name + ". " + directResponse + SettingPostProcessing(settings.ResponseOpeningAtmCard[rand.Next(0, settings.ResponseOpeningAtmCard.Count())], new List<string> {  }, new List<string> {  }, rand);
     }
-    private string GetRandomOpeningResponseForPolice(Random rand, string greetings, string name)
+    private string GetRandomOpeningResponseForPolice(Random rand, string greetings, string name, MailStorage currentMessage)
     {
-        return greetings + " " + name + ". " + SettingPostProcessing(settings.ResponseOpeningPolice[rand.Next(0, settings.ResponseOpeningPolice.Count())], new List<string> {  }, new List<string> {  }, rand);
+        string directResponse = HandleDirectQuestions(MakeEmailEasierToRead(currentMessage.EmailBodyPlain), currentMessage, rand);
+
+        return greetings + " " + name + ". " + directResponse + SettingPostProcessing(settings.ResponseOpeningPolice[rand.Next(0, settings.ResponseOpeningPolice.Count())], new List<string> {  }, new List<string> {  }, rand);
     }
-    private string GetRandomOpeningResponseForGenericPayment(Random rand, string greetings, string name)
+    private string GetRandomOpeningResponseForGenericPayment(Random rand, string greetings, string name, MailStorage currentMessage)
     {
-        return greetings + " " + name + ". " + SettingPostProcessing(settings.ResponseOpeningGenericPayment[rand.Next(0, settings.ResponseOpeningGenericPayment.Count())], new List<string> {  }, new List<string> {  }, rand);
+        string directResponse = HandleDirectQuestions(MakeEmailEasierToRead(currentMessage.EmailBodyPlain), currentMessage, rand);
+
+        return greetings + " " + name + ". " + directResponse + SettingPostProcessing(settings.ResponseOpeningGenericPayment[rand.Next(0, settings.ResponseOpeningGenericPayment.Count())], new List<string> {  }, new List<string> {  }, rand);
     }
-    private string GetRandomOpeningResponseForInvestor(Random rand, string greetings, string name)
+    private string GetRandomOpeningResponseForInvestor(Random rand, string greetings, string name, MailStorage currentMessage)
     {
-        return greetings + " " + name + ". " + SettingPostProcessing(settings.ResponseOpeningInvestor[rand.Next(0, settings.ResponseOpeningInvestor.Count())], new List<string> {  }, new List<string> {  }, rand);
+        string directResponse = HandleDirectQuestions(MakeEmailEasierToRead(currentMessage.EmailBodyPlain), currentMessage, rand);
+
+        return greetings + " " + name + ". " + directResponse + SettingPostProcessing(settings.ResponseOpeningInvestor[rand.Next(0, settings.ResponseOpeningInvestor.Count())], new List<string> {  }, new List<string> {  }, rand);
     }
-    private string GetRandomOpeningResponseForMoneyHack(Random rand, string greetings, string name)
+    private string GetRandomOpeningResponseForMoneyHack(Random rand, string greetings, string name, MailStorage currentMessage)
     {
-        return greetings + " " + name + ". " + SettingPostProcessing(settings.ResponseOpeningMoneyHack[rand.Next(0, settings.ResponseOpeningMoneyHack.Count())], new List<string> {  }, new List<string> {  }, rand);
+        string directResponse = HandleDirectQuestions(MakeEmailEasierToRead(currentMessage.EmailBodyPlain), currentMessage, rand);
+
+        return greetings + " " + name + ". " + directResponse + SettingPostProcessing(settings.ResponseOpeningMoneyHack[rand.Next(0, settings.ResponseOpeningMoneyHack.Count())], new List<string> {  }, new List<string> {  }, rand);
     }
     private string GetRandomOpeningResponseForInheritance(Random rand, string greetings, string name, string attamentType, MailStorage currentMessage, List<MailStorage> pastMessages)
     {
@@ -552,6 +575,7 @@ public class MailServerFunctions
         string memories = String.Empty;
         string followup = String.Empty;
         bool isMale = true;
+        string directResponse = HandleDirectQuestions(MakeEmailEasierToRead(currentMessage.EmailBodyPlain), currentMessage, rand);
 
         response += greetings + " " + name + ", ";
 
@@ -564,11 +588,11 @@ public class MailServerFunctions
         //Closing Followup line
         followup = GetRandomFollowupLine(rand);
 
-        response += introduction + Environment.NewLine + Environment.NewLine + inheritorDescription + Environment.NewLine + Environment.NewLine + memories + Environment.NewLine + Environment.NewLine + followup;
+        response += directResponse + introduction + Environment.NewLine + Environment.NewLine + inheritorDescription + Environment.NewLine + Environment.NewLine + memories + Environment.NewLine + Environment.NewLine + followup;
 
         return response;
     }
-    private string GetRandomResponseForSellingServices(Random rand, string greetings, string name)
+    private string GetRandomResponseForSellingServices(Random rand, string greetings, string name, MailStorage currentMessage)
     {
         List<string> lst = new List<string>
         {
@@ -578,32 +602,42 @@ public class MailServerFunctions
 
         return lst[rand.Next(0, lst.Count())];
     }
-    private string GetRandomOpeningResponseForBuildTrust(Random rand, string greetings, string name)
+    private string GetRandomOpeningResponseForBuildTrust(Random rand, string greetings, string name, MailStorage currentMessage)
     {
         string introduction = SettingPostProcessing(GetRandomInroduction(rand), rand);
+        string directResponse = HandleDirectQuestions(MakeEmailEasierToRead(currentMessage.EmailBodyPlain), currentMessage, rand);
+
         List<string> lst = new List<string>
         {
-            greetings + " friend, " + introduction,
-            greetings + " my friend, " + introduction
+            greetings + " friend, " + directResponse + introduction,
+            greetings + " my friend, " + directResponse + introduction
         };
 
         return lst[rand.Next(0, lst.Count())];
     }
-    private string GetRandomOpeningResponseForJobOffer(Random rand, string greetings, string name)
+    private string GetRandomOpeningResponseForJobOffer(Random rand, string greetings, string name, MailStorage currentMessage)
     {
-        return greetings + " " + name + ". " + SettingPostProcessing(settings.ResponseOpeningJobOffer[rand.Next(0, settings.ResponseOpeningJobOffer.Count())], new List<string> {  }, new List<string> {  }, rand);
+        string directResponse = HandleDirectQuestions(MakeEmailEasierToRead(currentMessage.EmailBodyPlain), currentMessage, rand);
+
+        return greetings + " " + name + ". " + directResponse + SettingPostProcessing(settings.ResponseOpeningJobOffer[rand.Next(0, settings.ResponseOpeningJobOffer.Count())], new List<string> {  }, new List<string> {  }, rand);
     }
-    private string GetRandomOpeningResponseForSellingProducts(Random rand, string greetings, string name)
+    private string GetRandomOpeningResponseForSellingProducts(Random rand, string greetings, string name, MailStorage currentMessage)
     {
-        return greetings + " " + name + ". " + SettingPostProcessing(settings.ResponseOpeningSellingProducts[rand.Next(0, settings.ResponseOpeningSellingProducts.Count())], new List<string> {  }, new List<string> {  }, rand);
+        string directResponse = HandleDirectQuestions(MakeEmailEasierToRead(currentMessage.EmailBodyPlain), currentMessage, rand);
+
+        return greetings + " " + name + ". " + directResponse + SettingPostProcessing(settings.ResponseOpeningSellingProducts[rand.Next(0, settings.ResponseOpeningSellingProducts.Count())], new List<string> {  }, new List<string> {  }, rand);
     }
-    private string GetRandomOpeningResponseForFreeMoney(Random rand, string greetings, string name)
+    private string GetRandomOpeningResponseForFreeMoney(Random rand, string greetings, string name, MailStorage currentMessage)
     {
-        return greetings + " " + name + ". " + SettingPostProcessing(settings.ResponseOpeningFreeMoney[rand.Next(0, settings.ResponseOpeningFreeMoney.Count())], rand);
+        string directResponse = HandleDirectQuestions(MakeEmailEasierToRead(currentMessage.EmailBodyPlain), currentMessage, rand);
+
+        return greetings + " " + name + ". " + directResponse + SettingPostProcessing(settings.ResponseOpeningFreeMoney[rand.Next(0, settings.ResponseOpeningFreeMoney.Count())], rand);
     }
-    private string GetRandomOpeningResponseForInformationGathering(Random rand, string greetings, string name)
+    private string GetRandomOpeningResponseForInformationGathering(Random rand, string greetings, string name, MailStorage currentMessage)
     {
-        return greetings + " " + name + ". " + SettingPostProcessing(settings.ResponseOpeningInformationGathering[rand.Next(0, settings.ResponseOpeningInformationGathering.Count())], rand);
+        string directResponse = HandleDirectQuestions(MakeEmailEasierToRead(currentMessage.EmailBodyPlain), currentMessage, rand);
+
+        return greetings + " " + name + ". " + directResponse + SettingPostProcessing(settings.ResponseOpeningInformationGathering[rand.Next(0, settings.ResponseOpeningInformationGathering.Count())], rand);
     }
 
     //Continued Responses
@@ -624,13 +658,16 @@ public class MailServerFunctions
     }
     private string GetRandomContinuedResponseForLottery(Random rand, string greetings, string name, MailStorage currentMessage)
     {
-        return greetings + " " + name + ". " + SettingPostProcessing(settings.ResponseContinuedLottery[rand.Next(0, settings.ResponseContinuedLottery.Count())], new List<string> { }, new List<string> { }, rand);
+        string directResponse = HandleDirectQuestions(MakeEmailEasierToRead(currentMessage.EmailBodyPlain), currentMessage, rand);
+
+        return greetings + " " + name + ". " + directResponse + SettingPostProcessing(settings.ResponseContinuedLottery[rand.Next(0, settings.ResponseContinuedLottery.Count())], new List<string> { }, new List<string> { }, rand);
     }
     private string GetRandomContinuedResponseForOilAndGas(Random rand, string greetings, string name, MailStorage currentMessage)
     {
         string rtn = String.Empty;
+        string directResponse = HandleDirectQuestions(MakeEmailEasierToRead(currentMessage.EmailBodyPlain), currentMessage, rand);
 
-        rtn = greetings + ". " + SettingPostProcessing(settings.ResponseContinuedOilAndGas[rand.Next(0, settings.ResponseContinuedOilAndGas.Count())], new List<string> { "|GetListOfAcquaintance|" }, new List<string> { GetListOfAcquaintance(rand, 5) }, rand);
+        rtn = greetings + ". " + directResponse + SettingPostProcessing(settings.ResponseContinuedOilAndGas[rand.Next(0, settings.ResponseContinuedOilAndGas.Count())], new List<string> { "|GetListOfAcquaintance|" }, new List<string> { GetListOfAcquaintance(rand, 5) }, rand);
 
         if (currentMessage.EmailBodyPlain.ToUpper().Contains("LOW PRICE") || currentMessage.EmailBodyPlain.ToUpper().Contains("LOW RATE") || currentMessage.EmailBodyPlain.ToUpper().Contains("CHEAP") || currentMessage.EmailBodyPlain.ToUpper().Contains("DISCOUNT") || currentMessage.EmailBodyPlain.ToUpper().Contains("A GOOD PRICE"))
         {
@@ -643,11 +680,14 @@ public class MailServerFunctions
     }
     private string GetRandomContinuedResponseForIlluminati(Random rand, string greetings, string name, MailStorage currentMessage)
     {
-        return greetings + " " + name + ". " + SettingPostProcessing(settings.ResponseContinuedIlluminati[rand.Next(0, settings.ResponseContinuedIlluminati.Count())], new List<string> {  }, new List<string> {  }, rand);
+        string directResponse = HandleDirectQuestions(MakeEmailEasierToRead(currentMessage.EmailBodyPlain), currentMessage, rand);
+
+        return greetings + " " + name + ". " + directResponse + SettingPostProcessing(settings.ResponseContinuedIlluminati[rand.Next(0, settings.ResponseContinuedIlluminati.Count())], new List<string> {  }, new List<string> {  }, rand);
     }
-    private string GetRandomContinuedResponseForConsignmentBox(Random rand, string greetings, string name, string attachmentType)
+    private string GetRandomContinuedResponseForConsignmentBox(Random rand, string greetings, string name, string attachmentType, MailStorage currentMessage)
     {
         string attachmentIncludedText = String.Empty;
+        string directResponse = HandleDirectQuestions(MakeEmailEasierToRead(currentMessage.EmailBodyPlain), currentMessage, rand);
 
         if (attachmentType == "Image")
         {
@@ -658,67 +698,97 @@ public class MailServerFunctions
             attachmentIncludedText = " I have noticed that no image file was included. Could you send me a picture of my consignment package so that I can trust you do in fact have it? I do not know what my package is supposed to look like but just to verify you have it.";
         }
 
-        return greetings + " " + name + ". " + SettingPostProcessing(settings.ResponseContinuedConsignmentBox[rand.Next(0, settings.ResponseContinuedConsignmentBox.Count())], new List<string> { "|attachmentIncludedText|" }, new List<string> { attachmentIncludedText }, rand);
+        return greetings + " " + name + ". " + directResponse + SettingPostProcessing(settings.ResponseContinuedConsignmentBox[rand.Next(0, settings.ResponseContinuedConsignmentBox.Count())], new List<string> { "|attachmentIncludedText|" }, new List<string> { attachmentIncludedText }, rand);
     }
     private string GetRandomContinuedResponseForDeathOrDying(Random rand, string greetings, string name, MailStorage currentMessage)
     {
-        return greetings + " " + name + ". " + SettingPostProcessing(settings.ResponseContinuedDeathOrDying[rand.Next(0, settings.ResponseContinuedDeathOrDying.Count())], new List<string> {  }, new List<string> {  }, rand);
+        string directResponse = HandleDirectQuestions(MakeEmailEasierToRead(currentMessage.EmailBodyPlain), currentMessage, rand);
+
+        return greetings + " " + name + ". " + directResponse + SettingPostProcessing(settings.ResponseContinuedDeathOrDying[rand.Next(0, settings.ResponseContinuedDeathOrDying.Count())], new List<string> {  }, new List<string> {  }, rand);
     }
     private string GetRandomContinuedResponseForLoanOffer(Random rand, string greetings, string name, MailStorage currentMessage)
     {
-        return greetings + " " + name + ". " + SettingPostProcessing(settings.ResponseContinuedLoanOffer[rand.Next(0, settings.ResponseContinuedLoanOffer.Count())], new List<string> {  }, new List<string> {  }, rand);
+        string directResponse = HandleDirectQuestions(MakeEmailEasierToRead(currentMessage.EmailBodyPlain), currentMessage, rand);
+
+        return greetings + " " + name + ". " + directResponse + SettingPostProcessing(settings.ResponseContinuedLoanOffer[rand.Next(0, settings.ResponseContinuedLoanOffer.Count())], new List<string> {  }, new List<string> {  }, rand);
     }
     private string GetRandomContinuedResponseForMoneyStorage(Random rand, string greetings, string name, MailStorage currentMessage)
     {
-        return greetings + " " + name + ". " + SettingPostProcessing(settings.ResponseContinuedMoneyStorage[rand.Next(0, settings.ResponseContinuedMoneyStorage.Count())], new List<string> { "|GetListOfAcquaintance|" }, new List<string> { GetListOfAcquaintance(rand, 2) }, rand);
+        string directResponse = HandleDirectQuestions(MakeEmailEasierToRead(currentMessage.EmailBodyPlain), currentMessage, rand);
+
+        return greetings + " " + name + ". " + directResponse + SettingPostProcessing(settings.ResponseContinuedMoneyStorage[rand.Next(0, settings.ResponseContinuedMoneyStorage.Count())], new List<string> { "|GetListOfAcquaintance|" }, new List<string> { GetListOfAcquaintance(rand, 2) }, rand);
     }
     private string GetRandomContinuedResponseForAtmCard(Random rand, string greetings, string name, MailStorage currentMessage)
     {
-        return greetings + " " + name + ". " + SettingPostProcessing(settings.ResponseContinuedAtmCard[rand.Next(0, settings.ResponseContinuedAtmCard.Count())], new List<string> { "|GetListOfAcquaintance|" }, new List<string> { GetListOfAcquaintance(rand, 2) }, rand);
+        string directResponse = HandleDirectQuestions(MakeEmailEasierToRead(currentMessage.EmailBodyPlain), currentMessage, rand);
+
+        return greetings + " " + name + ". " + directResponse + SettingPostProcessing(settings.ResponseContinuedAtmCard[rand.Next(0, settings.ResponseContinuedAtmCard.Count())], new List<string> { "|GetListOfAcquaintance|" }, new List<string> { GetListOfAcquaintance(rand, 2) }, rand);
     }
     private string GetRandomContinuedResponseForPolice(Random rand, string greetings, string name, MailStorage currentMessage)
     {
-        return greetings + " " + name + ". " + SettingPostProcessing(settings.ResponseContinuedPolice[rand.Next(0, settings.ResponseContinuedPolice.Count())], new List<string> { "|GetListOfAcquaintance|" }, new List<string> { GetListOfAcquaintance(rand, 2) }, rand);
+        string directResponse = HandleDirectQuestions(MakeEmailEasierToRead(currentMessage.EmailBodyPlain), currentMessage, rand);
+
+        return greetings + " " + name + ". " + directResponse + SettingPostProcessing(settings.ResponseContinuedPolice[rand.Next(0, settings.ResponseContinuedPolice.Count())], new List<string> { "|GetListOfAcquaintance|" }, new List<string> { GetListOfAcquaintance(rand, 2) }, rand);
     }
     private string GetRandomContinuedResponseForGenericPayment(Random rand, string greetings, string name, MailStorage currentMessage)
     {
-        return greetings + " " + name + ". " + SettingPostProcessing(settings.ResponseOpeningGenericPayment[rand.Next(0, settings.ResponseOpeningGenericPayment.Count())], new List<string> { "|GetListOfAcquaintance|" }, new List<string> { GetListOfAcquaintance(rand, 2) }, rand);
+        string directResponse = HandleDirectQuestions(MakeEmailEasierToRead(currentMessage.EmailBodyPlain), currentMessage, rand);
+
+        return greetings + " " + name + ". " + directResponse + SettingPostProcessing(settings.ResponseOpeningGenericPayment[rand.Next(0, settings.ResponseOpeningGenericPayment.Count())], new List<string> { "|GetListOfAcquaintance|" }, new List<string> { GetListOfAcquaintance(rand, 2) }, rand);
     }
     private string GetRandomContinuedResponseForInvestor(Random rand, string greetings, string name, MailStorage currentMessage)
     {
-        return greetings + " " + name + ". " + SettingPostProcessing(settings.ResponseOpeningInvestor[rand.Next(0, settings.ResponseOpeningInvestor.Count())], new List<string> { "|GetListOfAcquaintance|" }, new List<string> { GetListOfAcquaintance(rand, 2) }, rand);
+        string directResponse = HandleDirectQuestions(MakeEmailEasierToRead(currentMessage.EmailBodyPlain), currentMessage, rand);
+
+        return greetings + " " + name + ". " + directResponse + SettingPostProcessing(settings.ResponseOpeningInvestor[rand.Next(0, settings.ResponseOpeningInvestor.Count())], new List<string> { "|GetListOfAcquaintance|" }, new List<string> { GetListOfAcquaintance(rand, 2) }, rand);
     }
     private string GetRandomContinuedResponseForMoneyHack(Random rand, string greetings, string name, MailStorage currentMessage)
     {
-        return greetings + " " + name + ". " + SettingPostProcessing(settings.ResponseContinuedMoneyHack[rand.Next(0, settings.ResponseContinuedMoneyHack.Count())], new List<string> { "|GetListOfAcquaintance|" }, new List<string> { GetListOfAcquaintance(rand, 2) }, rand);
+        string directResponse = HandleDirectQuestions(MakeEmailEasierToRead(currentMessage.EmailBodyPlain), currentMessage, rand);
+
+        return greetings + " " + name + ". " + directResponse + SettingPostProcessing(settings.ResponseContinuedMoneyHack[rand.Next(0, settings.ResponseContinuedMoneyHack.Count())], new List<string> { "|GetListOfAcquaintance|" }, new List<string> { GetListOfAcquaintance(rand, 2) }, rand);
     }
     private string GetRandomContinuedResponseForInheritance(Random rand, string greetings, string name, MailStorage currentMessage)
     {
-        return greetings + " " + name + ". " + SettingPostProcessing(settings.ResponseContinuedInheritance[rand.Next(0, settings.ResponseContinuedInheritance.Count())], new List<string> { "|GetListOfAcquaintance|" }, new List<string> { GetListOfAcquaintance(rand, 2) }, rand);
+        string directResponse = HandleDirectQuestions(MakeEmailEasierToRead(currentMessage.EmailBodyPlain), currentMessage, rand);
+
+        return greetings + " " + name + ". " + directResponse + SettingPostProcessing(settings.ResponseContinuedInheritance[rand.Next(0, settings.ResponseContinuedInheritance.Count())], new List<string> { "|GetListOfAcquaintance|" }, new List<string> { GetListOfAcquaintance(rand, 2) }, rand);
     }
     private string GetRandomContinuedResponseForBeneficiary(Random rand, string greetings, string name, MailStorage currentMessage)
     {
-        return greetings + " " + name + ". " + SettingPostProcessing(settings.ResponseContinuedBeneficiary[rand.Next(0, settings.ResponseContinuedBeneficiary.Count())], new List<string> { "|GetListOfAcquaintance|" }, new List<string> { GetListOfAcquaintance(rand, 2) }, rand);
+        string directResponse = HandleDirectQuestions(MakeEmailEasierToRead(currentMessage.EmailBodyPlain), currentMessage, rand);
+
+        return greetings + " " + name + ". " + directResponse + SettingPostProcessing(settings.ResponseContinuedBeneficiary[rand.Next(0, settings.ResponseContinuedBeneficiary.Count())], new List<string> { "|GetListOfAcquaintance|" }, new List<string> { GetListOfAcquaintance(rand, 2) }, rand);
     }
     private string GetRandomContinuedResponseForBuildTrust(Random rand, string greetings, string name, MailStorage currentMessage)
     {
-        return greetings + " " + name + ". " + SettingPostProcessing(settings.ResponseContinuedBuildTrust[rand.Next(0, settings.ResponseContinuedBuildTrust.Count())], new List<string> { "|GetListOfAcquaintance|" }, new List<string> { GetListOfAcquaintance(rand, 2) }, rand);
+        string directResponse = HandleDirectQuestions(MakeEmailEasierToRead(currentMessage.EmailBodyPlain), currentMessage, rand);
+
+        return greetings + " " + name + ". " + directResponse + SettingPostProcessing(settings.ResponseContinuedBuildTrust[rand.Next(0, settings.ResponseContinuedBuildTrust.Count())], new List<string> { "|GetListOfAcquaintance|" }, new List<string> { GetListOfAcquaintance(rand, 2) }, rand);
     }
     private string GetRandomContinuedResponseForJobOffer(Random rand, string greetings, string name, MailStorage currentMessage)
     {
-        return greetings + " " + name + ". " + SettingPostProcessing(settings.ResponseContinuedJobOffer[rand.Next(0, settings.ResponseContinuedJobOffer.Count())], new List<string> { "|GetListOfAcquaintance|" }, new List<string> { GetListOfAcquaintance(rand, 2) }, rand);
+        string directResponse = HandleDirectQuestions(MakeEmailEasierToRead(currentMessage.EmailBodyPlain), currentMessage, rand);
+
+        return greetings + " " + name + ". " + directResponse + SettingPostProcessing(settings.ResponseContinuedJobOffer[rand.Next(0, settings.ResponseContinuedJobOffer.Count())], new List<string> { "|GetListOfAcquaintance|" }, new List<string> { GetListOfAcquaintance(rand, 2) }, rand);
     }
     private string GetRandomContinuedResponseForSellingProducts(Random rand, string greetings, string name, MailStorage currentMessage)
     {
-        return greetings + " " + name + ". " + SettingPostProcessing(settings.ResponseContinuedSellingProducts[rand.Next(0, settings.ResponseContinuedSellingProducts.Count())], new List<string> { "|GetListOfAcquaintance|" }, new List<string> { GetListOfAcquaintance(rand, 2) }, rand);
+        string directResponse = HandleDirectQuestions(MakeEmailEasierToRead(currentMessage.EmailBodyPlain), currentMessage, rand);
+
+        return greetings + " " + name + ". " + directResponse + SettingPostProcessing(settings.ResponseContinuedSellingProducts[rand.Next(0, settings.ResponseContinuedSellingProducts.Count())], new List<string> { "|GetListOfAcquaintance|" }, new List<string> { GetListOfAcquaintance(rand, 2) }, rand);
     }
     private string GetRandomContinuedResponseForFreeMoney(Random rand, string greetings, string name, MailStorage currentMessage)
     {
-        return greetings + " " + name + ". " + SettingPostProcessing(settings.ResponseContinuedFreeMoney[rand.Next(0, settings.ResponseContinuedFreeMoney.Count())], rand);
+        string directResponse = HandleDirectQuestions(MakeEmailEasierToRead(currentMessage.EmailBodyPlain), currentMessage, rand);
+
+        return greetings + " " + name + ". " + directResponse + SettingPostProcessing(settings.ResponseContinuedFreeMoney[rand.Next(0, settings.ResponseContinuedFreeMoney.Count())], rand);
     }
     private string GetRandomContinuedResponseForInformationGathering(Random rand, string greetings, string name, MailStorage currentMessage)
     {
-        return greetings + " " + name + ". " + SettingPostProcessing(settings.ResponseContinuedInformationGathering[rand.Next(0, settings.ResponseContinuedInformationGathering.Count())], rand);
+        string directResponse = HandleDirectQuestions(MakeEmailEasierToRead(currentMessage.EmailBodyPlain), currentMessage, rand);
+
+        return greetings + " " + name + ". " + directResponse + SettingPostProcessing(settings.ResponseContinuedInformationGathering[rand.Next(0, settings.ResponseContinuedInformationGathering.Count())], rand);
     }
 
     //Supporting Random lists
@@ -878,6 +948,36 @@ public class MailServerFunctions
     private string GetRandomPaymentMethod(Random rand)
     {
         List<string> lst = settings.PaymentMethods;
+
+        return lst[rand.Next(0, lst.Count())];
+    }
+    private string GetRandomQuestionsHowAreYou(Random rand)
+    {
+        List<string> lst = settings.QuestionsHowAreYou;
+
+        return lst[rand.Next(0, lst.Count())];
+    }
+    private string GetRandomQuestionsJokingAround(Random rand)
+    {
+        List<string> lst = settings.QuestionsJokingAround;
+
+        return lst[rand.Next(0, lst.Count())];
+    }
+    private string GetRandomQuestionsNotAnswering(Random rand)
+    {
+        List<string> lst = settings.QuestionsNotAnswering;
+
+        return lst[rand.Next(0, lst.Count())];
+    }
+    private string GetRandomQuestionsNotListening(Random rand)
+    {
+        List<string> lst = settings.QuestionsNotListening;
+
+        return lst[rand.Next(0, lst.Count())];
+    }
+    private string GetRandomQuestionsNotUnderstanding(Random rand)
+    {
+        List<string> lst = settings.QuestionsNotUnderstanding;
 
         return lst[rand.Next(0, lst.Count())];
     }
@@ -1101,6 +1201,57 @@ public class MailServerFunctions
 
         return replyToEmailAddress;
     }
+    private string HandleDirectQuestions(string body, MailStorage currentMessage, Random rand)
+    {
+        string response = String.Empty;
+        string preProcessedBody = body.Replace("\r\n", " ");
+
+        if (preProcessedBody.Trim().ToUpper().Contains("HOW ARE YOU DOING") || 
+            preProcessedBody.Trim().ToUpper().Contains("HOW YOU DOING") || 
+            preProcessedBody.Trim().ToUpper().Contains("HOW ARE YOU TODAY") ||
+            preProcessedBody.Trim().ToUpper().Contains("HOW ARE YOU TODAY"))
+        {
+            response += GetRandomQuestionsHowAreYou(rand) + " ";
+        }
+        if (preProcessedBody.Trim().ToUpper().Contains("IS THIS A JOKE") ||
+            preProcessedBody.Trim().ToUpper().Contains("ARE YOU MAKING FUN") ||
+            preProcessedBody.Trim().ToUpper().Contains("DO YOU THINK THIS IS JOKE") ||
+            preProcessedBody.Trim().ToUpper().Contains("ARE YOU PLAYING WITH US") ||
+            preProcessedBody.Trim().ToUpper().Contains("IF YOU KNOW YOU ARE NOT SERIOUS") ||
+            preProcessedBody.Trim().ToUpper().Contains("DO YOU TAKE US FOR A FOOL") ||
+            preProcessedBody.Trim().ToUpper().Contains("DO YOU THINK YOU ARE FUNNY"))
+        {
+            response += GetRandomQuestionsJokingAround(rand) + " ";
+        }
+        if (preProcessedBody.Trim().ToUpper().Contains("NOT ANSWERING ME") ||
+            preProcessedBody.Trim().ToUpper().Contains("IGNORING MY QUESTION") ||
+            preProcessedBody.Trim().ToUpper().Contains("NOT ANSWER MY QUESTION") ||
+            preProcessedBody.Trim().ToUpper().Contains("NOT ANSWER ME"))
+        {
+            response += GetRandomQuestionsNotAnswering(rand) + " ";
+        }
+        if (preProcessedBody.Trim().ToUpper().Contains("NOT LISTENING ME") ||
+            preProcessedBody.Trim().ToUpper().Contains("LISTEN TO ME") ||
+            preProcessedBody.Trim().ToUpper().Contains("PAY ATTENTION TO ME") ||
+            preProcessedBody.Trim().ToUpper().Contains("NOT PAYING ATTENTION"))
+        {
+            response += GetRandomQuestionsNotListening(rand) + " ";
+        }
+        if (preProcessedBody.Trim().ToUpper().Contains("NOT UNDERSTANDING MY") ||
+            preProcessedBody.Trim().ToUpper().Contains("NOT UNDERSTANDING ME") ||
+            preProcessedBody.Trim().ToUpper().Contains("CONFUSED BY MY") ||
+            preProcessedBody.Trim().ToUpper().Contains("WHY SO CONFUSED"))
+        {
+            response += GetRandomQuestionsNotUnderstanding(rand) + " ";
+        }
+
+        if (!String.IsNullOrEmpty(response))
+        {
+            response = Environment.NewLine + Environment.NewLine + response.Trim() + Environment.NewLine + Environment.NewLine;
+        }
+
+        return response;
+    }
     public bool IsValidEmail(string email)
     {
         try
@@ -1187,23 +1338,37 @@ public class MailServerFunctions
         {
             type = EmailType.BlankWithAttachment;
         }
-        else if (preProcessedBody.Trim().ToUpper().Contains("ILLUMINATI") || preProcessedBody.Trim().ToUpper().Contains("ILUMINATI"))
+        else if (preProcessedBody.Trim().ToUpper().Contains("ILLUMINATI") || 
+            preProcessedBody.Trim().ToUpper().Contains("ILUMINATI"))
         {
             type = EmailType.Illuminati;
         }
-        else if (preProcessedBody.Trim().ToUpper().Contains("DIED AFTER") || preProcessedBody.Trim().ToUpper().Contains("CANCER DIAG") || preProcessedBody.Trim().ToUpper().Contains("WITH CANCER") || preProcessedBody.Trim().ToUpper().Contains("MY CANCER") || preProcessedBody.Trim().ToUpper().Contains("HUSBAND DIED") || preProcessedBody.Trim().ToUpper().Contains("WIFE DIED") || preProcessedBody.Trim().ToUpper().Contains("CHILD DIED") || preProcessedBody.Trim().ToUpper().Contains("SON DIED") || preProcessedBody.Trim().ToUpper().Contains("DAUGHTER DIED"))
+        else if (preProcessedBody.Trim().ToUpper().Contains("DIED AFTER") || 
+            preProcessedBody.Trim().ToUpper().Contains("CANCER DIAG") || 
+            preProcessedBody.Trim().ToUpper().Contains("WITH CANCER") || 
+            preProcessedBody.Trim().ToUpper().Contains("MY CANCER") || 
+            preProcessedBody.Trim().ToUpper().Contains("HUSBAND DIED") || 
+            preProcessedBody.Trim().ToUpper().Contains("WIFE DIED") || 
+            preProcessedBody.Trim().ToUpper().Contains("CHILD DIED") || 
+            preProcessedBody.Trim().ToUpper().Contains("SON DIED") || 
+            preProcessedBody.Trim().ToUpper().Contains("DAUGHTER DIED"))
         {
             type = EmailType.DeathOrDying;
         }
-        else if (preProcessedBody.Trim().ToUpper().Contains("OIL AND GAS") || preProcessedBody.Trim().ToUpper().Contains("GAS AND OIL"))
+        else if (preProcessedBody.Trim().ToUpper().Contains("OIL AND GAS") || 
+            preProcessedBody.Trim().ToUpper().Contains("GAS AND OIL"))
         {
             type = EmailType.OilAndGas;
         }
-        else if (preProcessedBody.Trim().ToUpper().Contains("JOB OFFER") || preProcessedBody.Trim().ToUpper().Contains("POSITION IN COMPANY") || preProcessedBody.Trim().ToUpper().Contains("POSITION IN OUR COMPANY") || preProcessedBody.Trim().ToUpper().Contains("JOB PLACEMENT"))
+        else if (preProcessedBody.Trim().ToUpper().Contains("JOB OFFER") || 
+            preProcessedBody.Trim().ToUpper().Contains("POSITION IN COMPANY") || 
+            preProcessedBody.Trim().ToUpper().Contains("POSITION IN OUR COMPANY") || 
+            preProcessedBody.Trim().ToUpper().Contains("JOB PLACEMENT"))
         {
             type = EmailType.JobOffer;
         }
-        else if (preProcessedBody.Trim().ToUpper().Contains("WEB DESIGN") || preProcessedBody.Trim().ToUpper().Contains("DEVELOPMENT FIRM"))
+        else if (preProcessedBody.Trim().ToUpper().Contains("WEB DESIGN") || 
+            preProcessedBody.Trim().ToUpper().Contains("DEVELOPMENT FIRM"))
         {
             type = EmailType.SellingServices;
         }
@@ -1211,15 +1376,23 @@ public class MailServerFunctions
         {
             type = EmailType.OnlineMarketingConsult;
         }
-        else if (preProcessedBody.Trim().ToUpper().Contains("FINANCIAL ASSISTANCE") || preProcessedBody.Trim().ToUpper().Contains("FINANCIAL HELP") || preProcessedBody.Trim().ToUpper().Contains("LOAN") || preProcessedBody.Trim().ToUpper().Contains("APPLY FOR CASH"))
+        else if (preProcessedBody.Trim().ToUpper().Contains("FINANCIAL ASSISTANCE") || 
+            preProcessedBody.Trim().ToUpper().Contains("FINANCIAL HELP") || 
+            preProcessedBody.Trim().ToUpper().Contains("LOAN") || 
+            preProcessedBody.Trim().ToUpper().Contains("APPLY FOR CASH"))
         {
             type = EmailType.LoanOffer;
         }
-        else if (preProcessedBody.Trim().ToUpper().Contains("LOTTERY") || preProcessedBody.Trim().ToUpper().Contains("POWER BALL") || preProcessedBody.Trim().ToUpper().Contains("POWERBALL") || preProcessedBody.Trim().ToUpper().Contains("WINNER"))
+        else if (preProcessedBody.Trim().ToUpper().Contains("LOTTERY") || 
+            preProcessedBody.Trim().ToUpper().Contains("POWER BALL") || 
+            preProcessedBody.Trim().ToUpper().Contains("POWERBALL") || 
+            preProcessedBody.Trim().ToUpper().Contains("WINNER"))
         {
             type = EmailType.Lottery;
         }
-        else if (preProcessedBody.Trim().ToUpper().Contains("CONSIGNMENT") || preProcessedBody.Trim().ToUpper().Contains("TRUNK BOX") || preProcessedBody.Trim().ToUpper().Contains("DELIVER YOUR PACKAGE"))
+        else if (preProcessedBody.Trim().ToUpper().Contains("CONSIGNMENT") || 
+            preProcessedBody.Trim().ToUpper().Contains("TRUNK BOX") || 
+            preProcessedBody.Trim().ToUpper().Contains("DELIVER YOUR PACKAGE"))
         {
             type = EmailType.ConsignmentBox;
         }
@@ -1231,35 +1404,72 @@ public class MailServerFunctions
         {
             type = EmailType.MoneyHack;
         }
-        else if (preProcessedBody.Trim().ToUpper().Contains("ATM CARD") || preProcessedBody.Trim().ToUpper().Contains("ATMCARD") || preProcessedBody.Trim().ToUpper().Contains("ATM CREDIT CARD") || preProcessedBody.Trim().ToUpper().Contains("BANK CHEQUE"))
+        else if (preProcessedBody.Trim().ToUpper().Contains("ATM CARD") || 
+            preProcessedBody.Trim().ToUpper().Contains("ATMCARD") || 
+            preProcessedBody.Trim().ToUpper().Contains("ATM CREDIT CARD") || 
+            preProcessedBody.Trim().ToUpper().Contains("BANK CHEQUE"))
         {
             type = EmailType.AtmCard;
         }
-        else if (preProcessedBody.Trim().ToUpper().Contains("DONATING") || preProcessedBody.Trim().ToUpper().Contains("DONATION") || preProcessedBody.Trim().ToUpper().Contains("RELEASE OF THE FUNDS") || preProcessedBody.Trim().ToUpper().Contains("DON ATION") || preProcessedBody.Trim().ToUpper().Contains("TRANSFER TO YOUR ACCOUNT") || preProcessedBody.Trim().ToUpper().Contains("TO YOUR BANK ACCOUNT") || (preProcessedBody.Trim().ToUpper().Contains("FUND") && preProcessedBody.Trim().ToUpper().Contains("URGENT DELIVERY")) || preProcessedBody.Trim().ToUpper().Contains("COMPENSATION FUNDS") || preProcessedBody.Trim().ToUpper().Contains("OFFERED YOU WITH $") || preProcessedBody.Trim().ToUpper().Contains("OFFERED YOU $"))
+        else if (preProcessedBody.Trim().ToUpper().Contains("DONATING") || 
+            preProcessedBody.Trim().ToUpper().Contains("DONATION") || 
+            preProcessedBody.Trim().ToUpper().Contains("RELEASE OF THE FUNDS") || 
+            preProcessedBody.Trim().ToUpper().Contains("DON ATION") || 
+            preProcessedBody.Trim().ToUpper().Contains("TRANSFER TO YOUR ACCOUNT") || 
+            preProcessedBody.Trim().ToUpper().Contains("TO YOUR BANK ACCOUNT") || 
+            (preProcessedBody.Trim().ToUpper().Contains("FUND") && preProcessedBody.Trim().ToUpper().Contains("URGENT DELIVERY")) || 
+            preProcessedBody.Trim().ToUpper().Contains("COMPENSATION FUNDS") || 
+            preProcessedBody.Trim().ToUpper().Contains("OFFERED YOU WITH $") || 
+            preProcessedBody.Trim().ToUpper().Contains("OFFERED YOU $"))
         {
             type = EmailType.FreeMoney;
         }
-        else if (preProcessedBody.Trim().ToUpper().Contains("INHERITENCE") || preProcessedBody.Trim().ToUpper().Contains("INHERIT"))
+        else if (preProcessedBody.Trim().ToUpper().Contains("INHERITENCE") || 
+            preProcessedBody.Trim().ToUpper().Contains("INHERIT"))
         {
             type = EmailType.Inheritance;
         }
-        else if (preProcessedBody.Trim().ToUpper().Contains("BENEFICIARY") || preProcessedBody.Trim().ToUpper().Contains("NEXT OF KIN"))
+        else if (preProcessedBody.Trim().ToUpper().Contains("BENEFICIARY") || 
+            preProcessedBody.Trim().ToUpper().Contains("NEXT OF KIN"))
         {
             type = EmailType.Beneficiary;
         }
-        else if (preProcessedBody.Trim().ToUpper().Contains("KEEP MY MONEY") || preProcessedBody.Trim().ToUpper().Contains("ABANDONED SUM") || preProcessedBody.Trim().ToUpper().Contains("MOVE THE SUM") || preProcessedBody.Trim().ToUpper().Contains("STORE MY MONEY") || preProcessedBody.Trim().ToUpper().Contains("KEEP THE MONEY SAFE") || preProcessedBody.Trim().ToUpper().Contains("KEEP THE MONEY SAVE") || preProcessedBody.Trim().ToUpper().Contains("RECEIVE THE FUND AND KEEP IT") || preProcessedBody.Trim().ToUpper().Contains("RECEIVE THE MONEY"))
+        else if (preProcessedBody.Trim().ToUpper().Contains("KEEP MY MONEY") || 
+            preProcessedBody.Trim().ToUpper().Contains("ABANDONED SUM") || 
+            preProcessedBody.Trim().ToUpper().Contains("MOVE THE SUM") || 
+            preProcessedBody.Trim().ToUpper().Contains("STORE MY MONEY") || 
+            preProcessedBody.Trim().ToUpper().Contains("KEEP THE MONEY SAFE") || 
+            preProcessedBody.Trim().ToUpper().Contains("KEEP THE MONEY SAVE") || 
+            preProcessedBody.Trim().ToUpper().Contains("RECEIVE THE FUND AND KEEP IT") || 
+            preProcessedBody.Trim().ToUpper().Contains("RECEIVE THE MONEY"))
         {
             type = EmailType.MoneyStorage;
         }
-        else if (preProcessedBody.Trim().ToUpper().Contains("INVESTOR") || preProcessedBody.Trim().ToUpper().Contains("PROFIT SHARING") || preProcessedBody.Trim().ToUpper().Contains("INVESTMENT") || preProcessedBody.Trim().ToUpper().Contains("BUSINESS THAT COULD BE BROUGHT YOUR WAY"))
+        else if (preProcessedBody.Trim().ToUpper().Contains("INVESTOR") || 
+            preProcessedBody.Trim().ToUpper().Contains("PROFIT SHARING") || 
+            preProcessedBody.Trim().ToUpper().Contains("INVESTMENT") || 
+            preProcessedBody.Trim().ToUpper().Contains("BUSINESS THAT COULD BE BROUGHT YOUR WAY"))
         {
             type = EmailType.Investor;
         }
-        else if (preProcessedBody.Trim().ToUpper().Contains("PAYMENT") || preProcessedBody.Trim().ToUpper().Contains("MONEYGRAM") || preProcessedBody.Trim().ToUpper().Contains("WESTERN UNION") || preProcessedBody.Trim().ToUpper().Contains("TRANSFER THE FUND") || preProcessedBody.Trim().ToUpper().Contains("ASSIST ME WITH THE RENEW DUES"))
+        else if (preProcessedBody.Trim().ToUpper().Contains("PAYMENT") || 
+            preProcessedBody.Trim().ToUpper().Contains("MONEYGRAM") || 
+            preProcessedBody.Trim().ToUpper().Contains("WESTERN UNION") || 
+            preProcessedBody.Trim().ToUpper().Contains("TRANSFER THE FUND") || 
+            preProcessedBody.Trim().ToUpper().Contains("ASSIST ME WITH THE RENEW DUES"))
         {
             type = EmailType.GenericPayment;
         }
-        else if (preProcessedBody.Trim().ToUpper().Contains("LIKE TO KNOW YOU MORE") || preProcessedBody.Trim().ToUpper().Contains("GET TO KNOW YOU") || preProcessedBody.Trim().ToUpper().Contains("BUILD TRUST") || preProcessedBody.Trim().ToUpper().Contains("I SEE YOU AS SOMEONE I CAN WORK WITH") || preProcessedBody.Trim().ToUpper().Contains("I WILL TELL YOU MORE ABOUT MYSELF") || preProcessedBody.Trim().ToUpper().Contains("GET TO KNOW EACHOTHER") || preProcessedBody.Trim().ToUpper().Contains("GET TO KNOW EACH OTHER") || preProcessedBody.Trim().ToUpper().Contains("LONGTERM RELATIONSHIP") || preProcessedBody.Trim().ToUpper().Contains("LONG TERM RELATIONSHIP") || preProcessedBody.Trim().ToUpper().Contains("I WANT TO MAKE A NEW AND SPECIAL FRIEND"))
+        else if (preProcessedBody.Trim().ToUpper().Contains("LIKE TO KNOW YOU MORE") || 
+            preProcessedBody.Trim().ToUpper().Contains("GET TO KNOW YOU") || 
+            preProcessedBody.Trim().ToUpper().Contains("BUILD TRUST") || 
+            preProcessedBody.Trim().ToUpper().Contains("I SEE YOU AS SOMEONE I CAN WORK WITH") || 
+            preProcessedBody.Trim().ToUpper().Contains("I WILL TELL YOU MORE ABOUT MYSELF") || 
+            preProcessedBody.Trim().ToUpper().Contains("GET TO KNOW EACHOTHER") || 
+            preProcessedBody.Trim().ToUpper().Contains("GET TO KNOW EACH OTHER") || 
+            preProcessedBody.Trim().ToUpper().Contains("LONGTERM RELATIONSHIP") || 
+            preProcessedBody.Trim().ToUpper().Contains("LONG TERM RELATIONSHIP") || 
+            preProcessedBody.Trim().ToUpper().Contains("I WANT TO MAKE A NEW AND SPECIAL FRIEND"))
         {
             type = EmailType.BuildTrust;
         }
@@ -1267,7 +1477,8 @@ public class MailServerFunctions
         {
             type = EmailType.SellingProducts;
         }
-        else if (preProcessedBody.Trim().ToUpper().Contains("I HAVE SPECIAL PROPOSAL") || preProcessedBody.Trim().ToUpper().Contains("DID YOU RECEIVE MY PREVIOUS EMAIL"))
+        else if (preProcessedBody.Trim().ToUpper().Contains("I HAVE SPECIAL PROPOSAL") || 
+            preProcessedBody.Trim().ToUpper().Contains("DID YOU RECEIVE MY PREVIOUS EMAIL"))
         {
             type = EmailType.InformationGathering;
         }
@@ -1291,7 +1502,12 @@ public class MailServerFunctions
         {
             attachmentType = "Word";
         }
-        else if (currentMessage.AtachmentTypes.ToUpper().Contains("PNG") || currentMessage.AtachmentTypes.ToUpper().Contains("JPG") || currentMessage.AtachmentTypes.ToUpper().Contains("JPEG") || currentMessage.AtachmentTypes.ToUpper().Contains("BMP") || currentMessage.AtachmentTypes.ToUpper().Contains("GIF") || currentMessage.AtachmentTypes.ToUpper().Contains("TIFF"))
+        else if (currentMessage.AtachmentTypes.ToUpper().Contains("PNG") || 
+            currentMessage.AtachmentTypes.ToUpper().Contains("JPG") || 
+            currentMessage.AtachmentTypes.ToUpper().Contains("JPEG") || 
+            currentMessage.AtachmentTypes.ToUpper().Contains("BMP") || 
+            currentMessage.AtachmentTypes.ToUpper().Contains("GIF") || 
+            currentMessage.AtachmentTypes.ToUpper().Contains("TIFF"))
         {
             attachmentType = "Image";
         }
@@ -1363,13 +1579,13 @@ public class MailServerFunctions
                 if (pastMessages.Count() > 0)
                     rtnResponse = GetRandomContinuedResponseForBeneficiary(rand, greeting, name, currentMessage);
                 else
-                    rtnResponse = GetRandomOpeningResponseForBeneficiary(rand, greeting, name);
+                    rtnResponse = GetRandomOpeningResponseForBeneficiary(rand, greeting, name, currentMessage);
                 break;
             case EmailType.Lottery:
                 if (pastMessages.Count() > 0)
                     rtnResponse = GetRandomContinuedResponseForLottery(rand, greeting, name, currentMessage);
                 else
-                    rtnResponse = GetRandomOpeningResponseForLottery(rand, greeting);
+                    rtnResponse = GetRandomOpeningResponseForLottery(rand, greeting, currentMessage);
                 break;
             case EmailType.OilAndGas:
                 if (pastMessages.Count() > 0)
@@ -1385,48 +1601,48 @@ public class MailServerFunctions
                 break;
             case EmailType.ConsignmentBox:
                 if (pastMessages.Count() > 0)
-                    rtnResponse = GetRandomContinuedResponseForConsignmentBox(rand, greeting, name, attachmentType);
+                    rtnResponse = GetRandomContinuedResponseForConsignmentBox(rand, greeting, name, attachmentType, currentMessage);
                 else
-                    rtnResponse = GetRandomOpeningResponseForConsignmentBox(rand, greeting, name, attachmentType);
+                    rtnResponse = GetRandomOpeningResponseForConsignmentBox(rand, greeting, name, attachmentType, currentMessage);
                 break;
             case EmailType.DeathOrDying:
                 if (pastMessages.Count() > 0)
                     rtnResponse = GetRandomContinuedResponseForDeathOrDying(rand, greeting, name, currentMessage);
                 else
-                    rtnResponse = GetRandomOpeningResponseForDeathOrDying(rand, greeting, name);
+                    rtnResponse = GetRandomOpeningResponseForDeathOrDying(rand, greeting, name, currentMessage);
                 break;
             case EmailType.LoanOffer:
                 if (pastMessages.Count() > 0)
                     rtnResponse = GetRandomContinuedResponseForLoanOffer(rand, greeting, name, currentMessage);
                 else
-                    rtnResponse = GetRandomOpeningResponseForLoanOffer(rand, greeting, name);
+                    rtnResponse = GetRandomOpeningResponseForLoanOffer(rand, greeting, name, currentMessage);
                 break;
             case EmailType.MoneyStorage:
                 if (pastMessages.Count() > 0)
                     rtnResponse = GetRandomContinuedResponseForMoneyStorage(rand, greeting, name, currentMessage);
                 else
-                    rtnResponse = GetRandomOpeningResponseForMoneyStorage(rand, greeting, name);
+                    rtnResponse = GetRandomOpeningResponseForMoneyStorage(rand, greeting, name, currentMessage);
                 break;
             case EmailType.AtmCard:
                 if (pastMessages.Count() > 0)
                     rtnResponse = GetRandomContinuedResponseForAtmCard(rand, greeting, name, currentMessage);
                 else
-                    rtnResponse = GetRandomOpeningResponseForAtmCard(rand, greeting, name);
+                    rtnResponse = GetRandomOpeningResponseForAtmCard(rand, greeting, name, currentMessage);
                 break;
             case EmailType.Police:
                 if (pastMessages.Count() > 0)
                     rtnResponse = GetRandomContinuedResponseForPolice(rand, greeting, name, currentMessage);
                 else
-                    rtnResponse = GetRandomOpeningResponseForPolice(rand, greeting, name);
+                    rtnResponse = GetRandomOpeningResponseForPolice(rand, greeting, name, currentMessage);
                 break;
             case EmailType.GenericPayment:
                 if (pastMessages.Count() > 0)
                     rtnResponse = GetRandomContinuedResponseForGenericPayment(rand, greeting, name, currentMessage);
                 else
-                    rtnResponse = GetRandomOpeningResponseForGenericPayment(rand, greeting, name);
+                    rtnResponse = GetRandomOpeningResponseForGenericPayment(rand, greeting, name, currentMessage);
                 break;
             case EmailType.SellingServices:
-                rtnResponse = GetRandomResponseForSellingServices(rand, greeting, name);
+                rtnResponse = GetRandomResponseForSellingServices(rand, greeting, name, currentMessage);
                 break;
             case EmailType.OnlineMarketingConsult:
                 rtnResponse = "No";
@@ -1435,43 +1651,43 @@ public class MailServerFunctions
                 if (pastMessages.Count() > 0)
                     rtnResponse = GetRandomContinuedResponseForBuildTrust(rand, greeting, name, currentMessage);
                 else
-                    rtnResponse = GetRandomOpeningResponseForBuildTrust(rand, greeting, name);
+                    rtnResponse = GetRandomOpeningResponseForBuildTrust(rand, greeting, name, currentMessage);
                 break;
             case EmailType.Investor:
                 if (pastMessages.Count() > 0)
                     rtnResponse = GetRandomContinuedResponseForInvestor(rand, greeting, name, currentMessage);
                 else
-                    rtnResponse = GetRandomOpeningResponseForInvestor(rand, greeting, name);
+                    rtnResponse = GetRandomOpeningResponseForInvestor(rand, greeting, name, currentMessage);
                 break;
             case EmailType.MoneyHack:
                 if (pastMessages.Count() > 0)
                     rtnResponse = GetRandomContinuedResponseForMoneyHack(rand, greeting, name, currentMessage);
                 else
-                    rtnResponse = GetRandomOpeningResponseForMoneyHack(rand, greeting, name);
+                    rtnResponse = GetRandomOpeningResponseForMoneyHack(rand, greeting, name, currentMessage);
                 break;
             case EmailType.JobOffer:
                 if (pastMessages.Count() > 0)
                     rtnResponse = GetRandomContinuedResponseForJobOffer(rand, greeting, name, currentMessage);
                 else
-                    rtnResponse = GetRandomOpeningResponseForJobOffer(rand, greeting, name);
+                    rtnResponse = GetRandomOpeningResponseForJobOffer(rand, greeting, name, currentMessage);
                 break;
             case EmailType.SellingProducts:
                 if (pastMessages.Count() > 0)
                     rtnResponse = GetRandomContinuedResponseForSellingProducts(rand, greeting, name, currentMessage);
                 else
-                    rtnResponse = GetRandomOpeningResponseForSellingProducts(rand, greeting, name);
+                    rtnResponse = GetRandomOpeningResponseForSellingProducts(rand, greeting, name, currentMessage);
                 break;
             case EmailType.FreeMoney:
                 if (pastMessages.Count() > 0)
                     rtnResponse = GetRandomContinuedResponseForFreeMoney(rand, greeting, name, currentMessage);
                 else
-                    rtnResponse = GetRandomOpeningResponseForFreeMoney(rand, greeting, name);
+                    rtnResponse = GetRandomOpeningResponseForFreeMoney(rand, greeting, name, currentMessage);
                 break;
             case EmailType.InformationGathering:
                 if (pastMessages.Count() > 0)
                     rtnResponse = GetRandomContinuedResponseForInformationGathering(rand, greeting, name, currentMessage);
                 else
-                    rtnResponse = GetRandomOpeningResponseForInformationGathering(rand, greeting, name);
+                    rtnResponse = GetRandomOpeningResponseForInformationGathering(rand, greeting, name, currentMessage);
                 break;
         }
 

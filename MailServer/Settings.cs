@@ -4,6 +4,7 @@ public class Settings
 {
     private string emailAddress, password, myName;
     private List<string> names, greeting, signoff, introduction, introductionOpening, introductionClosing, personDescriptionMale, personDescriptionFemale, memory, followupLine, acquaintance, locations, products, paymentMethods;
+    private List<string> questionsNotListening, questionsJokingAround, questionsNotAnswering, questionsHowAreYou, questionsNotUnderstanding;
     private List<string> responseOpeningBlankEmailWithAttachment, responseOpeningLottery, responseOpeningOilAndGas, responseOpeningOilAndGasQuestionList, responseOpeningIlluminati, 
         responseOpeningConsignmentBox, responseOpeningDeathOrDying, responseOpeningLoanOffer, responseOpeningMoneyStorage, responseOpeningAtmCard, responseOpeningPolice, 
         responseOpeningGenericPayment, responseOpeningInvestor, responseOpeningMoneyHack, responseOpeningJobOffer, responseOpeningSellingProducts, responseOpeningFreeMoney, 
@@ -289,7 +290,31 @@ public class Settings
         get { return responseContinuedInformationGathering; }
         set { responseContinuedInformationGathering = value; }
     }
-
+    public List<string> QuestionsHowAreYou
+    {
+        get { return questionsHowAreYou; }
+        set { questionsHowAreYou = value; }
+    }
+    public List<string> QuestionsJokingAround
+    {
+        get { return questionsJokingAround; }
+        set { questionsJokingAround = value; }
+    }
+    public List<string> QuestionsNotAnswering
+    {
+        get { return questionsNotAnswering; }
+        set { questionsNotAnswering = value; }
+    }
+    public List<string> QuestionsNotListening
+    {
+        get { return questionsNotListening; }
+        set { questionsNotListening = value; }
+    }
+    public List<string> QuestionsNotUnderstanding
+    {
+        get { return questionsNotUnderstanding; }
+        set { questionsNotUnderstanding = value; }
+    }
     #endregion
 
     public Settings()
