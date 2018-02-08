@@ -4,8 +4,14 @@ public class Settings
 {
     private string emailAddress, password, myName;
     private List<string> names, greeting, signoff, introduction, introductionOpening, introductionClosing, personDescriptionMale, personDescriptionFemale, memory, followupLine, acquaintance, locations, products, paymentMethods;
-    private List<string> responseOpeningBlankEmailWithAttachment, responseOpeningLottery, responseOpeningOilAndGas, responseOpeningOilAndGasQuestionList, responseOpeningIlluminati, responseOpeningConsignmentBox, responseOpeningDeathOrDying, responseOpeningLoanOffer, responseOpeningMoneyStorage, responseOpeningAtmCard, responseOpeningPolice, responseOpeningGenericPayment, responseOpeningInvestor, responseOpeningMoneyHack, responseOpeningJobOffer, responseOpeningSellingProducts;
-    private List<string> responseContinuedBlankEmailWithAttachment, responseContinuedLottery, responseContinuedOilAndGas, responseContinuedIlluminati, responseContinuedConsignmentBox, responseContinuedDeathOrDying, responseContinuedLoanOffer, responseContinuedMoneyStorage, responseContinuedAtmCard, responseContinuedPolice, responseContinuedGenericPayment, responseContinuedInvestor, responseContinuedMoneyHack, responseContinuedBuildTrust, responseContinuedInheritance, responseContinuedBeneficiary, responseContinuedJobOffer, responseContinuedSellingProducts;
+    private List<string> responseOpeningBlankEmailWithAttachment, responseOpeningLottery, responseOpeningOilAndGas, responseOpeningOilAndGasQuestionList, responseOpeningIlluminati, 
+        responseOpeningConsignmentBox, responseOpeningDeathOrDying, responseOpeningLoanOffer, responseOpeningMoneyStorage, responseOpeningAtmCard, responseOpeningPolice, 
+        responseOpeningGenericPayment, responseOpeningInvestor, responseOpeningMoneyHack, responseOpeningJobOffer, responseOpeningSellingProducts, responseOpeningFreeMoney, 
+        responseOpeningInformationGathering;
+    private List<string> responseContinuedBlankEmailWithAttachment, responseContinuedLottery, responseContinuedOilAndGas, responseContinuedIlluminati, responseContinuedConsignmentBox, 
+        responseContinuedDeathOrDying, responseContinuedLoanOffer, responseContinuedMoneyStorage, responseContinuedAtmCard, responseContinuedPolice, responseContinuedGenericPayment, 
+        responseContinuedInvestor, responseContinuedMoneyHack, responseContinuedBuildTrust, responseContinuedInheritance, responseContinuedBeneficiary, responseContinuedJobOffer, 
+        responseContinuedSellingProducts, responseContinuedFreeMoney, responseContinuedInformationGathering;
 
     #region Get/sets
     public string EmailAddress
@@ -262,6 +268,26 @@ public class Settings
     {
         get { return responseOpeningSellingProducts; }
         set { responseOpeningSellingProducts = value; }
+    }
+    public List<string> ResponseOpeningFreeMoney
+    {
+        get { return responseOpeningFreeMoney; }
+        set { responseOpeningFreeMoney = value; }
+    }
+    public List<string> ResponseContinuedFreeMoney
+    {
+        get { return responseContinuedFreeMoney; }
+        set { responseContinuedFreeMoney = value; }
+    }
+    public List<string> ResponseOpeningInformationGathering
+    {
+        get { return responseOpeningInformationGathering; }
+        set { responseOpeningInformationGathering = value; }
+    }
+    public List<string> ResponseContinuedInformationGathering
+    {
+        get { return responseContinuedInformationGathering; }
+        set { responseContinuedInformationGathering = value; }
     }
 
     #endregion

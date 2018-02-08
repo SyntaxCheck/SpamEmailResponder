@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 [Serializable]
 public class MailStorage
 {
-    private string msgId, emailBodyPlain, emailBodyRich, emailBodyHtml, subjectLine, determinedReply, toAddress, atachmentTypes, personName;
+    private string msgId, emailBodyPlain, emailBodyRich, emailBodyHtml, subjectLine, determinedReply, toAddress, atachmentTypes, personName, attachmentNames;
     private int numberOfAttachments, messageType;
     private DateTime dateReceived;
     private bool replied;
@@ -89,10 +89,15 @@ public class MailStorage
         get { return replied; }
         set { replied = value; }
     }
+    public string AttachmentNames
+    {
+        get { return attachmentNames; }
+        set { attachmentNames = value; }
+    }
 
     public MailStorage()
     {
-        msgId = emailBodyPlain = emailBodyRich = emailBodyHtml = subjectLine = determinedReply = toAddress = atachmentTypes = personName = String.Empty;
+        msgId = emailBodyPlain = emailBodyRich = emailBodyHtml = subjectLine = determinedReply = toAddress = atachmentTypes = personName = attachmentNames = String.Empty;
         numberOfAttachments = messageType = 0;
         dateReceived = new DateTime(1900,01,01);
         replied = false;

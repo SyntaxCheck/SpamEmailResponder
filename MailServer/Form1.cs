@@ -234,10 +234,11 @@ namespace MailServer
             cbxHasAttachments.Checked = false;
             dgvPastEmail.Rows.Clear();
             tbxOutput.Text = String.Empty;
+            tbxAttachmentNames.Text = String.Empty;
         }
         private void LoadScreen(MailStorage ms, List<MailStorage> previousMessagesInThread)
         {
-            tbxBodyPlainText.Text = ms.EmailBodyPlain;
+            tbxBodyPlainText.Text = mailServer.MakeEmailEasierToRead(ms.EmailBodyPlain);
             tbxDateReceived.Text = ms.DateReceived.ToString("yyyy-MM-dd hh:mm");
             tbxDeterminedName.Text = ms.PersonName;
             tbxDeterminedType.Text = ((EmailType)ms.MessageType).ToString();
@@ -247,13 +248,19 @@ namespace MailServer
             tbxSubject.Text = ms.SubjectLine;
             tbxOutput.Text = String.Empty;
 
+            if (ms.NumberOfAttachments > 0)
+            {
+                cbxHasAttachments.Checked = true;
+                tbxAttachmentNames.Text = ms.AttachmentNames;
+            }
+
             dgvPastEmail.Rows.Clear();
             dgvPastEmail.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
             dgvPastEmail.DefaultCellStyle.WrapMode = DataGridViewTriState.True;
 
             foreach (MailStorage ms2 in previousMessagesInThread)
             {
-                dgvPastEmail.Rows.Add(ms2.SubjectLine, ms2.ToAddress, ms2.DateReceived, ms2.EmailBodyPlain);
+                dgvPastEmail.Rows.Add(ms2.SubjectLine, ms2.ToAddress, ms2.DateReceived, mailServer.MakeEmailEasierToRead(ms2.EmailBodyPlain), ms2.DeterminedReply);
             }
 
             workingOnMsg = ms.MsgId;
