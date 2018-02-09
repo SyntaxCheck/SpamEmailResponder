@@ -197,6 +197,15 @@ namespace MailServer
                 }
             }
         }
+        private void btnSaveChanges_Click(object sender, EventArgs e)
+        {
+            //Save data from screen to object
+            SaveData();
+        }
+        private void dgvPastEmail_CellContentDoubleClick(object sender, DataGridViewCellEventArgs e)
+        {
+            string myValue = dgvPastEmail[e.ColumnIndex, e.RowIndex].Value.ToString();
+        }
 
         //Private functions
         private void CheckForMessages()
@@ -344,11 +353,6 @@ namespace MailServer
                 processTimer.Start();
                 processTimer.Interval = 300000;
             }
-        }
-
-        private void dgvPastEmail_CellContentDoubleClick(object sender, DataGridViewCellEventArgs e)
-        {
-            string myValue = dgvPastEmail[e.ColumnIndex, e.RowIndex].Value.ToString();
         }
     }
 }
