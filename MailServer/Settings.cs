@@ -3,16 +3,17 @@
 public class Settings
 {
     private string emailAddress, password, myName;
-    private List<string> names, greeting, signoff, introduction, introductionOpening, introductionClosing, personDescriptionMale, personDescriptionFemale, memory, followupLine, acquaintance, locations, products, paymentMethods;
+    private List<string> names, greeting, signoff, introduction, introductionOpening, introductionClosing, personDescriptionMale, personDescriptionFemale, memory, followupLine, acquaintance, 
+        locations, products, paymentMethods, randomThoughts;
     private List<string> questionsNotListening, questionsJokingAround, questionsNotAnswering, questionsHowAreYou, questionsNotUnderstanding;
     private List<string> responseOpeningBlankEmailWithAttachment, responseOpeningLottery, responseOpeningOilAndGas, responseOpeningOilAndGasQuestionList, responseOpeningIlluminati, 
         responseOpeningConsignmentBox, responseOpeningDeathOrDying, responseOpeningLoanOffer, responseOpeningMoneyStorage, responseOpeningAtmCard, responseOpeningPolice, 
         responseOpeningGenericPayment, responseOpeningInvestor, responseOpeningMoneyHack, responseOpeningJobOffer, responseOpeningSellingProducts, responseOpeningFreeMoney, 
-        responseOpeningInformationGathering;
+        responseOpeningInformationGathering, responseOpeningPhishing;
     private List<string> responseContinuedBlankEmailWithAttachment, responseContinuedLottery, responseContinuedOilAndGas, responseContinuedIlluminati, responseContinuedConsignmentBox, 
         responseContinuedDeathOrDying, responseContinuedLoanOffer, responseContinuedMoneyStorage, responseContinuedAtmCard, responseContinuedPolice, responseContinuedGenericPayment, 
         responseContinuedInvestor, responseContinuedMoneyHack, responseContinuedBuildTrust, responseContinuedInheritance, responseContinuedBeneficiary, responseContinuedJobOffer, 
-        responseContinuedSellingProducts, responseContinuedFreeMoney, responseContinuedInformationGathering;
+        responseContinuedSellingProducts, responseContinuedFreeMoney, responseContinuedInformationGathering, responseContinuedPhishing;
 
     #region Get/sets
     public string EmailAddress
@@ -290,6 +291,16 @@ public class Settings
         get { return responseContinuedInformationGathering; }
         set { responseContinuedInformationGathering = value; }
     }
+    public List<string> ResponseOpeningPhishing
+    {
+        get { return responseOpeningPhishing; }
+        set { responseOpeningPhishing = value; }
+    }
+    public List<string> ResponseContinuedPhishing
+    {
+        get { return responseContinuedPhishing; }
+        set { responseContinuedPhishing = value; }
+    }
     public List<string> QuestionsHowAreYou
     {
         get { return questionsHowAreYou; }
@@ -314,6 +325,11 @@ public class Settings
     {
         get { return questionsNotUnderstanding; }
         set { questionsNotUnderstanding = value; }
+    }
+    public List<string> RandomThoughts
+    {
+        get { return randomThoughts; }
+        set { randomThoughts = value; }
     }
     #endregion
 

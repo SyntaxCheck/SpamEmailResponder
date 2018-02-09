@@ -45,7 +45,8 @@ public class MailServerFunctions
         JobOffer = 20,
         SellingProducts = 21,
         FreeMoney = 22,
-        InformationGathering = 23
+        InformationGathering = 23,
+        Phishing = 24
     };
 
     public MailServerFunctions()
@@ -78,6 +79,14 @@ public class MailServerFunctions
             settings.PersonDescriptionMale = new List<string>() { "He was a good person, he wouldn't hurt a fly.", "About 5 foot 8 inches in height. Maybe 170 pounds but it is tough to say. Green eyes but one eye was slightly larger than the other. Brown hair on the right side with red hair on the left side. When it comes to the hair the left side was black and the right side was green. Hair color was a pure white." };
             settings.PersonDescriptionFemale = new List<string>() { "You know her, always laughing. She had a laugh that would light up the entire room.", "About 5 foot 8 inches in height. Maybe 170 pounds but it is tough to say. Green eyes but one eye was slightly larger than the other. Brown hair on the right side with red hair on the left side. When it comes to the hair the left side was black and the right side was green. Hair color was a pure white." };
             settings.Signoff = new List<string>() { "Farewell my friend", "Bye", "Later gator, after awhile crocodile", "Cya", "ByeBye", "Bye now" };
+            settings.RandomThoughts = new List<string>() { "Life is much too short to get caught up in the details." };
+
+            //Question responses
+            settings.QuestionsHowAreYou = new List<string>() { "I am doing well, thanks for asking." };
+            settings.QuestionsJokingAround = new List<string>() { "I am taking this very serious." };
+            settings.QuestionsNotAnswering = new List<string>() { "I am a very busy person and must have missed your question." };
+            settings.QuestionsNotListening = new List<string>() { "I am trying to follow instructions but they are very confusing." };
+            settings.QuestionsNotUnderstanding = new List<string>() { "I am very confused, can you try to explain what you want in an easier way?" };
 
             //Opening responses
             settings.ResponseOpeningAtmCard = new List<string>() { "" };
@@ -97,6 +106,7 @@ public class MailServerFunctions
             settings.ResponseOpeningJobOffer = new List<string>() { "" };
             settings.ResponseOpeningSellingProducts = new List<string>() { "" };
             settings.ResponseOpeningInformationGathering = new List<string> { "" };
+            settings.ResponseOpeningPhishing = new List<string>() { "" };
 
             //Continued responses
             settings.ResponseContinuedAtmCard = new List<string>() { "" };
@@ -118,6 +128,7 @@ public class MailServerFunctions
             settings.ResponseContinuedJobOffer = new List<string>() { "" };
             settings.ResponseContinuedSellingProducts = new List<string>() { "" };
             settings.ResponseContinuedInformationGathering = new List<string>() { "" };
+            settings.ResponseContinuedPhishing = new List<string>() { "" };
 
             string json = new JavaScriptSerializer().Serialize(settings);
             File.WriteAllText(settingFileLocation, JsonHelper.FormatJson(json));
@@ -639,6 +650,12 @@ public class MailServerFunctions
 
         return greetings + " " + name + ". " + directResponse + SettingPostProcessing(settings.ResponseOpeningInformationGathering[rand.Next(0, settings.ResponseOpeningInformationGathering.Count())], rand);
     }
+    private string GetRandomOpeningResponseForPhishing(Random rand, string greetings, string name, MailStorage currentMessage)
+    {
+        string directResponse = HandleDirectQuestions(MakeEmailEasierToRead(currentMessage.EmailBodyPlain), currentMessage, rand);
+
+        return greetings + " " + name + ". " + directResponse + SettingPostProcessing(settings.ResponseOpeningPhishing[rand.Next(0, settings.ResponseOpeningPhishing.Count())], rand);
+    }
 
     //Continued Responses
     private string GetRandomContinuedResponseTest(Random rand)
@@ -789,6 +806,12 @@ public class MailServerFunctions
         string directResponse = HandleDirectQuestions(MakeEmailEasierToRead(currentMessage.EmailBodyPlain), currentMessage, rand);
 
         return greetings + " " + name + ". " + directResponse + SettingPostProcessing(settings.ResponseContinuedInformationGathering[rand.Next(0, settings.ResponseContinuedInformationGathering.Count())], rand);
+    }
+    private string GetRandomContinuedResponseForPhishing(Random rand, string greetings, string name, MailStorage currentMessage)
+    {
+        string directResponse = HandleDirectQuestions(MakeEmailEasierToRead(currentMessage.EmailBodyPlain), currentMessage, rand);
+
+        return greetings + " " + name + ". " + directResponse + SettingPostProcessing(settings.ResponseContinuedPhishing[rand.Next(0, settings.ResponseContinuedPhishing.Count())], rand);
     }
 
     //Supporting Random lists
@@ -981,6 +1004,12 @@ public class MailServerFunctions
 
         return lst[rand.Next(0, lst.Count())];
     }
+    private string GetRandomThought(Random rand)
+    {
+        List<string> lst = settings.RandomThoughts;
+
+        return lst[rand.Next(0, lst.Count())];
+    }
 
     //Helper functions
     private string SettingPostProcessing(string text, Random rand)
@@ -1006,6 +1035,8 @@ public class MailServerFunctions
         replacement.Add(GetRandomProduct(rand));
         placeholder.Add("|GetRandomPaymentMethod|");
         replacement.Add(GetRandomPaymentMethod(rand));
+        placeholder.Add("|GetRandomThought|");
+        replacement.Add(GetRandomThought(rand));
 
         for (int i = 0; i < placeholder.Count(); i++)
         {
@@ -1075,7 +1106,7 @@ public class MailServerFunctions
     private string AttemptToFindReplyToEmailAddress(string body)
     {
         string replyToEmailAddress = String.Empty;
-        string lineKeywordList = "EMAIL;EMAIL ADDRESS;EMAILADDRESS;MAILBOX;MAIL BOX;GMAIL;YAHOO;MSN;OUTLOOK;HOTMAIL;MY EMAIL;MY EMAIL ADDRESS;MAIL;MY MAIL;MY MAIL ADDRESS;CONTACT BANK VIA;MAILTO;EMAIL US;";
+        string lineKeywordList = "EMAIL;EMAIL ADDRESS;EMAILADDRESS;MAILBOX;MAIL BOX;GMAIL;YAHOO;MSN;OUTLOOK;HOTMAIL;MY EMAIL;MY EMAIL ADDRESS;MAIL;MY MAIL;MY MAIL ADDRESS;CONTACT BANK VIA;MAILTO;EMAIL US;E-MAIL;";
 
         string[] lineSplit = body.Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
         string[] lineKeywordSplit = lineKeywordList.ToUpper().Split(new string[] { ";" }, StringSplitOptions.RemoveEmptyEntries);
@@ -1087,7 +1118,7 @@ public class MailServerFunctions
             //First check if there is mailto: text like the following: <mailto:somthing@gmail.com>
             if (lineSplit[i].Contains("MAILTO:"))
             {
-                string lineScrubbed = lineSplit[i].Replace("<", " ").Replace(">", " ");
+                string lineScrubbed = lineSplit[i].Replace("<", " ").Replace(">", " ").Replace(Environment.NewLine, " ").Replace("\t", " ").Replace("\r", " ").Replace("\n", " ").Replace(" ", " ");
                 string[] tempLineSplit = lineScrubbed.Split(new string[] { " " }, StringSplitOptions.RemoveEmptyEntries);
                 foreach (string s in tempLineSplit)
                 {
@@ -1114,7 +1145,7 @@ public class MailServerFunctions
                 if (lineSplit[i].Contains(lineKeywordSplit[j].Trim().ToUpper()))
                 {
                     //Scrub the line for special characters first
-                    lineSplit[i] = lineSplit[i].Replace("{"," ").Replace("}", " ").Replace("]", " ").Replace("]", " ").Replace(",", " ").Replace("<", " ").Replace(">", " ").Replace("^", " ").Replace("(", " ").Replace(")", " ");
+                    lineSplit[i] = lineSplit[i].Replace("{"," ").Replace("}", " ").Replace("]", " ").Replace("]", " ").Replace(",", " ").Replace("<", " ").Replace(">", " ").Replace("^", " ").Replace("(", " ").Replace(")", " ").Replace("\t", " ").Replace("\r", " ").Replace("\n", " ").Replace(" ", " ");
 
                     //Check the same line for something like "Email: somethin@gmail.com"
                     //Start by checking for ":" as the seperator
@@ -1166,7 +1197,7 @@ public class MailServerFunctions
                             }
                         }
                     }
-                    tempSplit = lineSplit[i].Split(new string[] { " " }, StringSplitOptions.RemoveEmptyEntries);
+                    tempSplit = lineSplit[i].Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
                     for (int k = 0; k < tempSplit.Count(); k++)
                     {
                         if (tempSplit[k].Contains("@"))
@@ -1313,6 +1344,10 @@ public class MailServerFunctions
         {
             message = message.Replace("  ", " ");
         }
+        while (message.Contains(" "))
+        {
+            message = message.Replace(" ", " ");
+        }
 
         return message;
     }
@@ -1348,7 +1383,10 @@ public class MailServerFunctions
             preProcessedBody.Trim().ToUpper().Contains("WITH CANCER") || 
             preProcessedBody.Trim().ToUpper().Contains("MY CANCER") || 
             preProcessedBody.Trim().ToUpper().Contains("HUSBAND DIED") || 
-            preProcessedBody.Trim().ToUpper().Contains("WIFE DIED") || 
+            preProcessedBody.Trim().ToUpper().Contains("WIFE DIED") ||
+            preProcessedBody.Trim().ToUpper().Contains("DIED OF CANCER") ||
+            preProcessedBody.Trim().ToUpper().Contains("MOTHER DIED") ||
+            preProcessedBody.Trim().ToUpper().Contains("FATHER DIED") ||
             preProcessedBody.Trim().ToUpper().Contains("CHILD DIED") || 
             preProcessedBody.Trim().ToUpper().Contains("SON DIED") || 
             preProcessedBody.Trim().ToUpper().Contains("DAUGHTER DIED"))
@@ -1411,35 +1449,49 @@ public class MailServerFunctions
         {
             type = EmailType.AtmCard;
         }
-        else if (preProcessedBody.Trim().ToUpper().Contains("DONATING") || 
-            preProcessedBody.Trim().ToUpper().Contains("DONATION") || 
-            preProcessedBody.Trim().ToUpper().Contains("RELEASE OF THE FUNDS") || 
-            preProcessedBody.Trim().ToUpper().Contains("DON ATION") || 
-            preProcessedBody.Trim().ToUpper().Contains("TRANSFER TO YOUR ACCOUNT") || 
-            preProcessedBody.Trim().ToUpper().Contains("TO YOUR BANK ACCOUNT") || 
-            (preProcessedBody.Trim().ToUpper().Contains("FUND") && preProcessedBody.Trim().ToUpper().Contains("URGENT DELIVERY")) || 
-            preProcessedBody.Trim().ToUpper().Contains("COMPENSATION FUNDS") || 
-            preProcessedBody.Trim().ToUpper().Contains("OFFERED YOU WITH $") || 
-            preProcessedBody.Trim().ToUpper().Contains("OFFERED YOU $"))
-        {
-            type = EmailType.FreeMoney;
-        }
-        else if (preProcessedBody.Trim().ToUpper().Contains("INHERITENCE") || 
+        else if (preProcessedBody.Trim().ToUpper().Contains("INHERITENCE") ||
             preProcessedBody.Trim().ToUpper().Contains("INHERIT"))
         {
             type = EmailType.Inheritance;
         }
-        else if (preProcessedBody.Trim().ToUpper().Contains("BENEFICIARY") || 
+        else if (preProcessedBody.Trim().ToUpper().Contains("BENEFICIARY") ||
             preProcessedBody.Trim().ToUpper().Contains("NEXT OF KIN"))
         {
             type = EmailType.Beneficiary;
         }
+        else if (preProcessedBody.Trim().ToUpper().Contains("DONATING") || 
+            preProcessedBody.Trim().ToUpper().Contains("DONATION") || 
+            preProcessedBody.Trim().ToUpper().Contains("RELEASE OF THE FUNDS") || 
+            preProcessedBody.Trim().ToUpper().Contains("DON ATION") ||
+            preProcessedBody.Trim().ToUpper().Contains("EXPECTING TO RECEIVE IS A CASH") ||
+            preProcessedBody.Trim().ToUpper().Contains("TO BE COMPENSATED") ||
+            preProcessedBody.Trim().ToUpper().Contains("THE TRANSMISSION OF THE FUNDS") ||
+            preProcessedBody.Trim().ToUpper().Contains("TRANSFER TO YOUR ACCOUNT") || 
+            preProcessedBody.Trim().ToUpper().Contains("TO YOUR BANK ACCOUNT") || 
+            (preProcessedBody.Trim().ToUpper().Contains("FUND") && preProcessedBody.Trim().ToUpper().Contains("URGENT DELIVERY")) || 
+            preProcessedBody.Trim().ToUpper().Contains("COMPENSATION FUNDS") ||
+            preProcessedBody.Trim().ToUpper().Contains("CLAIM THE SUM") ||
+            preProcessedBody.Trim().ToUpper().Contains("INCOMING TRANSFER NOTIFICATION") ||
+            preProcessedBody.Trim().ToUpper().Contains("KEPT THE CHEQUE WITH THEM") ||
+            preProcessedBody.Trim().ToUpper().Contains("KEPT THE CHECK WITH THEM") ||
+            preProcessedBody.Trim().ToUpper().Contains("OFFERED YOU WITH $") ||
+            preProcessedBody.Trim().ToUpper().Contains("ASSIST IN RECEIVING") ||
+            preProcessedBody.Trim().ToUpper().Contains("YOU WILL BE RECEIVING THE FUNDS") ||
+            preProcessedBody.Trim().ToUpper().Contains("OFFERED YOU $"))
+        {
+            type = EmailType.FreeMoney;
+        }
         else if (preProcessedBody.Trim().ToUpper().Contains("KEEP MY MONEY") || 
             preProcessedBody.Trim().ToUpper().Contains("ABANDONED SUM") || 
             preProcessedBody.Trim().ToUpper().Contains("MOVE THE SUM") || 
-            preProcessedBody.Trim().ToUpper().Contains("STORE MY MONEY") || 
+            preProcessedBody.Trim().ToUpper().Contains("STORE MY MONEY") ||
+            preProcessedBody.Trim().ToUpper().Contains("EVACUATE THE SUM") ||
             preProcessedBody.Trim().ToUpper().Contains("KEEP THE MONEY SAFE") || 
-            preProcessedBody.Trim().ToUpper().Contains("KEEP THE MONEY SAVE") || 
+            preProcessedBody.Trim().ToUpper().Contains("KEEP THE MONEY SAVE") ||
+            preProcessedBody.Trim().ToUpper().Contains("KEEP THE FUNDS") ||
+            preProcessedBody.Trim().ToUpper().Contains("AMOUNT OF MONEY IN YOU") ||
+            preProcessedBody.Trim().ToUpper().Contains("AMOUNT OF MONEY TO YOU") ||
+            preProcessedBody.Trim().ToUpper().Contains("RECEIVE THE DELIVERY ON MY BEHALF") ||
             preProcessedBody.Trim().ToUpper().Contains("RECEIVE THE FUND AND KEEP IT") || 
             preProcessedBody.Trim().ToUpper().Contains("RECEIVE THE MONEY"))
         {
@@ -1447,7 +1499,8 @@ public class MailServerFunctions
         }
         else if (preProcessedBody.Trim().ToUpper().Contains("INVESTOR") || 
             preProcessedBody.Trim().ToUpper().Contains("PROFIT SHARING") || 
-            preProcessedBody.Trim().ToUpper().Contains("INVESTMENT") || 
+            preProcessedBody.Trim().ToUpper().Contains("INVESTMENT") ||
+            preProcessedBody.Trim().ToUpper().Contains("BUSINESS DEAL") ||
             preProcessedBody.Trim().ToUpper().Contains("BUSINESS THAT COULD BE BROUGHT YOUR WAY"))
         {
             type = EmailType.Investor;
@@ -1455,7 +1508,8 @@ public class MailServerFunctions
         else if (preProcessedBody.Trim().ToUpper().Contains("PAYMENT") || 
             preProcessedBody.Trim().ToUpper().Contains("MONEYGRAM") || 
             preProcessedBody.Trim().ToUpper().Contains("WESTERN UNION") || 
-            preProcessedBody.Trim().ToUpper().Contains("TRANSFER THE FUND") || 
+            preProcessedBody.Trim().ToUpper().Contains("TRANSFER THE FUND") ||
+            preProcessedBody.Trim().ToUpper().Contains("HELP ME WITH THE RENEW DUES") ||
             preProcessedBody.Trim().ToUpper().Contains("ASSIST ME WITH THE RENEW DUES"))
         {
             type = EmailType.GenericPayment;
@@ -1468,7 +1522,8 @@ public class MailServerFunctions
             preProcessedBody.Trim().ToUpper().Contains("GET TO KNOW EACHOTHER") || 
             preProcessedBody.Trim().ToUpper().Contains("GET TO KNOW EACH OTHER") || 
             preProcessedBody.Trim().ToUpper().Contains("LONGTERM RELATIONSHIP") || 
-            preProcessedBody.Trim().ToUpper().Contains("LONG TERM RELATIONSHIP") || 
+            preProcessedBody.Trim().ToUpper().Contains("LONG TERM RELATIONSHIP") ||
+            preProcessedBody.Trim().ToUpper().Contains("SERIOUS RELATIONSHIP") ||
             preProcessedBody.Trim().ToUpper().Contains("I WANT TO MAKE A NEW AND SPECIAL FRIEND"))
         {
             type = EmailType.BuildTrust;
@@ -1477,7 +1532,14 @@ public class MailServerFunctions
         {
             type = EmailType.SellingProducts;
         }
-        else if (preProcessedBody.Trim().ToUpper().Contains("I HAVE SPECIAL PROPOSAL") || 
+        else if (preProcessedBody.Trim().ToUpper().Contains("UPDATE TO SECURE YOUR ACCOUNT"))
+        {
+            type = EmailType.Phishing;
+        }
+        else if (preProcessedBody.Trim().ToUpper().Contains("I HAVE SPECIAL PROPOSAL") ||
+            preProcessedBody.Trim().ToUpper().Contains("CAN I ASK YOU A FAVOR") ||
+            preProcessedBody.Trim().ToUpper().Contains("CALL I DISCUSS WITH YOU") ||
+            preProcessedBody.Trim().ToUpper().Contains("CAN I DISCUSS WITH YOU") ||
             preProcessedBody.Trim().ToUpper().Contains("DID YOU RECEIVE MY PREVIOUS EMAIL"))
         {
             type = EmailType.InformationGathering;
@@ -1542,12 +1604,28 @@ public class MailServerFunctions
         }
 
         //Some of the scammers like to use an invalid email to send the message then instruct you to email them with the email in the message (Maybe to avoid getting the mailbox shutdown) so try to find the email address they want you to send to
-        string newEmailAddress = AttemptToFindReplyToEmailAddress(currentMessage.EmailBodyPlain).Trim();
+        string newEmailAddress = AttemptToFindReplyToEmailAddress(currentMessage.SubjectLine + " " + currentMessage.EmailBodyPlain).Trim();
         if (!String.IsNullOrEmpty(newEmailAddress))
         {
             if (!currentMessage.ToAddress.Trim().ToUpper().Contains(newEmailAddress.ToUpper()) && !settings.EmailAddress.ToUpper().Contains(newEmailAddress.ToUpper()))
             {
                 currentMessage.ToAddress += newEmailAddress + ";";
+            }
+        }
+
+        //If after all the checks we still do not know who to send it to then search every word to see if any are a valid email address
+        if (String.IsNullOrEmpty(currentMessage.ToAddress))
+        {
+            string[] tempSplit = (currentMessage.SubjectLine + " " + currentMessage.EmailBodyHtml).Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+            for (int k = 0; k < tempSplit.Count(); k++)
+            {
+                if (tempSplit[k].Contains("@"))
+                {
+                    if (IsValidEmail(tempSplit[k]))
+                    {
+                        currentMessage.ToAddress += tempSplit[k] + ";";
+                    }
+                }
             }
         }
 
@@ -1688,6 +1766,12 @@ public class MailServerFunctions
                     rtnResponse = GetRandomContinuedResponseForInformationGathering(rand, greeting, name, currentMessage);
                 else
                     rtnResponse = GetRandomOpeningResponseForInformationGathering(rand, greeting, name, currentMessage);
+                break;
+            case EmailType.Phishing:
+                if (pastMessages.Count() > 0)
+                    rtnResponse = GetRandomContinuedResponseForPhishing(rand, greeting, name, currentMessage);
+                else
+                    rtnResponse = GetRandomOpeningResponseForPhishing(rand, greeting, name, currentMessage);
                 break;
         }
 
