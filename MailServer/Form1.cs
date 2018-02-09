@@ -80,6 +80,12 @@ namespace MailServer
         {
             StandardResponse response = new StandardResponse() { Code = 0, Message = String.Empty, Data = String.Empty };
 
+            if (String.IsNullOrWhiteSpace(tbxFromAddress.Text))
+            {
+                MessageBox.Show("Must have to To Address to send email.","Cannot send email");
+                return;
+            }
+
             btnSendEmail.Enabled = false;
             btnNext.Enabled = false;
             btnIgnore.Enabled = false;
