@@ -59,6 +59,7 @@ namespace MailServer
             int preCount = storage.Count();
             response = mailServer.GetMessages(loggerInfo, ref storage);
             int postCount = storage.Count();
+
             if (response.Code < 0)
             {
                 tbxOutput.Text = response.AsString();
