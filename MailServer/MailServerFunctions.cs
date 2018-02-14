@@ -1287,6 +1287,9 @@ public class MailServerFunctions
     {
         try
         {
+            if (!email.Contains('@') && email.Trim().Contains(' '))
+                return false;
+
             var addr = new System.Net.Mail.MailAddress(email.Trim());
             return addr.Address.Trim().ToUpper() == email.Trim().ToUpper();
         }
@@ -1351,6 +1354,106 @@ public class MailServerFunctions
 
         return message;
     }
+    public string SynonymReplacement(Random rand, string textToReplace)
+    {
+        //This is a very primative function to replace some common words
+        string replaceList = "good,acceptable,excellent,great,marvelous,wonderful,aswesome|";
+        replaceList += "bad,awful,poor,lousy,crummy,horrible|";
+        replaceList += "progress,advance,breakthrough,growth,momentum,movement|";
+        replaceList += "trouble,concern,pain,difficulty,problem,unrest|";
+        replaceList += "hope,wish,desire|";
+        replaceList += "confused,baffled,befuddled,puzzled,perplexed|";
+        replaceList += "information,intelligence,knowledge,material|";
+        replaceList += "proof,validation,verification|";
+        replaceList += "group,club,faction,society,flock|";
+        replaceList += "interesting,compelling,engaging,though-provoking|";
+        replaceList += "mention,acknowledgment,comment,indication,remark|";
+        replaceList += "safe,secure,protected|";
+        replaceList += "money,cash,fund,pay,wealth|";
+        replaceList += "small,tiny,little,miniature|";
+        replaceList += "remember,relive,recall,commemorate|";
+        replaceList += "different,contrasting,diverse,various|";
+        replaceList += "charm,amuse,entertain,satisfy,tickle|";
+        replaceList += "start,begin,kickoff|";
+        replaceList += "quickly,hastily,hurriedly,immediately,instantly,promptly,rapidly,swiftly|";
+
+        string[] groupSplit = replaceList.Split(new char[] { '|' }, StringSplitOptions.RemoveEmptyEntries);
+        List<string[]> synonymList = new List<string[]>();
+
+        foreach (string s in groupSplit)
+        {
+            synonymList.Add(s.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries));
+        }
+
+        string[] textToReplaceWords = textToReplace.Split(new char[] { ' ' }, StringSplitOptions.None);
+
+        //Get number of words that could be replaced
+        int count = 0;
+        List<int> indexToRemove = new List<int>();
+        for (int i = 0; i < synonymList.Count(); i++)
+        {
+            int groupPreCount = count;
+            for (int k = 0; k < synonymList[i].Length; k++)
+            {
+                for (int j = 0; j < textToReplaceWords.Length; j++)
+                {
+                    if (synonymList[i][k] == textToReplaceWords[j])
+                    {
+                        count++;
+                    }
+                }
+            }
+
+            if (count == groupPreCount)
+            {
+                indexToRemove.Add(i);
+            }
+        }
+
+        if (count > 0)
+        {
+            //Remove all of the word groups that we found no hits in to help with performance
+            if (indexToRemove.Count() > 0)
+            {
+                for (int i = indexToRemove.Count() - 1; i >= 0; i--)
+                {
+                    synonymList.RemoveAt(indexToRemove[i]);
+                }
+            }
+
+            int percentChanceToReplace = 50;
+            if (count <= 3)
+            {
+                percentChanceToReplace = 100;
+            }
+
+            for (int i = 0; i < synonymList.Count(); i++)
+            {
+                int groupPreCount = count;
+                for (int k = 0; k < synonymList[i].Length; k++)
+                {
+                    for (int j = 0; j < textToReplaceWords.Length; j++)
+                    {
+                        if (synonymList[i][k] == textToReplaceWords[j])
+                        {
+                            if (rand.Next(0, 100) >= (100 - percentChanceToReplace))
+                            {
+                                textToReplaceWords[j] = synonymList[i][rand.Next(0, synonymList[i].Count() - 1)];
+                            }
+                        }
+                    }
+                }
+            }
+
+            textToReplace = String.Empty;
+            for (int j = 0; j < textToReplaceWords.Length; j++)
+            {
+                textToReplace += textToReplaceWords[j] + ' ';
+            }
+        }
+
+        return textToReplace.Trim();
+    }
     public string GetResponseForType(ref MailStorage currentMessage, List<MailStorage> pastMessages)
     {
         Random rand = new Random();
@@ -1388,7 +1491,8 @@ public class MailServerFunctions
             preProcessedBody.Trim().ToUpper().Contains("MOTHER DIED") ||
             preProcessedBody.Trim().ToUpper().Contains("FATHER DIED") ||
             preProcessedBody.Trim().ToUpper().Contains("CHILD DIED") || 
-            preProcessedBody.Trim().ToUpper().Contains("SON DIED") || 
+            preProcessedBody.Trim().ToUpper().Contains("SON DIED") ||
+            preProcessedBody.Trim().ToUpper().Contains("DIED IN") ||
             preProcessedBody.Trim().ToUpper().Contains("DAUGHTER DIED"))
         {
             type = EmailType.DeathOrDying;
@@ -1400,7 +1504,9 @@ public class MailServerFunctions
         }
         else if (preProcessedBody.Trim().ToUpper().Contains("JOB OFFER") || 
             preProcessedBody.Trim().ToUpper().Contains("POSITION IN COMPANY") || 
-            preProcessedBody.Trim().ToUpper().Contains("POSITION IN OUR COMPANY") || 
+            preProcessedBody.Trim().ToUpper().Contains("POSITION IN OUR COMPANY") ||
+            preProcessedBody.Trim().ToUpper().Contains("WORK FOR ME") ||
+            preProcessedBody.Trim().ToUpper().Contains("WORK HERE") ||
             preProcessedBody.Trim().ToUpper().Contains("JOB PLACEMENT"))
         {
             type = EmailType.JobOffer;
@@ -1429,7 +1535,8 @@ public class MailServerFunctions
             type = EmailType.Lottery;
         }
         else if (preProcessedBody.Trim().ToUpper().Contains("CONSIGNMENT") || 
-            preProcessedBody.Trim().ToUpper().Contains("TRUNK BOX") || 
+            preProcessedBody.Trim().ToUpper().Contains("TRUNK BOX") ||
+            preProcessedBody.Trim().ToUpper().Contains("PACKAGE BOX") ||
             preProcessedBody.Trim().ToUpper().Contains("DELIVER YOUR PACKAGE"))
         {
             type = EmailType.ConsignmentBox;
@@ -1539,6 +1646,12 @@ public class MailServerFunctions
         else if (preProcessedBody.Trim().ToUpper().Contains("I HAVE SPECIAL PROPOSAL") ||
             preProcessedBody.Trim().ToUpper().Contains("CAN I ASK YOU A FAVOR") ||
             preProcessedBody.Trim().ToUpper().Contains("CALL I DISCUSS WITH YOU") ||
+            preProcessedBody.Trim().ToUpper().Contains("GIVE ME A CALL") ||
+            preProcessedBody.Trim().ToUpper().Contains("GIVE ME CALL") ||
+            preProcessedBody.Trim().ToUpper().Contains("CALL ME") ||
+            preProcessedBody.Trim().ToUpper().Contains("CONTACT ME") ||
+            preProcessedBody.Trim().ToUpper().Contains("TALK WITH YOU") ||
+            preProcessedBody.Trim().ToUpper().Contains("TALK TO YOU") ||
             preProcessedBody.Trim().ToUpper().Contains("CAN I DISCUSS WITH YOU") ||
             preProcessedBody.Trim().ToUpper().Contains("DID YOU RECEIVE MY PREVIOUS EMAIL"))
         {
@@ -1777,6 +1890,10 @@ public class MailServerFunctions
 
         if (!String.IsNullOrEmpty(rtnResponse))
             rtnResponse += Environment.NewLine + Environment.NewLine + signOff + ", " + MyName;
+
+        //TODO Make enabling this a setting
+        //Replace synonyms
+        rtnResponse = SynonymReplacement(rand, rtnResponse);
 
         return rtnResponse;
     }

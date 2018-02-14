@@ -60,59 +60,72 @@ namespace MailServer
             response = mailServer.GetMessages(loggerInfo, ref storage);
             int postCount = storage.Count();
 
-            if (response.Code < 0)
-            {
-                tbxOutput.Text = response.AsString();
-            }
-            else if(postCount > preCount)
-            {
-                processTimer.Stop();
-                LoadMessage();
-            }
-
             //Write Storage object to disk
             if (storage.Count() > 0)
             {
                 string fullPath = Path.Combine(currentDirectory, storageObjectFile);
                 helperFunctions.WriteToBinaryFile(fullPath, storage, false);
             }
+
+            if (cbxAutoSend.Checked)
+            {
+                if (response.Code < 0)
+                {
+                    tbxOutput.Text = response.AsString();
+                    MessageBox.Show(response.AsString(), "Failed to get new mail");
+                    processTimer.Stop();
+                }
+                else
+                {
+                    bool foundMessageToSend = false;
+                    //Load the message onto the screen
+                    int rtn = LoadMessage();
+
+                    if (rtn > 0)
+                    {
+                        while (!foundMessageToSend)
+                        {
+                            if (String.IsNullOrEmpty(tbxDeterminedReply.Text.Trim()) || String.IsNullOrEmpty(tbxFromAddress.Text.Trim()))
+                            {
+                                skippedMessages += ";;;" + workingOnMsg + ";;;";
+
+                                rtn = CheckForMessages();
+                                if (rtn <= 0) //End the loop if there are no more messages or we encountered an error
+                                    break;
+                            }
+                            else
+                            {
+                                foundMessageToSend = true;
+                            }
+                        }
+
+                        if (foundMessageToSend)
+                        {
+                            rtn = SendEmail();
+                            if (rtn < 0) //If the email fails to send add to the temp skip list for someone to deal with later
+                            {
+                                skippedMessages += ";;;" + workingOnMsg + ";;;";
+                            }
+                        }
+                    }
+                }
+            }
+            else
+            {
+                if (response.Code < 0)
+                {
+                    tbxOutput.Text = response.AsString();
+                }
+                else if (postCount > preCount)
+                {
+                    processTimer.Stop();
+                    LoadMessage();
+                }
+            }
         }
         private void btnSendEmail_Click(object sender, EventArgs e)
         {
-            StandardResponse response = new StandardResponse() { Code = 0, Message = String.Empty, Data = String.Empty };
-
-            if (String.IsNullOrWhiteSpace(tbxFromAddress.Text))
-            {
-                MessageBox.Show("Must have to To Address to send email.","Cannot send email");
-                return;
-            }
-
-            btnSendEmail.Enabled = false;
-            btnNext.Enabled = false;
-            btnIgnore.Enabled = false;
-            btnRegenerate.Enabled = false;
-
-            //Save data from screen to object
-            SaveData();
-
-            for (int i = 0; i < storage.Count(); i++)
-            {
-                if (storage[i].MsgId == workingOnMsg)
-                {
-                    response = mailServer.SendSMTP(loggerInfo, storage[i].ToAddress, storage[i].SubjectLine, storage[i].DeterminedReply);
-                    if (response.Code >= 0)
-                    {
-                        storage[i].Replied = true;
-                        workingOnMsg = String.Empty;
-                        CheckForMessages();
-                    }
-                    else
-                    {
-                        tbxOutput.Text = response.AsString();
-                    }
-                    break;
-                }
-            }
+            SendEmail();
         }
         private void btnNext_Click(object sender, EventArgs e)
         {
@@ -215,7 +228,7 @@ namespace MailServer
         }
 
         //Private functions
-        private void CheckForMessages()
+        private int CheckForMessages()
         {
             StandardResponse response = new StandardResponse() { Code = 0, Message = String.Empty, Data = String.Empty };
 
@@ -233,8 +246,13 @@ namespace MailServer
                 helperFunctions.WriteToBinaryFile(fullPath, storage, false);
 
                 if (response.Code >= 0)
-                    LoadMessage();
+                {
+                    int rtn = LoadMessage();
+                    return rtn;
+                }
             }
+
+            return 0;
         }
         private void ClearScreen()
         {
@@ -309,7 +327,7 @@ namespace MailServer
                 }
             }
         }
-        private void LoadMessage()
+        private int LoadMessage()
         {
             StandardResponse response = new StandardResponse() { Code = 0, Message = String.Empty, Data = String.Empty };
             bool found = false;
@@ -359,7 +377,54 @@ namespace MailServer
                 tbxOutput.Text = "No new messages found.";
                 processTimer.Start();
                 processTimer.Interval = 300000;
+
+                return 0;
             }
+            else
+            {
+                return 1;
+            }
+        }
+        private int SendEmail()
+        {
+            StandardResponse response = new StandardResponse() { Code = 0, Message = String.Empty, Data = String.Empty };
+
+            if (String.IsNullOrWhiteSpace(tbxFromAddress.Text))
+            {
+                MessageBox.Show("Must have to To Address to send email.", "Cannot send email");
+                return -1;
+            }
+
+            btnSendEmail.Enabled = false;
+            btnNext.Enabled = false;
+            btnIgnore.Enabled = false;
+            btnRegenerate.Enabled = false;
+
+            //Save data from screen to object
+            SaveData();
+
+            for (int i = 0; i < storage.Count(); i++)
+            {
+                if (storage[i].MsgId == workingOnMsg)
+                {
+                    response = mailServer.SendSMTP(loggerInfo, storage[i].ToAddress, storage[i].SubjectLine, storage[i].DeterminedReply);
+                    if (response.Code >= 0)
+                    {
+                        storage[i].Replied = true;
+                        workingOnMsg = String.Empty;
+                        CheckForMessages();
+                    }
+                    else
+                    {
+                        tbxOutput.Text = response.AsString();
+
+                        return response.Code;
+                    }
+                    break;
+                }
+            }
+
+            return 0;
         }
     }
 }
