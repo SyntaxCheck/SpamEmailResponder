@@ -9,6 +9,7 @@ namespace MailServer
 {
     public partial class Form1 : Form
     {
+        const int SEND_INTERVAL = 240000; //Gmail has a limit of 500 emails per 24 hour period. Set the max output well above that. At 3 minutes we would have a max of 480 per day.
         string storageObjectFile = "MailStorage.store";
         string currentDirectory;
         LoggerInfo loggerInfo;
@@ -17,6 +18,7 @@ namespace MailServer
         MailServerFunctions mailServer = new MailServerFunctions();
         string workingOnMsg = String.Empty;
         string skippedMessages = String.Empty;
+        int skippedCount;
 
         public Form1()
         {
@@ -44,17 +46,18 @@ namespace MailServer
                 storage = helperFunctions.ReadFromBinaryFile<List<MailStorage>>(fullPath);
             }
 
+            skippedCount = 0;
+
             CheckForMessages();
 
-            //processTimer.Interval = 1; //Thirty seconds
-            ////processTimer.Interval = 300000; //Five minutes
-            //processTimer.Start();
+            processTimer.Interval = SEND_INTERVAL;
+            processTimer.Start();
         }
 
         private void processTimer_Tick(object sender, EventArgs e)
         {
             StandardResponse response = new StandardResponse() { Code = 0, Message = String.Empty, Data = String.Empty };
-            processTimer.Interval = 600000; //Every 10 minutes check for new mail
+            processTimer.Interval = SEND_INTERVAL;
 
             int preCount = storage.Count();
             response = mailServer.GetMessages(loggerInfo, ref storage);
@@ -88,6 +91,7 @@ namespace MailServer
                             if (String.IsNullOrEmpty(tbxDeterminedReply.Text.Trim()) || String.IsNullOrEmpty(tbxFromAddress.Text.Trim()))
                             {
                                 skippedMessages += ";;;" + workingOnMsg + ";;;";
+                                skippedCount++;
 
                                 rtn = CheckForMessages();
                                 if (rtn <= 0) //End the loop if there are no more messages or we encountered an error
@@ -135,6 +139,7 @@ namespace MailServer
             btnRegenerate.Enabled = false;
 
             skippedMessages += ";;;" + workingOnMsg + ";;;";
+            skippedCount++;
             CheckForMessages();
         }
         private void btnIgnore_Click(object sender, EventArgs e)
@@ -226,6 +231,17 @@ namespace MailServer
         {
             string myValue = dgvPastEmail[e.ColumnIndex, e.RowIndex].Value.ToString();
         }
+        private void cbxAutoSend_CheckedChanged(object sender, EventArgs e)
+        {
+            if (cbxAutoSend.Checked)
+            {
+                processTimer.Start();
+            }
+            else
+            {
+                processTimer.Stop();
+            }
+        }
 
         //Private functions
         private int CheckForMessages()
@@ -233,20 +249,28 @@ namespace MailServer
             StandardResponse response = new StandardResponse() { Code = 0, Message = String.Empty, Data = String.Empty };
 
             //Check for new messages
-            response = mailServer.GetMessages(loggerInfo, ref storage);
-            if (response.Code < 0)
+            if ((storage.Count(t => !t.Replied) - skippedCount) <= 0)
             {
-                tbxOutput.Text = response.AsString();
+                response = mailServer.GetMessages(loggerInfo, ref storage);
+                if (response.Code < 0)
+                {
+                    tbxOutput.Text = response.AsString();
+                }
+            }
+            else
+            {
+                response = new StandardResponse() { Code = 0 };
             }
 
             //Write Storage object to disk
             if (storage.Count() > 0)
             {
-                string fullPath = Path.Combine(currentDirectory, storageObjectFile);
-                helperFunctions.WriteToBinaryFile(fullPath, storage, false);
-
                 if (response.Code >= 0)
                 {
+                    //Always write the storage object here. When the program is auto sending we want to write after the send even if we didnt retrieve new messages
+                    string fullPath = Path.Combine(currentDirectory, storageObjectFile);
+                    helperFunctions.WriteToBinaryFile(fullPath, storage, false);
+
                     int rtn = LoadMessage();
                     return rtn;
                 }
@@ -371,12 +395,16 @@ namespace MailServer
                 }
             }
 
+            if (!found || cbxAutoSend.Checked)
+            {
+                processTimer.Start();
+                processTimer.Interval = SEND_INTERVAL;
+            }
+
             if (!found)
             {
                 //MessageBox.Show("No new messages", "No messages found");
                 tbxOutput.Text = "No new messages found.";
-                processTimer.Start();
-                processTimer.Interval = 300000;
 
                 return 0;
             }

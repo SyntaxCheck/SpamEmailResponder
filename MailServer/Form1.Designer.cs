@@ -29,14 +29,15 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle7 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle8 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle9 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle10 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
             this.processTimer = new System.Windows.Forms.Timer(this.components);
             this.tbxOutput = new System.Windows.Forms.TextBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.cbxAutoSend = new System.Windows.Forms.CheckBox();
             this.btnSaveChanges = new System.Windows.Forms.Button();
             this.tbxAttachmentNames = new System.Windows.Forms.TextBox();
             this.btnRegenerate = new System.Windows.Forms.Button();
@@ -69,7 +70,6 @@
             this.label3 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
-            this.cbxAutoSend = new System.Windows.Forms.CheckBox();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvPastEmail)).BeginInit();
             this.SuspendLayout();
@@ -123,10 +123,21 @@
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Current Message";
             // 
+            // cbxAutoSend
+            // 
+            this.cbxAutoSend.AutoSize = true;
+            this.cbxAutoSend.Location = new System.Drawing.Point(108, 732);
+            this.cbxAutoSend.Name = "cbxAutoSend";
+            this.cbxAutoSend.Size = new System.Drawing.Size(76, 17);
+            this.cbxAutoSend.TabIndex = 26;
+            this.cbxAutoSend.Text = "Auto Send";
+            this.cbxAutoSend.UseVisualStyleBackColor = true;
+            this.cbxAutoSend.CheckedChanged += new System.EventHandler(this.cbxAutoSend_CheckedChanged);
+            // 
             // btnSaveChanges
             // 
             this.btnSaveChanges.Location = new System.Drawing.Point(614, 183);
-            this.btnSaveChanges.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.btnSaveChanges.Margin = new System.Windows.Forms.Padding(2);
             this.btnSaveChanges.Name = "btnSaveChanges";
             this.btnSaveChanges.Size = new System.Drawing.Size(97, 23);
             this.btnSaveChanges.TabIndex = 25;
@@ -224,8 +235,8 @@
             // 
             // Subject
             // 
-            dataGridViewCellStyle6.Alignment = System.Windows.Forms.DataGridViewContentAlignment.TopLeft;
-            this.Subject.DefaultCellStyle = dataGridViewCellStyle6;
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.TopLeft;
+            this.Subject.DefaultCellStyle = dataGridViewCellStyle1;
             this.Subject.FillWeight = 125F;
             this.Subject.HeaderText = "Subject";
             this.Subject.Name = "Subject";
@@ -234,8 +245,8 @@
             // 
             // FromAddress
             // 
-            dataGridViewCellStyle7.Alignment = System.Windows.Forms.DataGridViewContentAlignment.TopLeft;
-            this.FromAddress.DefaultCellStyle = dataGridViewCellStyle7;
+            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.TopLeft;
+            this.FromAddress.DefaultCellStyle = dataGridViewCellStyle2;
             this.FromAddress.FillWeight = 150F;
             this.FromAddress.HeaderText = "From Address";
             this.FromAddress.Name = "FromAddress";
@@ -244,8 +255,8 @@
             // 
             // Date
             // 
-            dataGridViewCellStyle8.Alignment = System.Windows.Forms.DataGridViewContentAlignment.TopCenter;
-            this.Date.DefaultCellStyle = dataGridViewCellStyle8;
+            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.TopCenter;
+            this.Date.DefaultCellStyle = dataGridViewCellStyle3;
             this.Date.FillWeight = 125F;
             this.Date.HeaderText = "Date";
             this.Date.Name = "Date";
@@ -254,8 +265,8 @@
             // 
             // Body
             // 
-            dataGridViewCellStyle9.Alignment = System.Windows.Forms.DataGridViewContentAlignment.TopLeft;
-            this.Body.DefaultCellStyle = dataGridViewCellStyle9;
+            dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.TopLeft;
+            this.Body.DefaultCellStyle = dataGridViewCellStyle4;
             this.Body.FillWeight = 310F;
             this.Body.HeaderText = "Body";
             this.Body.Name = "Body";
@@ -264,8 +275,8 @@
             // 
             // Response
             // 
-            dataGridViewCellStyle10.Alignment = System.Windows.Forms.DataGridViewContentAlignment.TopLeft;
-            this.Response.DefaultCellStyle = dataGridViewCellStyle10;
+            dataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.TopLeft;
+            this.Response.DefaultCellStyle = dataGridViewCellStyle5;
             this.Response.FillWeight = 350F;
             this.Response.HeaderText = "Response";
             this.Response.Name = "Response";
@@ -422,16 +433,6 @@
             this.label1.Size = new System.Drawing.Size(69, 13);
             this.label1.TabIndex = 0;
             this.label1.Text = "Subject Line:";
-            // 
-            // cbxAutoSend
-            // 
-            this.cbxAutoSend.AutoSize = true;
-            this.cbxAutoSend.Location = new System.Drawing.Point(108, 732);
-            this.cbxAutoSend.Name = "cbxAutoSend";
-            this.cbxAutoSend.Size = new System.Drawing.Size(76, 17);
-            this.cbxAutoSend.TabIndex = 26;
-            this.cbxAutoSend.Text = "Auto Send";
-            this.cbxAutoSend.UseVisualStyleBackColor = true;
             // 
             // Form1
             // 

@@ -1490,6 +1490,7 @@ public class MailServerFunctions
             preProcessedBody.Trim().ToUpper().Contains("DIED OF CANCER") ||
             preProcessedBody.Trim().ToUpper().Contains("MOTHER DIED") ||
             preProcessedBody.Trim().ToUpper().Contains("FATHER DIED") ||
+            preProcessedBody.Trim().ToUpper().Contains("DIAGNOSED FOR CANCER") ||
             preProcessedBody.Trim().ToUpper().Contains("CHILD DIED") || 
             preProcessedBody.Trim().ToUpper().Contains("SON DIED") ||
             preProcessedBody.Trim().ToUpper().Contains("DIED IN") ||
@@ -1507,6 +1508,10 @@ public class MailServerFunctions
             preProcessedBody.Trim().ToUpper().Contains("POSITION IN OUR COMPANY") ||
             preProcessedBody.Trim().ToUpper().Contains("WORK FOR ME") ||
             preProcessedBody.Trim().ToUpper().Contains("WORK HERE") ||
+            preProcessedBody.Trim().ToUpper().Contains("EMPLOYMENT AT") ||
+            preProcessedBody.Trim().ToUpper().Contains("EMPLOYMENT OFFER") ||
+            preProcessedBody.Trim().ToUpper().Contains("EMPLOYMENT WORK") ||
+            preProcessedBody.Trim().ToUpper().Contains("EMPLOYMENT FOR") ||
             preProcessedBody.Trim().ToUpper().Contains("JOB PLACEMENT"))
         {
             type = EmailType.JobOffer;
@@ -1578,10 +1583,16 @@ public class MailServerFunctions
             (preProcessedBody.Trim().ToUpper().Contains("FUND") && preProcessedBody.Trim().ToUpper().Contains("URGENT DELIVERY")) || 
             preProcessedBody.Trim().ToUpper().Contains("COMPENSATION FUNDS") ||
             preProcessedBody.Trim().ToUpper().Contains("CLAIM THE SUM") ||
+            preProcessedBody.Trim().ToUpper().Contains("PROMISE TO PAY THE SUM") ||
+            preProcessedBody.Trim().ToUpper().Contains("PROMISE TO PAY THE SOM") ||
+            preProcessedBody.Trim().ToUpper().Contains("TRANSFER OF THE SUM") ||
+            preProcessedBody.Trim().ToUpper().Contains("DELIVER YOUR OWN COMPENSATION") ||
             preProcessedBody.Trim().ToUpper().Contains("INCOMING TRANSFER NOTIFICATION") ||
             preProcessedBody.Trim().ToUpper().Contains("KEPT THE CHEQUE WITH THEM") ||
             preProcessedBody.Trim().ToUpper().Contains("KEPT THE CHECK WITH THEM") ||
             preProcessedBody.Trim().ToUpper().Contains("OFFERED YOU WITH $") ||
+            preProcessedBody.Trim().ToUpper().Contains("CREDIT YOUR MONEY") ||
+            preProcessedBody.Trim().ToUpper().Contains("YOUR PACKAGE WORTH") ||
             preProcessedBody.Trim().ToUpper().Contains("ASSIST IN RECEIVING") ||
             preProcessedBody.Trim().ToUpper().Contains("YOU WILL BE RECEIVING THE FUNDS") ||
             preProcessedBody.Trim().ToUpper().Contains("OFFERED YOU $"))
@@ -1590,14 +1601,25 @@ public class MailServerFunctions
         }
         else if (preProcessedBody.Trim().ToUpper().Contains("KEEP MY MONEY") || 
             preProcessedBody.Trim().ToUpper().Contains("ABANDONED SUM") || 
-            preProcessedBody.Trim().ToUpper().Contains("MOVE THE SUM") || 
+            preProcessedBody.Trim().ToUpper().Contains("MOVE THE SUM") ||
+            preProcessedBody.Trim().ToUpper().Contains("MOVE SUM") ||
             preProcessedBody.Trim().ToUpper().Contains("STORE MY MONEY") ||
             preProcessedBody.Trim().ToUpper().Contains("EVACUATE THE SUM") ||
+            preProcessedBody.Trim().ToUpper().Contains("EVACUATE SUM") ||
             preProcessedBody.Trim().ToUpper().Contains("KEEP THE MONEY SAFE") || 
             preProcessedBody.Trim().ToUpper().Contains("KEEP THE MONEY SAVE") ||
+            preProcessedBody.Trim().ToUpper().Contains("SAFE KEEPING OF THE MONEY") ||
+            preProcessedBody.Trim().ToUpper().Contains("SAFE KEEPING OF MONEY") ||
+            preProcessedBody.Trim().ToUpper().Contains("SAFE KEEPING MONEY") ||
             preProcessedBody.Trim().ToUpper().Contains("KEEP THE FUNDS") ||
+            preProcessedBody.Trim().ToUpper().Contains("FUNDS WAS MOVED") ||
+            preProcessedBody.Trim().ToUpper().Contains("FUND WAS MOVED") ||
+            preProcessedBody.Trim().ToUpper().Contains("FUNDS WERE MOVED") ||
+            preProcessedBody.Trim().ToUpper().Contains("FUND WERE MOVED") ||
+            preProcessedBody.Trim().ToUpper().Contains("COMPENSATION FOR YOUR ASSISTANCE") ||
             preProcessedBody.Trim().ToUpper().Contains("AMOUNT OF MONEY IN YOU") ||
             preProcessedBody.Trim().ToUpper().Contains("AMOUNT OF MONEY TO YOU") ||
+            preProcessedBody.Trim().ToUpper().Contains("AMOUNT OF MONEY YOU") ||
             preProcessedBody.Trim().ToUpper().Contains("RECEIVE THE DELIVERY ON MY BEHALF") ||
             preProcessedBody.Trim().ToUpper().Contains("RECEIVE THE FUND AND KEEP IT") || 
             preProcessedBody.Trim().ToUpper().Contains("RECEIVE THE MONEY"))
@@ -1608,6 +1630,11 @@ public class MailServerFunctions
             preProcessedBody.Trim().ToUpper().Contains("PROFIT SHARING") || 
             preProcessedBody.Trim().ToUpper().Contains("INVESTMENT") ||
             preProcessedBody.Trim().ToUpper().Contains("BUSINESS DEAL") ||
+            preProcessedBody.Trim().ToUpper().Contains("BUSINESS DISCUSSION") ||
+            preProcessedBody.Trim().ToUpper().Contains("BUSINESS TALK") ||
+            preProcessedBody.Trim().ToUpper().Contains("BUSINESS PROPOSAL") ||
+            preProcessedBody.Trim().ToUpper().Contains("MIDDLEMAN BETWEEN OUR COMPANY") ||
+            preProcessedBody.Trim().ToUpper().Contains("BUSINESS PARTNER") ||
             preProcessedBody.Trim().ToUpper().Contains("BUSINESS THAT COULD BE BROUGHT YOUR WAY"))
         {
             type = EmailType.Investor;
@@ -1630,6 +1657,7 @@ public class MailServerFunctions
             preProcessedBody.Trim().ToUpper().Contains("GET TO KNOW EACH OTHER") || 
             preProcessedBody.Trim().ToUpper().Contains("LONGTERM RELATIONSHIP") || 
             preProcessedBody.Trim().ToUpper().Contains("LONG TERM RELATIONSHIP") ||
+            preProcessedBody.Trim().ToUpper().Contains("SEEKING YOUR ASSISTANCE") ||
             preProcessedBody.Trim().ToUpper().Contains("SERIOUS RELATIONSHIP") ||
             preProcessedBody.Trim().ToUpper().Contains("I WANT TO MAKE A NEW AND SPECIAL FRIEND"))
         {
@@ -1639,7 +1667,16 @@ public class MailServerFunctions
         {
             type = EmailType.SellingProducts;
         }
-        else if (preProcessedBody.Trim().ToUpper().Contains("UPDATE TO SECURE YOUR ACCOUNT"))
+        else if (preProcessedBody.Trim().ToUpper().Contains("UPDATE TO SECURE YOUR ACCOUNT") ||
+            preProcessedBody.Trim().ToUpper().Contains("YOUR ACCOUNT HAS BEEN LIMITED") ||
+            preProcessedBody.Trim().ToUpper().Contains("CONFIRME YOUR ACCOUNT") ||
+            preProcessedBody.Trim().ToUpper().Contains("CONFIRM YOUR ACCOUNT") ||
+            preProcessedBody.Trim().ToUpper().Contains("ACCOUNT HAS BEEN CREATED") ||
+            preProcessedBody.Trim().ToUpper().Contains("COMPLETE YOUR PURCHASE") ||
+            preProcessedBody.Trim().ToUpper().Contains("LEFT THE FOLLOWING ITEM") ||
+            preProcessedBody.Trim().ToUpper().Contains("CANCEL YOUR PAYPAL") ||
+            preProcessedBody.Trim().ToUpper().Contains("ISSUE WITH YOUR PAYPAL") ||
+            preProcessedBody.Trim().ToUpper().Contains("VISITED FROM AN UNUSUAL PLACE"))
         {
             type = EmailType.Phishing;
         }
@@ -1649,11 +1686,15 @@ public class MailServerFunctions
             preProcessedBody.Trim().ToUpper().Contains("GIVE ME A CALL") ||
             preProcessedBody.Trim().ToUpper().Contains("GIVE ME CALL") ||
             preProcessedBody.Trim().ToUpper().Contains("CALL ME") ||
+            preProcessedBody.Trim().ToUpper().Contains("ANY PROBLEM IN LIFE") ||
+            preProcessedBody.Trim().ToUpper().Contains("CHARITY PROPOSAL FOR YOU") ||
             preProcessedBody.Trim().ToUpper().Contains("CONTACT ME") ||
+            preProcessedBody.Trim().ToUpper().Contains("RANDOMLY SELECTED INDIVID") ||
             preProcessedBody.Trim().ToUpper().Contains("TALK WITH YOU") ||
             preProcessedBody.Trim().ToUpper().Contains("TALK TO YOU") ||
             preProcessedBody.Trim().ToUpper().Contains("CAN I DISCUSS WITH YOU") ||
-            preProcessedBody.Trim().ToUpper().Contains("DID YOU RECEIVE MY PREVIOUS EMAIL"))
+            preProcessedBody.Trim().ToUpper().Contains("DID YOU RECEIVE MY PREVIOUS EMAIL") ||
+            (preProcessedBody.Trim().ToUpper().Contains("HI") || preProcessedBody.Trim().ToUpper().Contains("HELLO")) && preProcessedBody.Length < 10)
         {
             type = EmailType.InformationGathering;
         }
@@ -1661,7 +1702,7 @@ public class MailServerFunctions
         {
             type = EmailType.ConsignmentBox;
         }
-        else if ((preProcessedBody.Length - currentMessage.SubjectLine.Length) < 40 && (preProcessedBody.Trim().ToUpper().Contains("INLINE IMAGE")))
+        else if (((preProcessedBody.Length - currentMessage.SubjectLine.Length) < 40 && (preProcessedBody.Trim().ToUpper().Contains("INLINE IMAGE"))) || preProcessedBody.Trim().ToUpper().Contains("KINDLY OPEN THE ATTACHED"))
         {
             type = EmailType.BlankWithAttachment;
         }
