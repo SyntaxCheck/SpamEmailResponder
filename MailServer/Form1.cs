@@ -88,6 +88,12 @@ namespace MailServer
                     {
                         while (!foundMessageToSend)
                         {
+                            if (String.IsNullOrEmpty(tbxDeterminedReply.Text.Trim()))
+                            {
+                                //If the reply is blank try to regen before we skip as more code is added to handle new types of emails
+                                Regen();
+                            }
+
                             if (String.IsNullOrEmpty(tbxDeterminedReply.Text.Trim()) || String.IsNullOrEmpty(tbxFromAddress.Text.Trim()))
                             {
                                 skippedMessages += ";;;" + workingOnMsg + ";;;";
@@ -172,55 +178,7 @@ namespace MailServer
         }
         private void btnRegenerate_Click(object sender, EventArgs e)
         {
-            for (int i = 0; i < storage.Count(); i++)
-            {
-                if (storage[i].MsgId == workingOnMsg)
-                {
-                    List<MailStorage> previousMessagesInThread = new List<MailStorage>();
-                    foreach (MailStorage ms in storage)
-                    {
-                        if (ms.SubjectLine == storage[i].SubjectLine && ms.MsgId != storage[i].MsgId)
-                        {
-                            int foundCount = 0;
-                            foreach (var v in storage[i].ToAddressList)
-                            {
-                                if (ms.ToAddress.Contains(v.ToString()))
-                                {
-                                    foundCount++;
-                                    break;
-                                }
-                            }
-
-                            if (foundCount > 0)
-                            {
-                                previousMessagesInThread.Add(ms);
-                                if (ms.MessageType != (int)EmailType.Unknown)
-                                {
-                                    storage[i].MessageType = ms.MessageType;
-                                }
-                            }
-                        }
-                    }
-                    MailStorage temp = storage[i];
-                    string newReply = mailServer.GetResponseForType(ref temp, previousMessagesInThread);
-
-                    tbxDeterminedReply.Text = newReply;
-                    temp.DeterminedReply = newReply;
-
-                    storage[i] = temp;
-
-                    LoadScreen(storage[i], previousMessagesInThread);
-
-                    //Write Storage object to disk
-                    if (storage.Count() > 0)
-                    {
-                        string fullPath = Path.Combine(currentDirectory, storageObjectFile);
-                        helperFunctions.WriteToBinaryFile(fullPath, storage, false);
-                    }
-
-                    break;
-                }
-            }
+            Regen();
         }
         private void btnSaveChanges_Click(object sender, EventArgs e)
         {
@@ -453,6 +411,58 @@ namespace MailServer
             }
 
             return 0;
+        }
+        private void Regen()
+        {
+            for (int i = 0; i < storage.Count(); i++)
+            {
+                if (storage[i].MsgId == workingOnMsg)
+                {
+                    List<MailStorage> previousMessagesInThread = new List<MailStorage>();
+                    foreach (MailStorage ms in storage)
+                    {
+                        if (ms.SubjectLine == storage[i].SubjectLine && ms.MsgId != storage[i].MsgId)
+                        {
+                            int foundCount = 0;
+                            foreach (var v in storage[i].ToAddressList)
+                            {
+                                if (ms.ToAddress.Contains(v.ToString()))
+                                {
+                                    foundCount++;
+                                    break;
+                                }
+                            }
+
+                            if (foundCount > 0)
+                            {
+                                previousMessagesInThread.Add(ms);
+                                if (ms.MessageType != (int)EmailType.Unknown)
+                                {
+                                    storage[i].MessageType = ms.MessageType;
+                                }
+                            }
+                        }
+                    }
+                    MailStorage temp = storage[i];
+                    string newReply = mailServer.GetResponseForType(ref temp, previousMessagesInThread);
+
+                    tbxDeterminedReply.Text = newReply;
+                    temp.DeterminedReply = newReply;
+
+                    storage[i] = temp;
+
+                    LoadScreen(storage[i], previousMessagesInThread);
+
+                    //Write Storage object to disk
+                    if (storage.Count() > 0)
+                    {
+                        string fullPath = Path.Combine(currentDirectory, storageObjectFile);
+                        helperFunctions.WriteToBinaryFile(fullPath, storage, false);
+                    }
+
+                    break;
+                }
+            }
         }
     }
 }

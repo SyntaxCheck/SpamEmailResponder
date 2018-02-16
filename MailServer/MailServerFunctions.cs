@@ -65,12 +65,12 @@ public class MailServerFunctions
             settings.EmailAddress = "PutYourEmailAddressHere@domain.com";
             settings.Password = "PutYouPasswordForTheEmailAddressHere";
             settings.MyName = "YourNameHere";
-            settings.Acquaintance = new List<string>() { "Bob", "Steve", "Bill" };
+            settings.Acquaintance = new List<string>() { "Bob", "Steve", "Bill", "Chad", "Mary", "Margret", "Joe", "Frank", "Cathy" };
             settings.Products = new List<string>() { "Cars", "Boats", "Lava Lamps", "Blinker Fluid" };
             settings.PaymentMethods = new List<string>() { "Cash", "Wire Transfer", "Bank Transfer", "Personal Check", "Bitcoin", "USD", "Euros", "Rupels" };
             settings.FollowupLine = new List<string>() { "Let me know what you need from me.", "What info do you need from me?", "Tell me exactly what you need from me." };
-            settings.Greeting = new List<string>() { "Hello", "Howdy", "Hi" };
-            settings.Locations = new List<string>() { "Florida", "Mexico", "Europe", "China" };
+            settings.Greeting = new List<string>() { "Hello", "Howdy", "Hi", "How are you" };
+            settings.Locations = new List<string>() { "Florida", "Mexico", "Europe", "China", "Montana", "New York" };
             settings.Introduction = new List<string>() { "I do not use the internet much so please be very specific.", "I was born and raised in the midwest. |Environment.NewLine| Herding cattle is what I did day in and day out.", "I have two brothers and a sister, I play professional basket baseball for the Minnesota Wild Twins." };
             settings.IntroductionClosing = new List<string>() { "Maybe this information is useful, maybe it is not", "That was a little it about who I am, maybe you want to share a little about yourself since I shared. I hate being the only one to share, it is always better if we all share. Note: I hate when people use the word 'Share' too often.", "thanks for taking the time to listen to me." };
             settings.IntroductionOpening = new List<string>() { "Before I respond to your email I want to give you a background on who I am.", "Let me tell you about myself before I answer.", "Here is a quick summary of me." };
@@ -89,46 +89,46 @@ public class MailServerFunctions
             settings.QuestionsNotUnderstanding = new List<string>() { "I am very confused, can you try to explain what you want in an easier way?" };
 
             //Opening responses
-            settings.ResponseOpeningAtmCard = new List<string>() { "" };
+            settings.ResponseOpeningAtmCard = new List<string>() { "I am glad to see progress with my ATM card, please send card numbers over email." };
             settings.ResponseOpeningBlankEmailWithAttachment = new List<string>() { "I am not able to open the |attachmentType| attachment you sent, please send the email without an attachment!" };
-            settings.ResponseOpeningConsignmentBox = new List<string>() { "" };
-            settings.ResponseOpeningDeathOrDying = new List<string>() { "" };
-            settings.ResponseOpeningGenericPayment = new List<string>() { "" };
-            settings.ResponseOpeningIlluminati = new List<string>() { "" };
-            settings.ResponseOpeningInvestor = new List<string>() { "" };
-            settings.ResponseOpeningLoanOffer = new List<string>() { "" };
+            settings.ResponseOpeningConsignmentBox = new List<string>() { "I am happy to see progress with my delivery. Please attach a picture in the email so I know you have my box." };
+            settings.ResponseOpeningDeathOrDying = new List<string>() { "This is a very sad situation we have found outselves in. How may I help?" };
+            settings.ResponseOpeningGenericPayment = new List<string>() { "I see you are seeking my payment. Please provide your photo ID or employee badge to show proof you are who you say you are." };
+            settings.ResponseOpeningIlluminati = new List<string>() { "I am glad you have contacted me. I want to join. Please describe to me the exact benefits I will receive." };
+            settings.ResponseOpeningInvestor = new List<string>() { "I am very interested in your opportunity. Tell me more about you or your company." };
+            settings.ResponseOpeningLoanOffer = new List<string>() { "I am interested in the loan offer." };
             settings.ResponseOpeningLottery = new List<string>() { "I am so excited for winning! What do you need from me?", "I need to tell all my friends I won! I need to tell: |GetListOfAcquaintance|" };
-            settings.ResponseOpeningMoneyHack = new List<string>() { "" };
-            settings.ResponseOpeningMoneyStorage = new List<string>() { "" };
-            settings.ResponseOpeningOilAndGas = new List<string>() { "" };
-            settings.ResponseOpeningOilAndGasQuestionList = new List<string> { "" };
+            settings.ResponseOpeningMoneyHack = new List<string>() { "I am interested in knowing more about this money trick." };
+            settings.ResponseOpeningMoneyStorage = new List<string>() { "I can complete the task you have set for me. How promptly will I receive payment?" };
+            settings.ResponseOpeningOilAndGas = new List<string>() { "I am interested in doing business with you." };
+            settings.ResponseOpeningOilAndGasQuestionList = new List<string> { "How many people are in on the operation?", "How will the money be split?", "Who is the leader/boss of the operation?", "Can I get |GetRandomAcquaintance| in on the deal?", "Why have you chosen me for this honor?", "I am worried about the chinese, how will we deal with them?", "Have you done this sort of thing before?" };
             settings.ResponseOpeningPolice = new List<string>() { "I swear I didn't do it! Your looking for |GetRandomAcquaintance| I think they are heading to |GetRandomLocation| with a bunch of stolen |GetRandomProduct| that they bought with fake |GetRandomPaymentMethod|. |GetRandomFollowupLine|" };
-            settings.ResponseOpeningJobOffer = new List<string>() { "" };
-            settings.ResponseOpeningSellingProducts = new List<string>() { "" };
-            settings.ResponseOpeningInformationGathering = new List<string> { "" };
-            settings.ResponseOpeningPhishing = new List<string>() { "" };
+            settings.ResponseOpeningJobOffer = new List<string>() { "I am interested in a job." };
+            settings.ResponseOpeningSellingProducts = new List<string>() { "I am interested in your product. Can you tell me more about it?" };
+            settings.ResponseOpeningInformationGathering = new List<string> { "Glad to receive your email. Can you tell me about yourself?" };
+            settings.ResponseOpeningPhishing = new List<string>() { "The link you sent did not work. I get a 404 error, please help." };
 
             //Continued responses
-            settings.ResponseContinuedAtmCard = new List<string>() { "" };
-            settings.ResponseContinuedBeneficiary = new List<string>() { "" };
-            settings.ResponseContinuedBlankEmailWithAttachment = new List<string>() { "" };
-            settings.ResponseContinuedBuildTrust = new List<string>() { "" };
-            settings.ResponseContinuedConsignmentBox = new List<string>() { "" };
-            settings.ResponseContinuedDeathOrDying = new List<string>() { "" };
-            settings.ResponseContinuedGenericPayment = new List<string>() { "" };
-            settings.ResponseContinuedIlluminati = new List<string>() { "" };
-            settings.ResponseContinuedInheritance = new List<string>() { "" };
-            settings.ResponseContinuedInvestor = new List<string>() { "" };
-            settings.ResponseContinuedLoanOffer = new List<string>() { "" };
-            settings.ResponseContinuedLottery = new List<string>() { "" };
-            settings.ResponseContinuedMoneyHack = new List<string>() { "" };
-            settings.ResponseContinuedMoneyStorage = new List<string>() { "" };
-            settings.ResponseContinuedOilAndGas = new List<string>() { "" };
-            settings.ResponseContinuedPolice = new List<string>() { "" };
-            settings.ResponseContinuedJobOffer = new List<string>() { "" };
-            settings.ResponseContinuedSellingProducts = new List<string>() { "" };
-            settings.ResponseContinuedInformationGathering = new List<string>() { "" };
-            settings.ResponseContinuedPhishing = new List<string>() { "" };
+            settings.ResponseContinuedAtmCard = new List<string>() { "I understand what you are saying but can you just provide the card numbers?", "Thank you again for your patience, I think it would be easiest if you just provided the card numbers over email." };
+            settings.ResponseContinuedBeneficiary = new List<string>() { "You have provided a lot of information, what is it you need from me exactly?", "How can we move forward with this?" };
+            settings.ResponseContinuedBlankEmailWithAttachment = new List<string>() { "My email client cannot support attachment, please paste the contents of the attachment into the email." };
+            settings.ResponseContinuedBuildTrust = new List<string>() { "Tell me what hobbies you have.", "Tell me more about what you do for work." };
+            settings.ResponseContinuedConsignmentBox = new List<string>() { "I really need to see a picture of the consignment box you speak of.", "We cannot proceed until I see a picture of the box.", "I am not sure if you attached the picture but we cannot proceed until I see it." };
+            settings.ResponseContinuedDeathOrDying = new List<string>() { "I wish to help you, how can I help.", "What do you need from me?", "Let me know what you need from me so that I can help." };
+            settings.ResponseContinuedGenericPayment = new List<string>() { "The information you provided does not seem right, can you double check it?" };
+            settings.ResponseContinuedIlluminati = new List<string>() { "Do I get to speak with the grandmaster?", "Can I get |GetRandomAcquaintance| in the club?" };
+            settings.ResponseContinuedInheritance = new List<string>() { "|GetRandomFollowupLine|" };
+            settings.ResponseContinuedInvestor = new List<string>() { "I see the information your provided but how will I make money?", "I get what your saying but what is in it for me?" };
+            settings.ResponseContinuedLoanOffer = new List<string>() { "How low of a rate can you get me?", "Can I get a lower rate?" };
+            settings.ResponseContinuedLottery = new List<string>() { "I am so excited that I won, please send me payment with an ATM card. Just send me the card number over email." };
+            settings.ResponseContinuedMoneyHack = new List<string>() { "This trick seems to good to be true. How do I know this is not a trick on me?", "How can I know what you say is true?" };
+            settings.ResponseContinuedMoneyStorage = new List<string>() { "I will hold onto your money.", "I am willing to help you with this.", "I think we will make a good team." };
+            settings.ResponseContinuedOilAndGas = new List<string>() { "How much volume can we move?", "Will we get in trouble with the government?", "Can I see proof that what you say is true?" };
+            settings.ResponseContinuedPolice = new List<string>() { "I can prove that I am innocent." };
+            settings.ResponseContinuedJobOffer = new List<string>() { "Can I work remotely?", "Is there a promotion path?", "Do I get on the job training?" };
+            settings.ResponseContinuedSellingProducts = new List<string>() { "How much product do you have?", "Can you accept payment in cryptocurrencies?" };
+            settings.ResponseContinuedInformationGathering = new List<string>() { "Do you have a family?", "Have you ever been to |GetRandomLocation|?" };
+            settings.ResponseContinuedPhishing = new List<string>() { "The link you sent isn't working and I really want to resolve this issue today.", "That isn't working for me. Is there another way to fix it?" };
 
             string json = new JavaScriptSerializer().Serialize(settings);
             File.WriteAllText(settingFileLocation, JsonHelper.FormatJson(json));
@@ -1491,6 +1491,7 @@ public class MailServerFunctions
             preProcessedBody.Trim().ToUpper().Contains("MOTHER DIED") ||
             preProcessedBody.Trim().ToUpper().Contains("FATHER DIED") ||
             preProcessedBody.Trim().ToUpper().Contains("DIAGNOSED FOR CANCER") ||
+            preProcessedBody.Trim().ToUpper().Contains("DIAGNOSED CANCER") ||
             preProcessedBody.Trim().ToUpper().Contains("CHILD DIED") || 
             preProcessedBody.Trim().ToUpper().Contains("SON DIED") ||
             preProcessedBody.Trim().ToUpper().Contains("DIED IN") ||
@@ -1508,10 +1509,6 @@ public class MailServerFunctions
             preProcessedBody.Trim().ToUpper().Contains("POSITION IN OUR COMPANY") ||
             preProcessedBody.Trim().ToUpper().Contains("WORK FOR ME") ||
             preProcessedBody.Trim().ToUpper().Contains("WORK HERE") ||
-            preProcessedBody.Trim().ToUpper().Contains("EMPLOYMENT AT") ||
-            preProcessedBody.Trim().ToUpper().Contains("EMPLOYMENT OFFER") ||
-            preProcessedBody.Trim().ToUpper().Contains("EMPLOYMENT WORK") ||
-            preProcessedBody.Trim().ToUpper().Contains("EMPLOYMENT FOR") ||
             preProcessedBody.Trim().ToUpper().Contains("JOB PLACEMENT"))
         {
             type = EmailType.JobOffer;
@@ -1679,6 +1676,10 @@ public class MailServerFunctions
             preProcessedBody.Trim().ToUpper().Contains("VISITED FROM AN UNUSUAL PLACE"))
         {
             type = EmailType.Phishing;
+        }
+        else if (preProcessedBody.Trim().ToUpper().Contains("EMPLOYMENT")) //If no other hits and the email contains employment assume its a job offer
+        {
+            type = EmailType.JobOffer;
         }
         else if (preProcessedBody.Trim().ToUpper().Contains("I HAVE SPECIAL PROPOSAL") ||
             preProcessedBody.Trim().ToUpper().Contains("CAN I ASK YOU A FAVOR") ||
