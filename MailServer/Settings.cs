@@ -2,10 +2,12 @@
 
 public class Settings
 {
-    private string emailAddress, password, myName;
+    private string emailAddress, password, myName, myFakeAddress, pathToMyFakeID, myFakePhoneNumber;
     private List<string> names, greeting, signoff, introduction, introductionOpening, introductionClosing, personDescriptionMale, personDescriptionFemale, memory, followupLine, acquaintance, 
         locations, products, paymentMethods, randomThoughts;
-    private List<string> questionsNotListening, questionsJokingAround, questionsNotAnswering, questionsHowAreYou, questionsNotUnderstanding;
+    private List<string> questionsNotListening, questionsJokingAround, questionsNotAnswering, questionsHowAreYou, 
+        questionsNotUnderstanding, questionsPermission, questionsSpokenLanguage, questionsTrust, questionsWhyNoAnswer,
+        questionsPhoneNumber, questionsAddress, questionsID, questionsAlreadyIncludedID, questionsCannotOpenAttachment;
     private List<string> responseOpeningBlankEmailWithAttachment, responseOpeningLottery, responseOpeningOilAndGas, responseOpeningOilAndGasQuestionList, responseOpeningIlluminati, 
         responseOpeningConsignmentBox, responseOpeningDeathOrDying, responseOpeningLoanOffer, responseOpeningMoneyStorage, responseOpeningAtmCard, responseOpeningPolice, 
         responseOpeningGenericPayment, responseOpeningInvestor, responseOpeningMoneyHack, responseOpeningJobOffer, responseOpeningSellingProducts, responseOpeningFreeMoney, 
@@ -30,6 +32,21 @@ public class Settings
     {
         get { return myName; }
         set { myName = value; }
+    }
+    public string MyFakeAddress
+    {
+        get { return myFakeAddress; }
+        set { myFakeAddress = value; }
+    }
+    public string MyFakePhoneNumber
+    {
+        get { return myFakePhoneNumber; }
+        set { myFakePhoneNumber = value; }
+    }
+    public string PathToMyFakeID
+    {
+        get { return pathToMyFakeID; }
+        set { pathToMyFakeID = value; }
     }
     public List<string> Acquaintance
     {
@@ -325,6 +342,51 @@ public class Settings
     {
         get { return questionsNotUnderstanding; }
         set { questionsNotUnderstanding = value; }
+    }
+    public List<string> QuestionsPermission
+    {
+        get { return questionsPermission; }
+        set { questionsPermission = value; }
+    }
+    public List<string> QuestionsSpokenLanguage
+    {
+        get { return questionsSpokenLanguage; }
+        set { questionsSpokenLanguage = value; }
+    }
+    public List<string> QuestionsTrust
+    {
+        get { return questionsTrust; }
+        set { questionsTrust = value; }
+    }
+    public List<string> QuestionsAddress
+    {
+        get { return questionsAddress; }
+        set { questionsAddress = value; }
+    }
+    public List<string> QuestionsID
+    {
+        get { return questionsID; }
+        set { questionsID = value; }
+    }
+    public List<string> QuestionsAlreadyIncludedID
+    {
+        get { return questionsAlreadyIncludedID; }
+        set { questionsAlreadyIncludedID = value; }
+    }
+    public List<string> QuestionsPhoneNumber
+    {
+        get { return questionsPhoneNumber; }
+        set { questionsPhoneNumber = value; }
+    }
+    public List<string> QuestionsWhyNoAnswer
+    {
+        get { return questionsWhyNoAnswer; }
+        set { questionsWhyNoAnswer = value; }
+    }
+    public List<string> QuestionsCannotOpenAttachment
+    {
+        get { return questionsCannotOpenAttachment; }
+        set { questionsCannotOpenAttachment = value; }
     }
     public List<string> RandomThoughts
     {

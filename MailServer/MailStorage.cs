@@ -10,7 +10,7 @@ public class MailStorage
     private string msgId, emailBodyPlain, emailBodyRich, emailBodyHtml, subjectLine, determinedReply, toAddress, atachmentTypes, personName, attachmentNames;
     private int numberOfAttachments, messageType;
     private DateTime dateReceived;
-    private bool replied;
+    private bool replied, includeID, includedIDinPast;
 
     public DateTime DateReceived
     {
@@ -94,12 +94,22 @@ public class MailStorage
         get { return attachmentNames; }
         set { attachmentNames = value; }
     }
+    public bool IncludeID
+    {
+        get { return includeID; }
+        set { includeID = value; }
+    }
+    public bool IncludedIDinPast
+    {
+        get { return includedIDinPast; }
+        set { includedIDinPast = value; }
+    }
 
     public MailStorage()
     {
         msgId = emailBodyPlain = emailBodyRich = emailBodyHtml = subjectLine = determinedReply = toAddress = atachmentTypes = personName = attachmentNames = String.Empty;
         numberOfAttachments = messageType = 0;
         dateReceived = new DateTime(1900,01,01);
-        replied = false;
+        replied = includeID = includedIDinPast = false;
     }
 }

@@ -10,20 +10,24 @@ namespace MailServer
     public partial class Form1 : Form
     {
         const int SEND_INTERVAL = 240000; //Gmail has a limit of 500 emails per 24 hour period. Set the max output well above that. At 3 minutes we would have a max of 480 per day.
-        string storageObjectFile = "MailStorage.store";
+        const string STORAGE_OBJECT_FILENAME = "MailStorage.store";
         string currentDirectory;
         LoggerInfo loggerInfo;
-        List<MailStorage> storage = new List<MailStorage>();
+        List<MailStorage> storage;
         HelperFunctions helperFunctions;
-        MailServerFunctions mailServer = new MailServerFunctions();
-        string workingOnMsg = String.Empty;
-        string skippedMessages = String.Empty;
+        MailServerFunctions mailServer;
+        string workingOnMsg;
+        string skippedMessages;
         int skippedCount;
 
         public Form1()
         {
+            storage = new List<MailStorage>();
+            mailServer = new MailServerFunctions();
             helperFunctions = new HelperFunctions();
             currentDirectory = Directory.GetCurrentDirectory();
+            workingOnMsg = String.Empty;
+            skippedMessages = String.Empty;
 
             InitializeComponent();
 
@@ -39,8 +43,15 @@ namespace MailServer
                 MessageBox.Show(loggerInfo.ErrorMsg, "Logger Error");
             }
 
+            string validate = mailServer.SettingsFileValidate();
+            if (!String.IsNullOrEmpty(validate))
+            {
+                MessageBox.Show("There was an error with your settings", validate);
+                this.Close();
+            }
+
             //Load in the storage serialized class
-            string fullPath = Path.Combine(currentDirectory, storageObjectFile);
+            string fullPath = Path.Combine(currentDirectory, STORAGE_OBJECT_FILENAME);
             if (File.Exists(fullPath))
             {
                 storage = helperFunctions.ReadFromBinaryFile<List<MailStorage>>(fullPath);
@@ -66,7 +77,7 @@ namespace MailServer
             //Write Storage object to disk
             if (storage.Count() > 0)
             {
-                string fullPath = Path.Combine(currentDirectory, storageObjectFile);
+                string fullPath = Path.Combine(currentDirectory, STORAGE_OBJECT_FILENAME);
                 helperFunctions.WriteToBinaryFile(fullPath, storage, false);
             }
 
@@ -231,7 +242,7 @@ namespace MailServer
                 if (response.Code >= 0)
                 {
                     //Always write the storage object here. When the program is auto sending we want to write after the send even if we didnt retrieve new messages
-                    string fullPath = Path.Combine(currentDirectory, storageObjectFile);
+                    string fullPath = Path.Combine(currentDirectory, STORAGE_OBJECT_FILENAME);
                     helperFunctions.WriteToBinaryFile(fullPath, storage, false);
 
                     int rtn = LoadMessage();
@@ -307,7 +318,7 @@ namespace MailServer
                     //Write Storage object to disk
                     if (storage.Count() > 0)
                     {
-                        string fullPath = Path.Combine(currentDirectory, storageObjectFile);
+                        string fullPath = Path.Combine(currentDirectory, STORAGE_OBJECT_FILENAME);
                         helperFunctions.WriteToBinaryFile(fullPath, storage, false);
                     }
                     break;
@@ -398,7 +409,7 @@ namespace MailServer
             {
                 if (storage[i].MsgId == workingOnMsg)
                 {
-                    response = mailServer.SendSMTP(loggerInfo, storage[i].ToAddress, storage[i].SubjectLine, storage[i].DeterminedReply);
+                    response = mailServer.SendSMTP(loggerInfo, storage[i].ToAddress, storage[i].SubjectLine, storage[i].DeterminedReply, storage[i].IncludeID);
                     if (response.Code >= 0)
                     {
                         storage[i].Replied = true;
@@ -461,7 +472,7 @@ namespace MailServer
                     //Write Storage object to disk
                     if (storage.Count() > 0)
                     {
-                        string fullPath = Path.Combine(currentDirectory, storageObjectFile);
+                        string fullPath = Path.Combine(currentDirectory, STORAGE_OBJECT_FILENAME);
                         helperFunctions.WriteToBinaryFile(fullPath, storage, false);
                     }
 
