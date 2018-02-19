@@ -9,11 +9,11 @@ public class Settings
     private List<string> responseOpeningBlankEmailWithAttachment, responseOpeningLottery, responseOpeningOilAndGas, responseOpeningOilAndGasQuestionList, responseOpeningIlluminati, 
         responseOpeningConsignmentBox, responseOpeningDeathOrDying, responseOpeningLoanOffer, responseOpeningMoneyStorage, responseOpeningAtmCard, responseOpeningPolice, 
         responseOpeningGenericPayment, responseOpeningInvestor, responseOpeningMoneyHack, responseOpeningJobOffer, responseOpeningSellingProducts, responseOpeningFreeMoney, 
-        responseOpeningInformationGathering, responseOpeningPhishing;
+        responseOpeningInformationGathering, responseOpeningPhishing, responseOpeningScamVictim;
     private List<string> responseContinuedBlankEmailWithAttachment, responseContinuedLottery, responseContinuedOilAndGas, responseContinuedIlluminati, responseContinuedConsignmentBox, 
         responseContinuedDeathOrDying, responseContinuedLoanOffer, responseContinuedMoneyStorage, responseContinuedAtmCard, responseContinuedPolice, responseContinuedGenericPayment, 
         responseContinuedInvestor, responseContinuedMoneyHack, responseContinuedBuildTrust, responseContinuedInheritance, responseContinuedBeneficiary, responseContinuedJobOffer, 
-        responseContinuedSellingProducts, responseContinuedFreeMoney, responseContinuedInformationGathering, responseContinuedPhishing;
+        responseContinuedSellingProducts, responseContinuedFreeMoney, responseContinuedInformationGathering, responseContinuedPhishing, responseContinuedScamVictim;
 
     #region Get/sets
     public string EmailAddress
@@ -330,6 +330,16 @@ public class Settings
     {
         get { return randomThoughts; }
         set { randomThoughts = value; }
+    }
+    public List<string> ResponseOpeningScamVictim
+    {
+        get { return responseOpeningScamVictim; }
+        set { responseOpeningScamVictim = value; }
+    }
+    public List<string> ResponseContinuedScamVictim
+    {
+        get { return responseContinuedScamVictim; }
+        set { responseContinuedScamVictim = value; }
     }
     #endregion
 

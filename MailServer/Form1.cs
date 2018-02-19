@@ -184,6 +184,11 @@ namespace MailServer
         {
             //Save data from screen to object
             SaveData();
+
+            btnSendEmail.Enabled = true;
+            btnNext.Enabled = true;
+            btnIgnore.Enabled = true;
+            btnRegenerate.Enabled = true;
         }
         private void dgvPastEmail_CellContentDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
