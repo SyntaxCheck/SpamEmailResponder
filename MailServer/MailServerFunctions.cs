@@ -1398,6 +1398,7 @@ public class MailServerFunctions
     {
         string response = String.Empty;
         string preProcessedBody = body.Replace("\r\n", " ");
+        bool alreadyRepliedNotAnswering = false;
 
         if (preProcessedBody.Trim().ToUpper().Contains("HOW ARE YOU DOING") || 
             preProcessedBody.Trim().ToUpper().Contains("HOW YOU DOING") || 
@@ -1416,13 +1417,53 @@ public class MailServerFunctions
         {
             response += GetRandomQuestionsJokingAround(rand) + " ";
         }
-        if (preProcessedBody.Trim().ToUpper().Contains("NOT ANSWERING ME") ||
-            preProcessedBody.Trim().ToUpper().Contains("IGNORING MY QUESTION") ||
+        if (preProcessedBody.Trim().ToUpper().Contains("NO PICK UP WHEN") ||
+            preProcessedBody.Trim().ToUpper().Contains("DID YOU NOT PICK UP") ||
+            preProcessedBody.Trim().ToUpper().Contains("NOT PICKING UP") ||
+            (
+                (preProcessedBody.Trim().ToUpper().Contains("CALL") || 
+                    preProcessedBody.Trim().ToUpper().Contains("PHONE") || 
+                    preProcessedBody.Trim().ToUpper().Contains("RANG") || 
+                    preProcessedBody.Trim().ToUpper().Contains("RING")
+                ) &&
+                (preProcessedBody.Trim().ToUpper().Contains("NOT ANSWERING ME") ||
+                    preProcessedBody.Trim().ToUpper().Contains("IGNORING MY QUESTION") ||
+                    preProcessedBody.Trim().ToUpper().Contains("NOT ANSWER MY QUESTION") ||
+                    preProcessedBody.Trim().ToUpper().Contains("DID YOU NOT ANSWER") ||
+                    preProcessedBody.Trim().ToUpper().Contains("YOU DID NOT ANSWER") ||
+                    preProcessedBody.Trim().ToUpper().Contains("NO ANSWER WHEN") ||
+                    preProcessedBody.Trim().ToUpper().Contains("YOU DID NO ANSWER") ||
+                    preProcessedBody.Trim().ToUpper().Contains("NOT ANSWER ME")
+                )
+            ) ||
+            preProcessedBody.Trim().ToUpper().Contains("YOU DID NOT PICK UP"))
+        {
+            response += GetRandomQuestionsWhyNoAnswer(rand) + " ";
+        }
+        else if (preProcessedBody.Trim().ToUpper().Contains("NOT ANSWERING ME") ||
             preProcessedBody.Trim().ToUpper().Contains("NOT ANSWER MY QUESTION") ||
+            preProcessedBody.Trim().ToUpper().Contains("DID YOU NOT ANSWER") ||
+            preProcessedBody.Trim().ToUpper().Contains("YOU DID NOT ANSWER") ||
+            preProcessedBody.Trim().ToUpper().Contains("NO ANSWER WHEN") ||
+            preProcessedBody.Trim().ToUpper().Contains("YOU DID NO ANSWER") ||
             preProcessedBody.Trim().ToUpper().Contains("NOT ANSWER ME"))
         {
+            alreadyRepliedNotAnswering = true;
             response += GetRandomQuestionsNotAnswering(rand) + " ";
         }
+        if (!alreadyRepliedNotAnswering)
+        {
+            if (preProcessedBody.Trim().ToUpper().Contains("IGNORING MY QUESTION") ||
+                preProcessedBody.Trim().ToUpper().Contains("NOT RESPONDING MY QUESTION") ||
+                preProcessedBody.Trim().ToUpper().Contains("NO RESPONDING MY QUESTION") ||
+                preProcessedBody.Trim().ToUpper().Contains("NOT RESPONDING QUESTION") ||
+                preProcessedBody.Trim().ToUpper().Contains("NO RESPONDING QUESTION") ||
+                preProcessedBody.Trim().ToUpper().Contains("IGNORING QUESTION"))
+            {
+                response += GetRandomQuestionsNotAnswering(rand) + " ";
+            }
+        }
+
         if (preProcessedBody.Trim().ToUpper().Contains("NOT LISTENING ME") ||
             preProcessedBody.Trim().ToUpper().Contains("LISTEN TO ME") ||
             preProcessedBody.Trim().ToUpper().Contains("PAY ATTENTION TO ME") ||
@@ -1493,18 +1534,6 @@ public class MailServerFunctions
             preProcessedBody.Trim().ToUpper().Contains("HOW CAN I CALL YOU"))
         {
             response += GetRandomQuestionsPhoneNumber(rand) + " ";
-        }
-        if (preProcessedBody.Trim().ToUpper().Contains("DID YOU NOT ANSWER") ||
-            preProcessedBody.Trim().ToUpper().Contains("YOU DID NOT ANSWER") ||
-            preProcessedBody.Trim().ToUpper().Contains("NO ANSWER WHEN") ||
-            preProcessedBody.Trim().ToUpper().Contains("NOT ANSWERING") ||
-            preProcessedBody.Trim().ToUpper().Contains("YOU DID NO ANSWER") ||
-            preProcessedBody.Trim().ToUpper().Contains("NO PICK UP WHEN") ||
-            preProcessedBody.Trim().ToUpper().Contains("DID YOU NOT PICK UP") ||
-            preProcessedBody.Trim().ToUpper().Contains("NOT PICKING UP") ||
-            preProcessedBody.Trim().ToUpper().Contains("YOU DID NOT PICK UP"))
-        {
-            response += GetRandomQuestionsWhyNoAnswer(rand) + " ";
         }
         if (preProcessedBody.Trim().ToUpper().Contains("SEND YOUR ID") ||
             preProcessedBody.Trim().ToUpper().Contains("SEND US YOUR ID") ||
