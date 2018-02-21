@@ -3,9 +3,9 @@ using System.IO;
 using System.Xml;
 using System.Xml.Serialization;
 
-public class HelperFunctions
+public class SerializeHelper
 {
-    public HelperFunctions()
+    public SerializeHelper()
     {
     }
 
@@ -37,7 +37,6 @@ public class HelperFunctions
             //Log exception here
         }
     }
-
 
     /// <summary>
     /// Deserializes an xml file into an object list
@@ -78,6 +77,7 @@ public class HelperFunctions
 
         return objectOut;
     }
+
     /// <summary>
     /// Writes the given object instance to a binary file.
     /// <para>Object type (and all child types) must be decorated with the [Serializable] attribute.</para>

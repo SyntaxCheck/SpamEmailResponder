@@ -9,60 +9,67 @@ namespace MailServer
 {
     public partial class Form1 : Form
     {
-        const int SEND_INTERVAL = 240000; //Gmail has a limit of 500 emails per 24 hour period. Set the max output well above that. At 3 minutes we would have a max of 480 per day.
-        const string STORAGE_OBJECT_FILENAME = "MailStorage.store";
-        string currentDirectory;
-        LoggerInfo loggerInfo;
-        List<MailStorage> storage;
-        HelperFunctions helperFunctions;
-        MailServerFunctions mailServer;
-        string workingOnMsg;
-        string skippedMessages;
-        int skippedCount;
+        private const int SEND_INTERVAL = 240000; //Gmail has a limit of 500 emails per 24 hour period. Set the max output well above that. At 3 minutes we would have a max of 480 per day.
+        private const string STORAGE_OBJECT_FILENAME = "MailStorage.store";
+        private string currentDirectory;
+        private LoggerInfo loggerInfo;
+        private List<MailStorage> storage;
+        private SerializeHelper serializeHelper;
+        private MailServerFunctions mailServer;
+        private string workingOnMsg;
+        private string skippedMessages;
+        private int skippedCount;
 
         public Form1()
         {
-            storage = new List<MailStorage>();
-            mailServer = new MailServerFunctions();
-            helperFunctions = new HelperFunctions();
-            currentDirectory = Directory.GetCurrentDirectory();
-            workingOnMsg = String.Empty;
-            skippedMessages = String.Empty;
-
-            InitializeComponent();
-
-            string path = System.Reflection.Assembly.GetEntryAssembly().Location.ToString();
-
-            loggerInfo = new LoggerInfo();
-            loggerInfo.RootPath = path.Substring(0, path.LastIndexOf('\\'));
-            loggerInfo.FolderName = "LogsFolder";
-            loggerInfo.FileName = "log_" + DateTimeConversion.DateTimeToStringTimestamp(DateTime.Now.Date).Replace('-', ' ').Replace(':', ' ').Replace('.', ' ') + ".txt";
-            Logger.ValidatePath(ref loggerInfo);
-            if (loggerInfo.ErrorFlag)
+            try
             {
-                MessageBox.Show(loggerInfo.ErrorMsg, "Logger Error");
-            }
+                storage = new List<MailStorage>();
+                mailServer = new MailServerFunctions();
+                serializeHelper = new SerializeHelper();
+                currentDirectory = Directory.GetCurrentDirectory();
+                workingOnMsg = String.Empty;
+                skippedMessages = String.Empty;
 
-            string validate = mailServer.SettingsFileValidate();
-            if (!String.IsNullOrEmpty(validate))
+                InitializeComponent();
+
+                string path = System.Reflection.Assembly.GetEntryAssembly().Location.ToString();
+
+                loggerInfo = new LoggerInfo();
+                loggerInfo.RootPath = path.Substring(0, path.LastIndexOf('\\'));
+                loggerInfo.FolderName = "LogsFolder";
+                loggerInfo.FileName = "log_" + DateTimeConversion.DateTimeToStringTimestamp(DateTime.Now.Date).Replace('-', ' ').Replace(':', ' ').Replace('.', ' ') + ".txt";
+                Logger.ValidatePath(ref loggerInfo);
+                if (loggerInfo.ErrorFlag)
+                {
+                    MessageBox.Show(loggerInfo.ErrorMsg, "Logger Error");
+                }
+
+                string validate = mailServer.SettingsFileValidate();
+                if (!String.IsNullOrEmpty(validate))
+                {
+                    MessageBox.Show("There was an error with your settings", validate);
+                    this.Close();
+                }
+
+                //Load in the storage serialized class
+                string fullPath = Path.Combine(currentDirectory, STORAGE_OBJECT_FILENAME);
+                if (File.Exists(fullPath))
+                {
+                    storage = serializeHelper.ReadFromBinaryFile<List<MailStorage>>(fullPath);
+                }
+
+                skippedCount = 0;
+
+                CheckForMessages();
+
+                processTimer.Interval = SEND_INTERVAL;
+                processTimer.Start();
+            }
+            catch (Exception ex)
             {
-                MessageBox.Show("There was an error with your settings", validate);
-                this.Close();
+                MessageBox.Show("Message: " + ex.Message, "Exception on launch");
             }
-
-            //Load in the storage serialized class
-            string fullPath = Path.Combine(currentDirectory, STORAGE_OBJECT_FILENAME);
-            if (File.Exists(fullPath))
-            {
-                storage = helperFunctions.ReadFromBinaryFile<List<MailStorage>>(fullPath);
-            }
-
-            skippedCount = 0;
-
-            CheckForMessages();
-
-            processTimer.Interval = SEND_INTERVAL;
-            processTimer.Start();
         }
 
         private void processTimer_Tick(object sender, EventArgs e)
@@ -78,7 +85,7 @@ namespace MailServer
             if (storage.Count() > 0)
             {
                 string fullPath = Path.Combine(currentDirectory, STORAGE_OBJECT_FILENAME);
-                helperFunctions.WriteToBinaryFile(fullPath, storage, false);
+                serializeHelper.WriteToBinaryFile(fullPath, storage, false);
             }
 
             if (cbxAutoSend.Checked)
@@ -243,7 +250,7 @@ namespace MailServer
                 {
                     //Always write the storage object here. When the program is auto sending we want to write after the send even if we didnt retrieve new messages
                     string fullPath = Path.Combine(currentDirectory, STORAGE_OBJECT_FILENAME);
-                    helperFunctions.WriteToBinaryFile(fullPath, storage, false);
+                    serializeHelper.WriteToBinaryFile(fullPath, storage, false);
 
                     int rtn = LoadMessage();
                     return rtn;
@@ -319,7 +326,7 @@ namespace MailServer
                     if (storage.Count() > 0)
                     {
                         string fullPath = Path.Combine(currentDirectory, STORAGE_OBJECT_FILENAME);
-                        helperFunctions.WriteToBinaryFile(fullPath, storage, false);
+                        serializeHelper.WriteToBinaryFile(fullPath, storage, false);
                     }
                     break;
                 }
@@ -473,7 +480,7 @@ namespace MailServer
                     if (storage.Count() > 0)
                     {
                         string fullPath = Path.Combine(currentDirectory, STORAGE_OBJECT_FILENAME);
-                        helperFunctions.WriteToBinaryFile(fullPath, storage, false);
+                        serializeHelper.WriteToBinaryFile(fullPath, storage, false);
                     }
 
                     break;

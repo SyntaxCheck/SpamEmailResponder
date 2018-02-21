@@ -2,12 +2,13 @@
 
 public class Settings
 {
-    private string emailAddress, password, myName, myFakeAddress, pathToMyFakeID, myFakePhoneNumber;
+    private string emailAddress, password, myName, myFakeAddress, myFakeBirthdate, pathToMyFakeID, myFakePhoneNumber;
     private List<string> names, greeting, signoff, introduction, introductionOpening, introductionClosing, personDescriptionMale, personDescriptionFemale, memory, followupLine, acquaintance, 
         locations, products, paymentMethods, randomThoughts;
     private List<string> questionsNotListening, questionsJokingAround, questionsNotAnswering, questionsHowAreYou, 
         questionsNotUnderstanding, questionsPermission, questionsSpokenLanguage, questionsTrust, questionsWhyNoAnswer,
-        questionsPhoneNumber, questionsAddress, questionsID, questionsAlreadyIncludedID, questionsCannotOpenAttachment;
+        questionsPhoneNumber, questionsAddress, questionsID, questionsAlreadyIncludedID, questionsCannotOpenAttachment,
+        questionsBirthdate, questionsBetterPhoto;
     private List<string> responseOpeningBlankEmailWithAttachment, responseOpeningLottery, responseOpeningOilAndGas, responseOpeningOilAndGasQuestionList, responseOpeningIlluminati, 
         responseOpeningConsignmentBox, responseOpeningDeathOrDying, responseOpeningLoanOffer, responseOpeningMoneyStorage, responseOpeningAtmCard, responseOpeningPolice, 
         responseOpeningGenericPayment, responseOpeningInvestor, responseOpeningMoneyHack, responseOpeningJobOffer, responseOpeningSellingProducts, responseOpeningFreeMoney, 
@@ -42,6 +43,11 @@ public class Settings
     {
         get { return myFakePhoneNumber; }
         set { myFakePhoneNumber = value; }
+    }
+    public string MyFakeBirthdate
+    {
+        get { return myFakeBirthdate; }
+        set { myFakeBirthdate = value; }
     }
     public string PathToMyFakeID
     {
@@ -318,6 +324,16 @@ public class Settings
         get { return responseContinuedPhishing; }
         set { responseContinuedPhishing = value; }
     }
+    public List<string> ResponseOpeningScamVictim
+    {
+        get { return responseOpeningScamVictim; }
+        set { responseOpeningScamVictim = value; }
+    }
+    public List<string> ResponseContinuedScamVictim
+    {
+        get { return responseContinuedScamVictim; }
+        set { responseContinuedScamVictim = value; }
+    }
     public List<string> QuestionsHowAreYou
     {
         get { return questionsHowAreYou; }
@@ -388,20 +404,21 @@ public class Settings
         get { return questionsCannotOpenAttachment; }
         set { questionsCannotOpenAttachment = value; }
     }
+    public List<string> QuestionsBirthdate
+    {
+        get { return questionsBirthdate; }
+        set { questionsBirthdate = value; }
+    }
+    public List<string> QuestionsBetterPhoto
+    {
+        get { return questionsBetterPhoto; }
+        set { questionsBetterPhoto = value; }
+    }
+
     public List<string> RandomThoughts
     {
         get { return randomThoughts; }
         set { randomThoughts = value; }
-    }
-    public List<string> ResponseOpeningScamVictim
-    {
-        get { return responseOpeningScamVictim; }
-        set { responseOpeningScamVictim = value; }
-    }
-    public List<string> ResponseContinuedScamVictim
-    {
-        get { return responseContinuedScamVictim; }
-        set { responseContinuedScamVictim = value; }
     }
     #endregion
 

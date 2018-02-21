@@ -8,6 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Threading;
+using System.Web;
 using System.Web.Script.Serialization;
 
 public class MailServerFunctions
@@ -68,6 +69,7 @@ public class MailServerFunctions
             settings.MyName = "YourNameHere";
             settings.MyFakeAddress = "FakeAddressHere";
             settings.MyFakePhoneNumber = "(000) 000-0000";
+            settings.MyFakeBirthdate = "01-01-1900";
             settings.PathToMyFakeID = @"c:\FakeID\PathHere.png";
             settings.Acquaintance = new List<string>() { "Bob", "Steve", "Bill", "Chad", "Mary", "Margret", "Joe", "Frank", "Cathy" };
             settings.Products = new List<string>() { "Cars", "Boats", "Lava Lamps", "Blinker Fluid" };
@@ -95,6 +97,7 @@ public class MailServerFunctions
             settings.QuestionsSpokenLanguage = new List<string>() { "I speak english." };
             settings.QuestionsTrust = new List<string>() { "You can trust me." };
             settings.QuestionsAddress = new List<string>() { "My Address: |Address|." };
+            settings.QuestionsBirthdate = new List<string>() { "MyName birthdate: |Birthdate|." };
             settings.QuestionsID = new List<string>() { "I included the ID." };
             settings.QuestionsPhoneNumber = new List<string>() { "My Phone Number: |PhoneNumber|." };
             settings.QuestionsNotAnswering = new List<string>() { "I must have missed your call." };
@@ -330,11 +333,19 @@ public class MailServerFunctions
             //        Text = bodyText
             //    };
             //}
+
+            string htmlBodyText = TextToHtml(bodyText);
+
             Multipart alternative = new Multipart("alternative");
             TextPart plainText = null;
             plainText = new TextPart("plain");
             plainText.Text = bodyText;
             alternative.Add(plainText);
+
+            TextPart htmlText = null;
+            htmlText = new TextPart("html");
+            htmlText.Text = htmlBodyText;
+            alternative.Add(htmlText);
 
             Multipart messageBodyMultiPart = new Multipart("mixed");
             messageBodyMultiPart.Add(alternative);
@@ -486,7 +497,9 @@ public class MailServerFunctions
         return response;
     }
 
+    //TODO This class is potentially too large, consider splitting into smaller classes and remove regions
     //Opening Responses
+    #region Opening Responses
     private string GetRandomOpeningResponseTest(Random rand)
     {
         List<string> lst = new List<string>
@@ -686,8 +699,10 @@ public class MailServerFunctions
 
         return greetings + " " + name + ". " + directResponse + SettingPostProcessing(settings.ResponseOpeningScamVictim[rand.Next(0, settings.ResponseOpeningScamVictim.Count())], rand);
     }
+    #endregion
 
     //Unsubscribe
+    #region Unsubscribe
     private string GetRandomResponseForSellingServices(Random rand, string greetings, string name, MailStorage currentMessage)
     {
         List<string> lst = new List<string>
@@ -698,8 +713,10 @@ public class MailServerFunctions
 
         return lst[rand.Next(0, lst.Count())];
     }
+    #endregion
 
     //Continued Responses
+    #region Continued Responses
     private string GetRandomContinuedResponseTest(Random rand)
     {
         List<string> lst = new List<string>
@@ -861,8 +878,10 @@ public class MailServerFunctions
 
         return greetings + " " + name + ". " + directResponse + SettingPostProcessing(settings.ResponseContinuedScamVictim[rand.Next(0, settings.ResponseContinuedScamVictim.Count())], rand);
     }
+    #endregion
 
     //Supporting Random lists
+    #region Random Lists
     private string GetRandomName(Random rand)
     {
         List<string> lst = settings.Names;
@@ -1028,8 +1047,10 @@ public class MailServerFunctions
 
         return lst[rand.Next(0, lst.Count())];
     }
+    #endregion
 
     //Get Random Questions lists
+    #region Random Question lists
     private string GetRandomQuestionsHowAreYou(Random rand)
     {
         List<string> lst = settings.QuestionsHowAreYou;
@@ -1114,8 +1135,22 @@ public class MailServerFunctions
 
         return lst[rand.Next(0, lst.Count())];
     }
+    private string GetRandomQuestionsBirthdate(Random rand)
+    {
+        List<string> lst = settings.QuestionsBirthdate;
+
+        return lst[rand.Next(0, lst.Count())];
+    }
+    private string GetRandomQuestionsBetterPhoto(Random rand)
+    {
+        List<string> lst = settings.QuestionsBetterPhoto;
+
+        return lst[rand.Next(0, lst.Count())];
+    }
+    #endregion
 
     //Helper functions
+    #region Helper functions
     private string SettingPostProcessing(string text, Random rand)
     {
         return SettingPostProcessing(text, new List<string> { }, new List<string> { }, rand);
@@ -1144,6 +1179,8 @@ public class MailServerFunctions
         placeholder.Add("|PhoneNumber|");
         replacement.Add(settings.MyFakePhoneNumber);
         placeholder.Add("|Address|");
+        replacement.Add(settings.MyFakeAddress);
+        placeholder.Add("|Birthdate|");
         replacement.Add(settings.MyFakeAddress);
 
         for (int i = 0; i < placeholder.Count(); i++)
@@ -1235,9 +1272,10 @@ public class MailServerFunctions
         //Sometimes they mistype ">" with "?", we don't need punctuation when parsing so just replace with space
         body.Replace("?", " ");
 
+        char[] trimChars = new char[] { '\r', '\n', '\t' };
         for (int i = lineSplit.Count() - 1; i >= 0; i--)
         {
-            lineSplit[i] = lineSplit[i].Trim().ToUpper();
+            lineSplit[i] = lineSplit[i].Trim(trimChars).Trim().ToUpper();
 
             //First check if there is mailto: text like the following: <mailto:somthing@gmail.com>
             if (lineSplit[i].Contains("MAILTO:"))
@@ -1426,13 +1464,27 @@ public class MailServerFunctions
             preProcessedBody.Trim().ToUpper().Contains("WHERE CAN I SEND") ||
             preProcessedBody.Trim().ToUpper().Contains("MAILING ADDRESS") ||
             preProcessedBody.Trim().ToUpper().Contains("POSTAL ADDRESS") ||
+            preProcessedBody.Trim().ToUpper().Contains("INCLUDE YOUR ADDRESS") ||
             preProcessedBody.Trim().ToUpper().Contains("BILLING ADDRESS") ||
             preProcessedBody.Trim().ToUpper().Contains("GIVE ME YOUR ADDRESS"))
         {
             response += GetRandomQuestionsAddress(rand) + " ";
         }
+        if (preProcessedBody.Trim().ToUpper().Contains("OLD ARE YOU") ||
+            preProcessedBody.Trim().ToUpper().Contains("BIRTHDATE") ||
+            preProcessedBody.Trim().ToUpper().Contains("YOUR AGE") ||
+            preProcessedBody.Trim().ToUpper().Contains("BIRTH YEAR") ||
+            preProcessedBody.Trim().ToUpper().Contains("BIRTH DAY") ||
+            preProcessedBody.Trim().ToUpper().Contains("BIRTH MONTH") ||
+            preProcessedBody.Trim().ToUpper().Contains("BIRTH TIME") ||
+            preProcessedBody.Trim().ToUpper().Contains("YOU AGE"))
+        {
+            response += GetRandomQuestionsBirthdate(rand) + " ";
+        }
         if (preProcessedBody.Trim().ToUpper().Contains("WHAT IS YOUR PHONE") ||
             preProcessedBody.Trim().ToUpper().Contains("WHAT YOUR PHONE") ||
+            preProcessedBody.Trim().ToUpper().Contains("INCLUDE YOUR PHONE") ||
+            preProcessedBody.Trim().ToUpper().Contains("INCLUDE YOUR NUMBER") ||
             preProcessedBody.Trim().ToUpper().Contains("YOUR PHONE NUMBER") ||
             preProcessedBody.Trim().ToUpper().Contains("I NEED YOUR NUMBER") ||
             preProcessedBody.Trim().ToUpper().Contains("WHAT IS YOUR NUMBER") ||
@@ -1509,6 +1561,21 @@ public class MailServerFunctions
             {
                 response += GetRandomQuestionsCannotOpenAttachment(rand) + " ";
             }
+        }
+        if (preProcessedBody.Trim().ToUpper().Contains("BETTER PICTURE") ||
+            preProcessedBody.Trim().ToUpper().Contains("BETTER PHOTO") ||
+            preProcessedBody.Trim().ToUpper().Contains("BETTER IMAGE") ||
+            preProcessedBody.Trim().ToUpper().Contains("QUALITY PICUTRE") ||
+            preProcessedBody.Trim().ToUpper().Contains("QUALITY PHOTO") ||
+            preProcessedBody.Trim().ToUpper().Contains("QUALITY IMAGE") ||
+            preProcessedBody.Trim().ToUpper().Contains("CLOSER PICTURE") ||
+            preProcessedBody.Trim().ToUpper().Contains("CLOSE PICTURE") ||
+            preProcessedBody.Trim().ToUpper().Contains("CLOSER PHOTO") ||
+            preProcessedBody.Trim().ToUpper().Contains("CLOSE PHOTO") ||
+            preProcessedBody.Trim().ToUpper().Contains("CLOSER IMAGE") ||
+            preProcessedBody.Trim().ToUpper().Contains("CLOSE IMAGE"))
+        {
+            response += GetRandomQuestionsBetterPhoto(rand) + " ";
         }
 
         if (!String.IsNullOrEmpty(response))
@@ -1588,6 +1655,11 @@ public class MailServerFunctions
         }
 
         return message;
+    }
+    public string TextToHtml(string text)
+    {
+        text = "<pre>" + HttpUtility.HtmlEncode(text) + "</pre>";
+        return text;
     }
     public string SynonymReplacement(Random rand, string textToReplace)
     {
@@ -1728,6 +1800,13 @@ public class MailServerFunctions
 
             rtn += "The phone number in the settings file is the default value. Use google voice or some other 3rd party app to get a fake phone number.";
         }
+        if (settings.MyFakeBirthdate == "01-01-1900")
+        {
+            if (!String.IsNullOrEmpty(rtn))
+                rtn += Environment.NewLine;
+
+            rtn += "The birthdate in the settings file is the default value.";
+        }
         if (settings.PathToMyFakeID == @"c:\FakeID\PathHere.png")
         {
             if (!String.IsNullOrEmpty(rtn))
@@ -1763,7 +1842,7 @@ public class MailServerFunctions
         }
         else if (((preProcessedBody.Trim() == String.Empty || ((preProcessedBody.Length - currentMessage.SubjectLine.Length) < 40 && 
             (preProcessedBody.ToUpper().Contains("ATTACHMENT") || preProcessedBody.ToUpper().Contains("FILE")))) && currentMessage.NumberOfAttachments > 0) ||
-            ((preProcessedBody.Length - currentMessage.SubjectLine.Length) == 0 && currentMessage.NumberOfAttachments > 0))
+            ((preProcessedBody.Length - currentMessage.SubjectLine.Length) <= 3 && currentMessage.NumberOfAttachments > 0))
         {
             type = EmailType.BlankWithAttachment;
         }
@@ -1829,6 +1908,8 @@ public class MailServerFunctions
         }
         else if (preProcessedBody.Trim().ToUpper().Contains("WEB DESIGN") ||
             preProcessedBody.Trim().ToUpper().Contains("GENERATE HIGHER VISITOR TRAFFIC TO YOUR WEBSITE") ||
+            preProcessedBody.Trim().ToUpper().Contains("WEBSITE DESIGN") ||
+            preProcessedBody.Trim().ToUpper().Contains("WEB SITE DESIGN") ||
             preProcessedBody.Trim().ToUpper().Contains("DEVELOPMENT FIRM"))
         {
             type = EmailType.SellingServices;
@@ -1852,7 +1933,7 @@ public class MailServerFunctions
             preProcessedBody.Trim().ToUpper().Contains("LOTTO DRAW") ||
             preProcessedBody.Trim().ToUpper().Contains("MILLION LOTTO") ||
             preProcessedBody.Trim().ToUpper().Contains("YOUR WINNING PIN") ||
-            (preProcessedBody.Trim().ToUpper().Contains("YOU HAVE BEEN CHOSEN") && (preProcessedBody.Trim().ToUpper().Contains("AWARD") || preProcessedBody.Trim().ToUpper().Contains("PROMO"))) ||
+            ((preProcessedBody.Trim().ToUpper().Contains("YOU HAVE BEEN CHOSEN") || preProcessedBody.Trim().ToUpper().Contains("YOU HAVE BEEN CHOOSEN")) && (preProcessedBody.Trim().ToUpper().Contains("AWARD") || preProcessedBody.Trim().ToUpper().Contains("PROMO"))) ||
             preProcessedBody.Trim().ToUpper().Contains("WINNER"))
         {
             type = EmailType.Lottery;
@@ -1944,6 +2025,7 @@ public class MailServerFunctions
             preProcessedBody.Trim().ToUpper().Contains("INVOLVING THE SUM") ||
             preProcessedBody.Trim().ToUpper().Contains("EFFECT THE SUM") ||
             preProcessedBody.Trim().ToUpper().Contains("TRANSFERRED THE FUND") ||
+            preProcessedBody.Trim().ToUpper().Contains("COMPENSATION AMOUNT") ||
             preProcessedBody.Trim().ToUpper().Contains("INSTANT RICH SUM") ||
             preProcessedBody.Trim().ToUpper().Contains("INVEST THE SUM") ||
             preProcessedBody.Trim().ToUpper().Contains("OFFERED YOU $"))
@@ -1994,6 +2076,7 @@ public class MailServerFunctions
             preProcessedBody.Trim().ToUpper().Contains("CAN YOU WORK WITH ME") ||
             preProcessedBody.Trim().ToUpper().Contains("PARTNER WITH YOU") ||
             preProcessedBody.Trim().ToUpper().Contains("IF WE WORK TOGETHER") ||
+            preProcessedBody.Trim().ToUpper().Contains("LUCRATIVE PROPOSAL") ||
             preProcessedBody.Trim().ToUpper().Contains("BUSINESS THAT COULD BE BROUGHT YOUR WAY"))
         {
             type = EmailType.Investor;
@@ -2106,7 +2189,7 @@ public class MailServerFunctions
             preProcessedBody.Trim().ToUpper().Contains("DISCUSS A IMPORTANT ISSUE") ||
             preProcessedBody.Trim().ToUpper().Contains("DISCUSS A ISSUE") ||
             preProcessedBody.Trim().ToUpper().Contains("DISCUSS AN ISSUE") ||
-            (preProcessedBody.Trim().ToUpper().Contains("HI") || preProcessedBody.Trim().ToUpper().Contains("HELLO")) && preProcessedBody.Length < 10)
+            (preProcessedBody.Trim().ToUpper().Contains("HI") || preProcessedBody.Trim().ToUpper().Contains("HELLO")) && (preProcessedBody.Length - currentMessage.SubjectLine.Length) < 10)
         {
             type = EmailType.InformationGathering;
         }
@@ -2382,4 +2465,5 @@ public class MailServerFunctions
 
         return rtnResponse;
     }
+    #endregion
 }

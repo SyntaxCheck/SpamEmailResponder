@@ -1,4 +1,5 @@
 ﻿using HtmlAgilityPack;
+using System;
 using System.IO;
 
 public class HtmlConvert
@@ -75,7 +76,35 @@ public class HtmlConvert
                 {
                     case "p":
                         // treat paragraphs as crlf
-                        outText.Write("\r\n");
+                        outText.Write(Environment.NewLine);
+                        break;
+                    case "br":
+                        // treat br element as crlf
+                        outText.Write(Environment.NewLine);
+                        break;
+                    case "pre":
+                        // treat pre element as crlf
+                        outText.Write(Environment.NewLine);
+                        break;
+                    case "h1":
+                        // treat h1 element as crlf
+                        outText.Write(Environment.NewLine);
+                        break;
+                    case "h2":
+                        // treat h2 element as crlf
+                        outText.Write(Environment.NewLine);
+                        break;
+                    case "h3":
+                        // treat h3 element as crlf
+                        outText.Write(Environment.NewLine);
+                        break;
+                    case "h4":
+                        // treat h4 element as crlf
+                        outText.Write(Environment.NewLine);
+                        break;
+                    case "h5":
+                        // treat h5 element as crlf
+                        outText.Write(Environment.NewLine);
                         break;
                 }
 
