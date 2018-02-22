@@ -78,7 +78,18 @@ namespace MailServer
             processTimer.Interval = SEND_INTERVAL;
 
             int preCount = storage.Count();
-            response = mailServer.GetMessages(loggerInfo, ref storage);
+            if ((storage.Count(t => !t.Replied) - skippedCount) <= 0)
+            {
+                response = mailServer.GetMessages(loggerInfo, ref storage);
+                if (response.Code < 0)
+                {
+                    tbxOutput.Text = response.AsString();
+                }
+            }
+            else
+            {
+                response = new StandardResponse() { Code = 0 };
+            }
             int postCount = storage.Count();
 
             //Write Storage object to disk

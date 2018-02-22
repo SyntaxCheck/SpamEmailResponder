@@ -462,6 +462,24 @@ public class EmailMessage
             for (int i = 0; i < addrList.Count; i++)
             {
                 System.Net.Mail.MailAddress ma = new System.Net.Mail.MailAddress(addrList[i].ToString());
+
+                if (String.IsNullOrEmpty(addrList[i].ToString().Trim()) || String.IsNullOrEmpty(ma.Address))
+                {
+                    string exc = String.Empty;
+
+                    if (addrList[i].ToString() == null)
+                        exc = "AddrList is null";
+                    else
+                        exc = "AddrList value: " + addrList[i].ToString();
+
+                    if (ma.Address == null)
+                        exc += ". ma.Address is null.";
+                    else
+                        exc += ". ma.Address value: " + ma.Address + ".";
+
+                    throw new Exception("Failed to get address. " + exc);
+                }
+
                 rtn += ma.Address;
                 if (i < (addrList.Count - 1))
                 {
