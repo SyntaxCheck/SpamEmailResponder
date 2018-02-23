@@ -182,91 +182,111 @@ public class MailServerFunctions
 
                 using (var cancel = new CancellationTokenSource())
                 {
-                    client.Timeout = Timeout;
-
-                    Logger.WriteDbg(loggerInfo, "Imap Pre-Connect");
-                    client.Connect("imap.gmail.com", 993, true, cancel.Token);
-
-                    // Note: since we don't have an OAuth2 token, disable
-                    // the XOAUTH2 authentication mechanism.
-                    client.AuthenticationMechanisms.Remove("XOAUTH");
-
-                    Logger.WriteDbg(loggerInfo, "Imap Pre-Authenticate");
-                    client.Authenticate(credentials, cancel.Token);
-
-                    //All IMAP servers have an inbox, consume all messages in inbox
-                    var inbox = client.Inbox;
-                    Logger.WriteDbg(loggerInfo, "Imap Pre-Inbox Open");
-                    inbox.Open(FolderAccess.ReadWrite, cancel.Token);
-
-                    int processAmount = 0;
-
-                    //Hard code to process a single message at a time, this is due to some memory issues we received from a series of emails with large attachments
-                    //TODO Add threading
-                    if (inbox.Count > 0) processAmount = 1;
-
-                    for (int i = 0; i < processAmount; i++)
+                    int failedCount = 0;
+                    while (failedCount < 5)
                     {
-                        //Consume Message into EmailMessage Object
-                        EmailMessage msg = new EmailMessage(loggerInfo, inbox.GetMessage(i, cancel.Token));
-                        messages.Add(msg);
-                        Logger.WriteDbg(loggerInfo, "Imap Get Message " + i.ToString() + ". Email subject: " + msg.Subject);
-                        msg = null;
-                    }
-
-                    //Return if nothing to process
-                    if (messages.Count() > 0)
-                    {
-                        //Pass the message to the handler function to generate a reply
-                        response = HandleMessage(messages[0], ref storage);
-                        if (response.Code < 0)
-                        {
-                            return response;
-                        }
-
-                        //Post Process if we processed successfully
-                        //Create the Process folder if it does not exist
-                        IMailFolder personal = client.GetFolder(client.PersonalNamespaces[0]);
                         try
                         {
-                            Boolean foundFolder = false;
-                            foreach (var folder in personal.GetSubfolders(false))
+                            client.Timeout = Timeout;
+
+                            Logger.WriteDbg(loggerInfo, "Imap Pre-Connect");
+                            client.Connect("imap.gmail.com", 993, true, cancel.Token);
+
+                            // Note: since we don't have an OAuth2 token, disable
+                            // the XOAUTH2 authentication mechanism.
+                            client.AuthenticationMechanisms.Remove("XOAUTH");
+
+                            Logger.WriteDbg(loggerInfo, "Imap Pre-Authenticate");
+                            client.Authenticate(credentials, cancel.Token);
+
+                            //All IMAP servers have an inbox, consume all messages in inbox
+                            var inbox = client.Inbox;
+                            Logger.WriteDbg(loggerInfo, "Imap Pre-Inbox Open");
+                            inbox.Open(FolderAccess.ReadWrite, cancel.Token);
+
+                            int processAmount = 0;
+
+                            //Hard code to process a single message at a time, this is due to some memory issues we received from a series of emails with large attachments
+                            //TODO Add threading
+                            if (inbox.Count > 0) processAmount = 1;
+
+                            for (int i = 0; i < processAmount; i++)
                             {
-                                if (folder.Name == ProcessFolderName)
+                                //Consume Message into EmailMessage Object
+                                EmailMessage msg = new EmailMessage(loggerInfo, inbox.GetMessage(i, cancel.Token));
+                                messages.Add(msg);
+                                Logger.WriteDbg(loggerInfo, "Imap Get Message " + i.ToString() + ". Email subject: " + msg.Subject);
+                                msg = null;
+                            }
+
+                            //Return if nothing to process
+                            if (messages.Count() > 0)
+                            {
+                                //Pass the message to the handler function to generate a reply
+                                response = HandleMessage(messages[0], ref storage);
+                                if (response.Code < 0)
                                 {
-                                    foundFolder = true;
-                                    break;
+                                    return response;
                                 }
-                            }
 
-                            if (!foundFolder)
+                                //Post Process if we processed successfully
+                                //Create the Process folder if it does not exist
+                                IMailFolder personal = client.GetFolder(client.PersonalNamespaces[0]);
+                                try
+                                {
+                                    Boolean foundFolder = false;
+                                    foreach (var folder in personal.GetSubfolders(false))
+                                    {
+                                        if (folder.Name == ProcessFolderName)
+                                        {
+                                            foundFolder = true;
+                                            break;
+                                        }
+                                    }
+
+                                    if (!foundFolder)
+                                    {
+                                        personal.Create(ProcessFolderName, true, cancel.Token);
+                                    }
+                                }
+                                catch (Exception ex)
+                                {
+                                    //Log that we failed to (most likely) create the folder, this is not a hard error as it just causes more processing to be executed during the IMAP polling
+                                    Logger.Write(loggerInfo, "Failed to read folders, or create read folder.", ex);
+                                }
+
+                                //After the mail has been processed then move the mail to the processed folder. This way if we get disconnected the mail would still be in the inbox folder
+                                try
+                                {
+                                    inbox.MoveTo(0, personal.GetSubfolder(ProcessFolderName, cancel.Token));
+                                }
+                                catch (Exception ex2)
+                                {
+                                    response.Code = -1;
+                                    response.Message = "Exception during IMAP Post Processing";
+                                    response.Data = "IIS.SendMessage.POST.HandlerDirect(). Exception - " + ex2.Message + Environment.NewLine + ex2.StackTrace;
+                                }
+
+                                Logger.WriteDbg(loggerInfo, "Imap Close Inbox and disconnect from the mailbox");
+
+                                //Close with Expunge = True since we are moving emails in this function
+                                inbox.Close(true, cancel.Token);
+                                client.Disconnect(true, cancel.Token);
+                            }
+                            break;
+                        }
+                        catch (Exception iex)
+                        {
+                            if (iex.Message.Contains("established connection failed because connected host has failed to respond"))
                             {
-                                personal.Create(ProcessFolderName, true, cancel.Token);
+                                failedCount++;
+                                Thread.Sleep(10000); //Sleep for 10 seconds and wait for the connection issue to clear up
+                            }
+                            else
+                            {
+                                throw iex;
                             }
                         }
-                        catch (Exception ex)
-                        {
-                            //Log that we failed to (most likely) create the folder, this is not a hard error as it just causes more processing to be executed during the IMAP polling
-                            Logger.Write(loggerInfo, "Failed to read folders, or create read folder.", ex);
-                        }
-
-                        //After the mail has been processed then move the mail to the processed folder. This way if we get disconnected the mail would still be in the inbox folder
-                        try
-                        {
-                            inbox.MoveTo(0, personal.GetSubfolder(ProcessFolderName, cancel.Token));
-                        }
-                        catch (Exception ex2)
-                        {
-                            response.Code = -1;
-                            response.Message = "Exception during IMAP Post Processing";
-                            response.Data = "IIS.SendMessage.POST.HandlerDirect(). Exception - " + ex2.Message + Environment.NewLine + ex2.StackTrace;
-                        }
-
-                        Logger.WriteDbg(loggerInfo, "Imap Close Inbox and disconnect from the mailbox");
-
-                        //Close with Expunge = True since we are moving emails in this function
-                        inbox.Close(true, cancel.Token);
-                        client.Disconnect(true, cancel.Token);
                     }
                 }
             }
@@ -377,24 +397,45 @@ public class MailServerFunctions
 
             Logger.WriteDbg(loggerInfo, "Message Built");
 
-            if (timeout > 0)
+            int failedCount = 0;
+            while (failedCount < 5)
             {
-                client.Timeout = timeout;
+                try
+                {
+                    if (timeout > 0)
+                    {
+                        client.Timeout = timeout;
+                    }
+                    client.ServerCertificateValidationCallback = (s, c, h, e) => true;
+                    client.Connect(hostName, port, true);
+                    Logger.WriteDbg(loggerInfo, "Connected to Host");
+
+                    // Note: since we don't have an OAuth2 token, disable
+                    // the XOAUTH2 authentication mechanism.
+                    client.AuthenticationMechanisms.Remove("XOAUTH2");
+
+                    client.Authenticate(username, password);
+                    Logger.WriteDbg(loggerInfo, "Authenticated User");
+                    client.Send(message);
+                    Logger.WriteDbg(loggerInfo, "Sent Message");
+                    client.Disconnect(true);
+                    Logger.WriteDbg(loggerInfo, "Disconnect");
+
+                    break; //If no exception was thrown break the loop
+                }
+                catch (Exception iex)
+                {
+                    if (iex.Message.Contains("established connection failed because connected host has failed to respond"))
+                    {
+                        failedCount++;
+                        Thread.Sleep(10000); //Sleep for 10 seconds and wait for the connection issue to clear up
+                    }
+                    else
+                    {
+                        throw iex;
+                    }
+                }
             }
-            client.ServerCertificateValidationCallback = (s, c, h, e) => true;
-            client.Connect(hostName, port, true);
-            Logger.WriteDbg(loggerInfo, "Connected to Host");
-
-            // Note: since we don't have an OAuth2 token, disable
-            // the XOAUTH2 authentication mechanism.
-            client.AuthenticationMechanisms.Remove("XOAUTH2");
-
-            client.Authenticate(username, password);
-            Logger.WriteDbg(loggerInfo, "Authenticated User");
-            client.Send(message);
-            Logger.WriteDbg(loggerInfo, "Sent Message");
-            client.Disconnect(true);
-            Logger.WriteDbg(loggerInfo, "Disconnect");
         }
         catch (Exception ex)
         {
@@ -2222,6 +2263,9 @@ public class MailServerFunctions
             preProcessedBody.Trim().ToUpper().Contains("CURRENTLY SINGLE GIRL") ||
             preProcessedBody.Trim().ToUpper().Contains("PRESENTLY SINGLE WOMAN") ||
             preProcessedBody.Trim().ToUpper().Contains("CURRENTLY SINGLE WOMAN") ||
+            preProcessedBody.Trim().ToUpper().Contains("BECOME YOUR GOOD FRIEND") ||
+            preProcessedBody.Trim().ToUpper().Contains("BECOME YOU GOOD FRIEND") ||
+            preProcessedBody.Trim().ToUpper().Contains("BECOME A GOOD FRIEND") ||
             preProcessedBody.Trim().ToUpper().Contains("I WANT TO MAKE A NEW AND SPECIAL FRIEND"))
         {
             type = EmailType.BuildTrust;
