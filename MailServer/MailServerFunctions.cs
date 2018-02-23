@@ -16,7 +16,7 @@ public class MailServerFunctions
 {
     private const string settingFileLocation = "Settings.json";
     public const string ProcessFolderName = "AutoProcessedMail";
-    public const int Timeout = 5000;
+    public const int Timeout = 50000; //TODO turn this into a setting
     public string UserName;
     public string Password;
     public string MyName;
