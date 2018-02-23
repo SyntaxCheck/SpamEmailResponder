@@ -2,13 +2,13 @@
 
 public class Settings
 {
-    private string emailAddress, password, myName, myFakeAddress, myFakeBirthdate, pathToMyFakeID, myFakePhoneNumber;
+    private string emailAddress, password, myName, myFakeAddress, myFakeBirthdate, pathToMyFakeID, myFakePhoneNumber, myFakeOccupation, myFakeGender, myFakeMaritalStatus, myFakeCountry;
     private List<string> names, greeting, signoff, introduction, introductionOpening, introductionClosing, personDescriptionMale, personDescriptionFemale, memory, followupLine, acquaintance, 
         locations, products, paymentMethods, randomThoughts;
     private List<string> questionsNotListening, questionsJokingAround, questionsNotAnswering, questionsHowAreYou, 
         questionsNotUnderstanding, questionsPermission, questionsSpokenLanguage, questionsTrust, questionsWhyNoAnswer,
         questionsPhoneNumber, questionsAddress, questionsID, questionsAlreadyIncludedID, questionsCannotOpenAttachment,
-        questionsBirthdate, questionsBetterPhoto;
+        questionsBirthdate, questionsBetterPhoto, questionsOccupation, questionsGender, questionsMaritalStatus, questionsCountry;
     private List<string> responseOpeningBlankEmailWithAttachment, responseOpeningLottery, responseOpeningOilAndGas, responseOpeningOilAndGasQuestionList, responseOpeningIlluminati, 
         responseOpeningConsignmentBox, responseOpeningDeathOrDying, responseOpeningLoanOffer, responseOpeningMoneyStorage, responseOpeningAtmCard, responseOpeningPolice, 
         responseOpeningGenericPayment, responseOpeningInvestor, responseOpeningMoneyHack, responseOpeningJobOffer, responseOpeningSellingProducts, responseOpeningFreeMoney, 
@@ -48,6 +48,26 @@ public class Settings
     {
         get { return myFakeBirthdate; }
         set { myFakeBirthdate = value; }
+    }
+    public string MyFakeCountry
+    {
+        get { return myFakeCountry; }
+        set { myFakeCountry = value; }
+    }
+    public string MyFakeGender
+    {
+        get { return myFakeGender; }
+        set { myFakeGender = value; }
+    }
+    public string MyFakeMaritalStatus
+    {
+        get { return myFakeMaritalStatus; }
+        set { myFakeMaritalStatus = value; }
+    }
+    public string MyFakeOccupation
+    {
+        get { return myFakeOccupation; }
+        set { myFakeOccupation = value; }
     }
     public string PathToMyFakeID
     {
@@ -413,6 +433,26 @@ public class Settings
     {
         get { return questionsBetterPhoto; }
         set { questionsBetterPhoto = value; }
+    }
+    public List<string> QuestionsCountry
+    {
+        get { return questionsCountry; }
+        set { questionsCountry = value; }
+    }
+    public List<string> QuestionsGender
+    {
+        get { return questionsGender; }
+        set { questionsGender = value; }
+    }
+    public List<string> QuestionsMaritalStatus
+    {
+        get { return questionsMaritalStatus; }
+        set { questionsMaritalStatus = value; }
+    }
+    public List<string> QuestionsOccupation
+    {
+        get { return questionsOccupation; }
+        set { questionsOccupation = value; }
     }
 
     public List<string> RandomThoughts

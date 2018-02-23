@@ -64,7 +64,7 @@ namespace MailServer
                 CheckForMessages();
 
                 processTimer.Interval = SEND_INTERVAL;
-                processTimer.Start();
+                //processTimer.Start();
             }
             catch (Exception ex)
             {
@@ -78,17 +78,23 @@ namespace MailServer
             processTimer.Interval = SEND_INTERVAL;
 
             int preCount = storage.Count();
-            if ((storage.Count(t => !t.Replied) - skippedCount) <= 0)
+            //if ((storage.Count(t => !t.Replied) - skippedCount) <= 0)
+            //{
+            //    response = mailServer.GetMessages(loggerInfo, ref storage);
+            //    if (response.Code < 0)
+            //    {
+            //        tbxOutput.Text = response.AsString();
+            //    }
+            //}
+            //else
+            //{
+            //    response = new StandardResponse() { Code = 0 };
+            //    Logger.Write(loggerInfo, "Skipping the check for messages. Unreplied count: " + storage.Count(t => !t.Replied).ToString() + ", Skip count: " + skippedCount.ToString());
+            //}
+            response = mailServer.GetMessages(loggerInfo, ref storage);
+            if (response.Code < 0)
             {
-                response = mailServer.GetMessages(loggerInfo, ref storage);
-                if (response.Code < 0)
-                {
-                    tbxOutput.Text = response.AsString();
-                }
-            }
-            else
-            {
-                response = new StandardResponse() { Code = 0 };
+                tbxOutput.Text = response.AsString();
             }
             int postCount = storage.Count();
 
@@ -387,16 +393,10 @@ namespace MailServer
                 }
             }
 
-            if (!found || cbxAutoSend.Checked)
-            {
-                processTimer.Start();
-                processTimer.Interval = SEND_INTERVAL;
-            }
-
             if (!found)
             {
-                //MessageBox.Show("No new messages", "No messages found");
                 tbxOutput.Text = "No new messages found.";
+                Logger.Write(loggerInfo, "No new messages found");
 
                 return 0;
             }
