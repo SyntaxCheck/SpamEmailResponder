@@ -1309,11 +1309,11 @@ public class MailServerFunctions
                     if (lineSplit[i].ToUpper().StartsWith(regardsSplit[j])) //Name might be following the regards
                     {
                         string[] sentenceSplit = lineSplit[i].Split(new string[] { " " }, StringSplitOptions.RemoveEmptyEntries);
-                        string[] tempRegardsSplit = regardsSplit[i].Split(new string[] { " " }, StringSplitOptions.RemoveEmptyEntries);
+                        string[] tempRegardsSplit = regardsSplit[j].Split(new string[] { " " }, StringSplitOptions.RemoveEmptyEntries);
 
                         if (sentenceSplit.Count() - tempRegardsSplit.Count() < 5)
                         {
-                            rtn = lineSplit[i].Replace(regardsSplit[i], "");
+                            rtn = lineSplit[i].Replace(regardsSplit[j], "");
                         }
                     }
                 }

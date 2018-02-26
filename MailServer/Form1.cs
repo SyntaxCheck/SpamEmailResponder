@@ -110,8 +110,8 @@ namespace MailServer
                 if (response.Code < 0)
                 {
                     tbxOutput.Text = response.AsString();
-                    MessageBox.Show(response.AsString(), "Failed to get new mail");
                     processTimer.Stop();
+                    MessageBox.Show(response.AsString(), "Failed to get new mail");
                 }
                 else
                 {
