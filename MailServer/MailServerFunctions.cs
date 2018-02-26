@@ -1740,7 +1740,16 @@ public class MailServerFunctions
     {
         try
         {
-            if (!email.Contains('@') || email.Trim().Contains(' ') || email.Trim().Contains('?') || email.Trim().ToUpper() == settings.EmailAddress.Trim().ToUpper())
+            if (!email.Contains('@') || email.Trim().Contains(' ') || email.Trim().Contains('?') || 
+                email.Trim().ToUpper() == settings.EmailAddress.Trim().ToUpper() || email.Trim().Contains('/') || 
+                email.Trim().Contains('\\') || email.Trim().Contains("..."))
+                return false;
+
+            int atLocation = email.Trim().IndexOf('@');
+            string name = email.Trim().Substring(0, atLocation);
+            string domain = email.Trim().Substring(atLocation + 1);
+
+            if (name.Trim().Length == 0 || domain.Trim().Length == 0)
                 return false;
 
             var addr = new System.Net.Mail.MailAddress(email.Trim());
@@ -2107,6 +2116,10 @@ public class MailServerFunctions
             preProcessedBody.Trim().ToUpper().Contains("YOUR EMAIL HAVE WON") ||
             preProcessedBody.Trim().ToUpper().Contains("YOUR E-MAIL HAS WON") ||
             preProcessedBody.Trim().ToUpper().Contains("YOUR EMAIL HAS WON") ||
+            preProcessedBody.Trim().ToUpper().Contains("YOUR E-MAIL ADDRESS HAVE WON") ||
+            preProcessedBody.Trim().ToUpper().Contains("YOUR EMAIL ADDRESS HAVE WON") ||
+            preProcessedBody.Trim().ToUpper().Contains("YOUR E-MAIL ADDRESS HAS WON") ||
+            preProcessedBody.Trim().ToUpper().Contains("YOUR EMAIL ADDRESS HAS WON") ||
             preProcessedBody.Trim().ToUpper().Contains("CONGRATULATIONS! YOU WON") ||
             preProcessedBody.Trim().ToUpper().Contains("CONGRATULATIONS. YOU WON") ||
             preProcessedBody.Trim().ToUpper().Contains("CONGRATULATIONS, YOU WON") ||
@@ -2188,6 +2201,7 @@ public class MailServerFunctions
             preProcessedBody.Trim().ToUpper().Contains("YOUR ACCOUNT TO RECEIVE $") ||
             preProcessedBody.Trim().ToUpper().Contains("IS YOUR ACCOUNT ABLE RECEIVE $") ||
             preProcessedBody.Trim().ToUpper().Contains("IS YOUR ACCOUNT ABLE TO RECEIVE $") ||
+            preProcessedBody.Trim().ToUpper().Contains("WORK WITH ME AND CLAIM IT") ||
             (preProcessedBody.Trim().ToUpper().Contains("MOVE OUT OF THE COUNTRY") && preProcessedBody.Trim().ToUpper().Contains("FUNDS")) ||
             preProcessedBody.Trim().ToUpper().Contains("RECEIVE THE MONEY"))
         {
@@ -2266,12 +2280,15 @@ public class MailServerFunctions
             preProcessedBody.Trim().ToUpper().Contains("BECOME YOUR GOOD FRIEND") ||
             preProcessedBody.Trim().ToUpper().Contains("BECOME YOU GOOD FRIEND") ||
             preProcessedBody.Trim().ToUpper().Contains("BECOME A GOOD FRIEND") ||
+            preProcessedBody.Trim().ToUpper().Contains("I WANT US TO BE FRIENDS") ||
+            preProcessedBody.Trim().ToUpper().Contains("I WANT US TO BECOME FRIENDS") ||
             preProcessedBody.Trim().ToUpper().Contains("I WANT TO MAKE A NEW AND SPECIAL FRIEND"))
         {
             type = EmailType.BuildTrust;
         }
         else if (preProcessedBody.Trim().ToUpper().Contains("MANUFACTURER OF LED") ||
             preProcessedBody.Trim().ToUpper().Contains("GOLD FOR SALE") ||
+            preProcessedBody.Trim().ToUpper().Contains("ASPIRIN CREAM") ||
             preProcessedBody.Trim().ToUpper().Contains("OUR PRODUCT LINE") ||
             preProcessedBody.Trim().ToUpper().Contains("LED DISPLAY SUPPLIER"))
         {
@@ -2365,6 +2382,7 @@ public class MailServerFunctions
             preProcessedBody.Trim().ToUpper().Contains("THOSE FUNDS TRANSFERRED") ||
             preProcessedBody.Trim().ToUpper().Contains("HAVE A PACKAGE OF $") ||
             preProcessedBody.Trim().ToUpper().Contains("RELEASE SOME FUNDS") ||
+            preProcessedBody.Trim().ToUpper().Contains("YOUR DELIVERY WORTH") ||
             (preProcessedBody.Trim().ToUpper().Contains("OF THIS MONEY") && preProcessedBody.Trim().ToUpper().Contains("OFFER YOU")) ||
             preProcessedBody.Trim().ToUpper().Contains("I WISH TO BEQUEATH YOU IN SPECIES THIS SU M") || //How can we possibly predict emails with wording/grammer like this?
             (preProcessedBody.Trim().ToUpper().Contains("DONATE $") && preProcessedBody.Trim().ToUpper().Contains("TO YOU")) ||
@@ -2423,6 +2441,8 @@ public class MailServerFunctions
             preProcessedBody.Trim().ToUpper().Contains("KNOW IF YOU RECEIVED MY PREVIOUS MAIL") ||
             preProcessedBody.Trim().ToUpper().Contains("IMPORTANT INFORMATION FOR YOU") ||
             preProcessedBody.Trim().ToUpper().Contains("HEY DEAR") ||
+            preProcessedBody.Trim().ToUpper().Contains("HELLO DEAR") ||
+            preProcessedBody.Trim().ToUpper().Contains("HI DEAR") ||
             preProcessedBody.Trim().ToUpper().Contains("COCA-COLA AWARD") ||
             preProcessedBody.Trim().ToUpper().Contains("SOMETHING URGENT") ||
             preProcessedBody.Trim().ToUpper().Contains("IMPORTANT I LIKE TO SHARE") ||
@@ -2431,6 +2451,7 @@ public class MailServerFunctions
             preProcessedBody.Trim().ToUpper().Contains("THIS IS TO INFORM YOU THAT YOU HAVE BEEN PICKED") ||
             preProcessedBody.Trim().ToUpper().Contains("SOMETHING IMPORTANT FOR YOU") ||
             preProcessedBody.Trim().ToUpper().Contains("SOME THING IMPORTANT FOR YOU") ||
+            preProcessedBody.Trim().ToUpper().Contains("YOU HAVE A GOOD PROFILE") ||
             (preProcessedBody.Trim().ToUpper().Contains("GOOD MORNING AND HOW ARE YOU") && preProcessedBody.Trim().ToUpper().Contains("MY NAME IS") && (preProcessedBody.Length - currentMessage.SubjectLine.Length) < 100) ||
             (preProcessedBody.Trim().ToUpper().Contains("HI") || preProcessedBody.Trim().ToUpper().Contains("HELLO") || preProcessedBody.Trim().ToUpper().Contains("DEAR FRIEND")) && (preProcessedBody.Length - currentMessage.SubjectLine.Length) <= 10)
         {
