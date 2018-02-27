@@ -1900,6 +1900,7 @@ public class MailServerFunctions
         replaceList += "charm,amuse,entertain,satisfy,tickle|";
         replaceList += "start,begin,kickoff|";
         replaceList += "quickly,hastily,hurriedly,immediately,instantly,promptly,rapidly,swiftly|";
+        replaceList += "help,aide,assist|";
 
         string[] groupSplit = replaceList.Split(new char[] { '|' }, StringSplitOptions.RemoveEmptyEntries);
         List<string[]> synonymList = new List<string[]>();
