@@ -29,11 +29,11 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle21 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle22 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle23 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle24 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle25 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
             this.processTimer = new System.Windows.Forms.Timer(this.components);
             this.tbxOutput = new System.Windows.Forms.TextBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
@@ -74,8 +74,11 @@
             this.cbxDebug = new System.Windows.Forms.CheckBox();
             this.lblCountdown = new System.Windows.Forms.Label();
             this.trckBar = new System.Windows.Forms.TrackBar();
-            this.label11 = new System.Windows.Forms.Label();
+            this.lblSendFreq = new System.Windows.Forms.Label();
             this.lblTrackBarValue = new System.Windows.Forms.Label();
+            this.lblTimeTillNextSend = new System.Windows.Forms.Label();
+            this.countdownTimer = new System.Windows.Forms.Timer(this.components);
+            this.lblNext = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvPastEmail)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.trckBar)).BeginInit();
@@ -96,8 +99,10 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.lblNext);
+            this.groupBox1.Controls.Add(this.lblTimeTillNextSend);
             this.groupBox1.Controls.Add(this.lblTrackBarValue);
-            this.groupBox1.Controls.Add(this.label11);
+            this.groupBox1.Controls.Add(this.lblSendFreq);
             this.groupBox1.Controls.Add(this.trckBar);
             this.groupBox1.Controls.Add(this.lblCountdown);
             this.groupBox1.Controls.Add(this.cbxDebug);
@@ -260,8 +265,8 @@
             // 
             // Subject
             // 
-            dataGridViewCellStyle21.Alignment = System.Windows.Forms.DataGridViewContentAlignment.TopLeft;
-            this.Subject.DefaultCellStyle = dataGridViewCellStyle21;
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.TopLeft;
+            this.Subject.DefaultCellStyle = dataGridViewCellStyle1;
             this.Subject.FillWeight = 125F;
             this.Subject.HeaderText = "Subject";
             this.Subject.Name = "Subject";
@@ -270,8 +275,8 @@
             // 
             // FromAddress
             // 
-            dataGridViewCellStyle22.Alignment = System.Windows.Forms.DataGridViewContentAlignment.TopLeft;
-            this.FromAddress.DefaultCellStyle = dataGridViewCellStyle22;
+            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.TopLeft;
+            this.FromAddress.DefaultCellStyle = dataGridViewCellStyle2;
             this.FromAddress.FillWeight = 150F;
             this.FromAddress.HeaderText = "From Address";
             this.FromAddress.Name = "FromAddress";
@@ -280,8 +285,8 @@
             // 
             // Date
             // 
-            dataGridViewCellStyle23.Alignment = System.Windows.Forms.DataGridViewContentAlignment.TopCenter;
-            this.Date.DefaultCellStyle = dataGridViewCellStyle23;
+            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.TopCenter;
+            this.Date.DefaultCellStyle = dataGridViewCellStyle3;
             this.Date.FillWeight = 125F;
             this.Date.HeaderText = "Date";
             this.Date.Name = "Date";
@@ -290,8 +295,8 @@
             // 
             // Body
             // 
-            dataGridViewCellStyle24.Alignment = System.Windows.Forms.DataGridViewContentAlignment.TopLeft;
-            this.Body.DefaultCellStyle = dataGridViewCellStyle24;
+            dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.TopLeft;
+            this.Body.DefaultCellStyle = dataGridViewCellStyle4;
             this.Body.FillWeight = 310F;
             this.Body.HeaderText = "Body";
             this.Body.Name = "Body";
@@ -300,8 +305,8 @@
             // 
             // Response
             // 
-            dataGridViewCellStyle25.Alignment = System.Windows.Forms.DataGridViewContentAlignment.TopLeft;
-            this.Response.DefaultCellStyle = dataGridViewCellStyle25;
+            dataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.TopLeft;
+            this.Response.DefaultCellStyle = dataGridViewCellStyle5;
             this.Response.FillWeight = 350F;
             this.Response.HeaderText = "Response";
             this.Response.Name = "Response";
@@ -521,14 +526,14 @@
             this.trckBar.Value = 240;
             this.trckBar.Scroll += new System.EventHandler(this.trckBar_Scroll);
             // 
-            // label11
+            // lblSendFreq
             // 
-            this.label11.AutoSize = true;
-            this.label11.Location = new System.Drawing.Point(1130, 902);
-            this.label11.Name = "label11";
-            this.label11.Size = new System.Drawing.Size(116, 17);
-            this.label11.TabIndex = 31;
-            this.label11.Text = "Send Frequency:";
+            this.lblSendFreq.AutoSize = true;
+            this.lblSendFreq.Location = new System.Drawing.Point(1130, 902);
+            this.lblSendFreq.Name = "lblSendFreq";
+            this.lblSendFreq.Size = new System.Drawing.Size(116, 17);
+            this.lblSendFreq.TabIndex = 31;
+            this.lblSendFreq.Text = "Send Frequency:";
             // 
             // lblTrackBarValue
             // 
@@ -538,6 +543,30 @@
             this.lblTrackBarValue.Size = new System.Drawing.Size(99, 17);
             this.lblTrackBarValue.TabIndex = 32;
             this.lblTrackBarValue.Text = "(240 seconds)";
+            // 
+            // lblTimeTillNextSend
+            // 
+            this.lblTimeTillNextSend.AutoSize = true;
+            this.lblTimeTillNextSend.ForeColor = System.Drawing.Color.DarkRed;
+            this.lblTimeTillNextSend.Location = new System.Drawing.Point(1012, 928);
+            this.lblTimeTillNextSend.Name = "lblTimeTillNextSend";
+            this.lblTimeTillNextSend.Size = new System.Drawing.Size(32, 17);
+            this.lblTimeTillNextSend.TabIndex = 33;
+            this.lblTimeTillNextSend.Text = "125";
+            // 
+            // countdownTimer
+            // 
+            this.countdownTimer.Interval = 1000;
+            this.countdownTimer.Tick += new System.EventHandler(this.countdownTimer_Tick);
+            // 
+            // lblNext
+            // 
+            this.lblNext.AutoSize = true;
+            this.lblNext.Location = new System.Drawing.Point(976, 928);
+            this.lblNext.Name = "lblNext";
+            this.lblNext.Size = new System.Drawing.Size(40, 17);
+            this.lblNext.TabIndex = 34;
+            this.lblNext.Text = "Next:";
             // 
             // Form1
             // 
@@ -601,8 +630,11 @@
         private System.Windows.Forms.CheckBox cbxDebug;
         private System.Windows.Forms.Label lblCountdown;
         private System.Windows.Forms.TrackBar trckBar;
-        private System.Windows.Forms.Label label11;
+        private System.Windows.Forms.Label lblSendFreq;
         private System.Windows.Forms.Label lblTrackBarValue;
+        private System.Windows.Forms.Label lblTimeTillNextSend;
+        private System.Windows.Forms.Timer countdownTimer;
+        private System.Windows.Forms.Label lblNext;
     }
 }
 

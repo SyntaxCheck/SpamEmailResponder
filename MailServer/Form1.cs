@@ -19,6 +19,7 @@ namespace MailServer
         private string workingOnMsg;
         private string skippedMessages;
         private int skippedCount;
+        private int countdownRemaining;
 
         public Form1()
         {
@@ -74,6 +75,7 @@ namespace MailServer
 
         private void processTimer_Tick(object sender, EventArgs e)
         {
+            bool stopped = false;
             StandardResponse response = new StandardResponse() { Code = 0, Message = String.Empty, Data = String.Empty };
             processTimer.Interval = SEND_INTERVAL;
 
@@ -111,6 +113,7 @@ namespace MailServer
                 {
                     tbxOutput.Text = response.AsString();
                     processTimer.Stop();
+                    stopped = true;
                     MessageBox.Show(response.AsString(), "Failed to get new mail");
                 }
                 else
@@ -163,10 +166,24 @@ namespace MailServer
                 }
                 else if (postCount > preCount)
                 {
+                    stopped = true;
                     processTimer.Stop();
                     LoadMessage();
                 }
             }
+
+            //Start the visual countdown on screen
+            countdownRemaining = trckBar.Value;
+            countdownTimer.Interval = trckBar.Value * 1000;
+            countdownTimer.Start();
+        }
+        private void countdownTimer_Tick(object sender, EventArgs e)
+        {
+            countdownRemaining--;
+            lblTimeTillNextSend.Text = "Next: " + countdownRemaining.ToString();
+
+            if (countdownRemaining <= 0)
+                countdownTimer.Stop();
         }
         private void btnSendEmail_Click(object sender, EventArgs e)
         {
@@ -234,10 +251,20 @@ namespace MailServer
             if (cbxAutoSend.Checked)
             {
                 processTimer.Start();
+                lblNext.Visible = true;
+                lblTimeTillNextSend.Visible = true;
+                lblSendFreq.Visible = true;
+                lblTrackBarValue.Visible = true;
+                trckBar.Visible = true;
             }
             else
             {
                 processTimer.Stop();
+                lblNext.Visible = false;
+                lblTimeTillNextSend.Visible = false;
+                lblSendFreq.Visible = false;
+                lblTrackBarValue.Visible = false;
+                trckBar.Visible = false;
             }
         }
         private void cbxDebug_CheckedChanged(object sender, EventArgs e)
