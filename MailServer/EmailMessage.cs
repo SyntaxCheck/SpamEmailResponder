@@ -388,6 +388,10 @@ public class EmailMessage
             response.Data = ex.Message;
 
             Logger.Write(loggerInfo, "General exception processing attachments. Exception: " + ex.Message + Environment.NewLine + "Stack Trace: " + ex.StackTrace);
+            if (ex.InnerException != null)
+            {
+                Logger.Write(loggerInfo, "  Inner exception. Exception: " + ex.InnerException.Message + Environment.NewLine + "Stack Trace: " + ex.InnerException.StackTrace);
+            }
             returnResponse = response; //Any exceptions during the processing of the attachments stop processing and the error needs to be dealt with
         }
 
@@ -443,29 +447,37 @@ public class EmailMessage
         {
             for (int i = 0; i < addrList.Count; i++)
             {
-                System.Net.Mail.MailAddress ma = new System.Net.Mail.MailAddress(addrList[i].ToString().Replace(";",""));
-
-                if (String.IsNullOrEmpty(addrList[i].ToString().Trim()) || String.IsNullOrEmpty(ma.Address))
+                try
                 {
-                    string exc = String.Empty;
+                    System.Net.Mail.MailAddress ma = new System.Net.Mail.MailAddress(addrList[i].ToString().Replace(";", ""));
 
-                    if (addrList[i].ToString() == null)
-                        exc = "AddrList is null";
-                    else
-                        exc = "AddrList value: " + addrList[i].ToString();
+                    if (String.IsNullOrEmpty(addrList[i].ToString().Trim()) || String.IsNullOrEmpty(ma.Address))
+                    {
+                        string exc = String.Empty;
 
-                    if (ma.Address == null)
-                        exc += ". ma.Address is null.";
-                    else
-                        exc += ". ma.Address value: " + ma.Address + ".";
+                        if (addrList[i].ToString() == null)
+                            exc = "AddrList is null";
+                        else
+                            exc = "AddrList value: " + addrList[i].ToString();
 
-                    throw new Exception("Failed to get address. " + exc);
+                        if (ma.Address == null)
+                            exc += ". ma.Address is null.";
+                        else
+                            exc += ". ma.Address value: " + ma.Address + ".";
+
+                        throw new Exception("Failed to get address. " + exc);
+                    }
+
+                    rtn += ma.Address;
+                    if (i < (addrList.Count - 1))
+                    {
+                        rtn += delimiterChar;
+                    }
                 }
-
-                rtn += ma.Address;
-                if (i < (addrList.Count - 1))
+                catch (Exception ex)
                 {
-                    rtn += delimiterChar;
+                    Exception newEx = new Exception("Orig: " + ex.Message + Environment.NewLine + "Address: " + addrList[i].ToString(), ex);
+                    throw newEx;
                 }
             }
         }

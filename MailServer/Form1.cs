@@ -60,6 +60,7 @@ namespace MailServer
                 }
 
                 skippedCount = 0;
+                skippedCount = 0;
 
                 CheckForMessages();
 
