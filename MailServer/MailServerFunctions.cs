@@ -224,6 +224,13 @@ public class MailServerFunctions
                             if (messages.Count() > 0)
                             {
                                 //Pass the message to the handler function to generate a reply
+                                if (messages[0].ProcessingNotes.ToUpper().Contains("FAILED"))
+                                {
+                                    response.Code = -1;
+                                    response.Message = messages[0].ProcessingNotes;
+                                    return response;
+                                }
+
                                 response = HandleMessage(messages[0], ref storage);
                                 if (response.Code < 0)
                                 {
