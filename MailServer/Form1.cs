@@ -245,6 +245,7 @@ namespace MailServer
         private int CheckForMessages()
         {
             StandardResponse response = new StandardResponse() { Code = 0, Message = String.Empty, Data = String.Empty };
+            int rtn = 0;
 
             //Check for new messages
             if ((storage.Count(t => !t.Replied) - skippedCount) <= 0)
@@ -269,12 +270,13 @@ namespace MailServer
                     string fullPath = Path.Combine(currentDirectory, STORAGE_OBJECT_FILENAME);
                     serializeHelper.WriteToBinaryFile(fullPath, storage, false);
 
-                    int rtn = LoadMessage();
-                    return rtn;
+                    rtn = LoadMessage();
                 }
             }
 
-            return 0;
+            SetMessageCountLabel();
+
+            return rtn;
         }
         private void ClearScreen()
         {
@@ -497,6 +499,10 @@ namespace MailServer
                     break;
                 }
             }
+        }
+        private void SetMessageCountLabel()
+        {
+            lblMessageInfo.Text = "Sent Messages: " + storage.Count(t => t.Replied).ToString("#,###") + "   Skipped Messages: " + skippedCount.ToString("#,###") + "   Pending Messages: " + storage.Count(t => !t.Replied).ToString("#,###") + "   Unprocessed Messages: " + mailServer.LastInboxCount.ToString("#,###");
         }
     }
 }

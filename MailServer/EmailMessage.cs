@@ -305,7 +305,7 @@ public class EmailMessage
             messageId = message.MessageId == null ? String.Empty : message.MessageId;
             resentMessageId = message.ResentMessageId == null ? String.Empty : message.ResentMessageId;
             subject = message.Subject == null ? String.Empty : message.Subject;
-            headers.AddRange(message.Headers.Where(x => x.Field.ToUpper().Contains("X-"))); //Check for any custom X- headers, might be used by some spam engines to denote originator. Need more investigation
+            //headers.AddRange(message.Headers.Where(x => x.Field.ToUpper().Contains("X-"))); //Check for any custom X- headers, might be used by some spam engines to denote originator. Need more investigation
 
             PopulateAddressStrings();
 
@@ -375,7 +375,7 @@ public class EmailMessage
                     response.Message = "Failed to read attachment";
                     response.Data = ex.Message;
 
-                    Logger.WriteDbg(loggerInfo, "General exception reading attachment. Filename during error: " + m.FileName + ", Exception: " + ex.Message + Environment.NewLine + "Stack Trace: " + ex.StackTrace);
+                    Logger.Write(loggerInfo, "General exception reading attachment. Filename during error: " + m.FileName + ", Exception: " + ex.Message + Environment.NewLine + "Stack Trace: " + ex.StackTrace);
                     returnResponse = response; //Any exceptions during the processing of the attachments stop processing and the error needs to be dealt with
                     break;
                 }
@@ -387,7 +387,7 @@ public class EmailMessage
             response.Message = "Failed to process attachments";
             response.Data = ex.Message;
 
-            Logger.WriteDbg(loggerInfo, "General exception processing attachments. Exception: " + ex.Message + Environment.NewLine + "Stack Trace: " + ex.StackTrace);
+            Logger.Write(loggerInfo, "General exception processing attachments. Exception: " + ex.Message + Environment.NewLine + "Stack Trace: " + ex.StackTrace);
             returnResponse = response; //Any exceptions during the processing of the attachments stop processing and the error needs to be dealt with
         }
 
@@ -443,7 +443,7 @@ public class EmailMessage
         {
             for (int i = 0; i < addrList.Count; i++)
             {
-                System.Net.Mail.MailAddress ma = new System.Net.Mail.MailAddress(addrList[i].ToString());
+                System.Net.Mail.MailAddress ma = new System.Net.Mail.MailAddress(addrList[i].ToString().Replace(";",""));
 
                 if (String.IsNullOrEmpty(addrList[i].ToString().Trim()) || String.IsNullOrEmpty(ma.Address))
                 {

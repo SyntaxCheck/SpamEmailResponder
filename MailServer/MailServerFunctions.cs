@@ -17,6 +17,7 @@ public class MailServerFunctions
     private const string settingFileLocation = "Settings.json";
     public const string ProcessFolderName = "AutoProcessedMail";
     public const int Timeout = 50000; //TODO turn this into a setting
+    public int LastInboxCount;
     public string UserName;
     public string Password;
     public string MyName;
@@ -54,6 +55,7 @@ public class MailServerFunctions
 
     public MailServerFunctions()
     {
+        LastInboxCount = 0;
         settings = new Settings();
         if (File.Exists(settingFileLocation))
         {
@@ -209,6 +211,7 @@ public class MailServerFunctions
 
                             //Hard code to process a single message at a time, this is due to some memory issues we received from a series of emails with large attachments
                             //TODO Add threading
+                            LastInboxCount = inbox.Count;
                             if (inbox.Count > 0) processAmount = 1;
 
                             for (int i = 0; i < processAmount; i++)
