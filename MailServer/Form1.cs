@@ -60,7 +60,6 @@ namespace MailServer
                 }
 
                 skippedCount = 0;
-                skippedCount = 0;
 
                 CheckForMessages();
 
@@ -503,7 +502,7 @@ namespace MailServer
         }
         private void SetMessageCountLabel()
         {
-            lblMessageInfo.Text = "Sent Messages: " + storage.Count(t => t.Replied).ToString("#,###") + "   Skipped Messages: " + skippedCount.ToString("#,###") + "   Pending Messages: " + storage.Count(t => !t.Replied).ToString("#,###") + "   Unprocessed Messages: " + mailServer.LastInboxCount.ToString("#,###");
+            lblMessageInfo.Text = "Sent Messages: " + storage.Count(t => t.Replied).ToString("#,##0") + "   Skipped Messages: " + skippedCount.ToString("#,##0") + "   Pending Messages: " + storage.Count(t => !t.Replied).ToString("#,##0") + "   Unprocessed Messages: " + mailServer.LastInboxCount.ToString("#,##0");
         }
     }
 }

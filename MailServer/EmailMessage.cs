@@ -449,29 +449,32 @@ public class EmailMessage
             {
                 try
                 {
-                    System.Net.Mail.MailAddress ma = new System.Net.Mail.MailAddress(addrList[i].ToString().Replace(";", ""));
-
-                    if (String.IsNullOrEmpty(addrList[i].ToString().Trim()) || String.IsNullOrEmpty(ma.Address))
+                    if (addrList[i].ToString().Contains('@'))
                     {
-                        string exc = String.Empty;
+                        System.Net.Mail.MailAddress ma = new System.Net.Mail.MailAddress(addrList[i].ToString().Replace(";", ""));
 
-                        if (addrList[i].ToString() == null)
-                            exc = "AddrList is null";
-                        else
-                            exc = "AddrList value: " + addrList[i].ToString();
+                        if (String.IsNullOrEmpty(addrList[i].ToString().Trim()) || String.IsNullOrEmpty(ma.Address))
+                        {
+                            string exc = String.Empty;
 
-                        if (ma.Address == null)
-                            exc += ". ma.Address is null.";
-                        else
-                            exc += ". ma.Address value: " + ma.Address + ".";
+                            if (addrList[i].ToString() == null)
+                                exc = "AddrList is null";
+                            else
+                                exc = "AddrList value: " + addrList[i].ToString();
 
-                        throw new Exception("Failed to get address. " + exc);
-                    }
+                            if (ma.Address == null)
+                                exc += ". ma.Address is null.";
+                            else
+                                exc += ". ma.Address value: " + ma.Address + ".";
 
-                    rtn += ma.Address;
-                    if (i < (addrList.Count - 1))
-                    {
-                        rtn += delimiterChar;
+                            throw new Exception("Failed to get address. " + exc);
+                        }
+
+                        rtn += ma.Address;
+                        if (i < (addrList.Count - 1))
+                        {
+                            rtn += delimiterChar;
+                        }
                     }
                 }
                 catch (Exception ex)
