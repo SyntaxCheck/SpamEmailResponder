@@ -240,6 +240,15 @@ namespace MailServer
                 processTimer.Stop();
             }
         }
+        private void cbxDebug_CheckedChanged(object sender, EventArgs e)
+        {
+            loggerInfo.DebugActive = cbxDebug.Checked;
+        }
+        private void trckBar_Scroll(object sender, EventArgs e)
+        {
+            processTimer.Interval = trckBar.Value * 1000;
+            lblTrackBarValue.Text = trckBar.Value.ToString();
+        }
 
         //Private functions
         private int CheckForMessages()
@@ -502,6 +511,66 @@ namespace MailServer
         }
         private void SetMessageCountLabel()
         {
+            if (mailServer.InboxCountHistory.Count() > 0)
+            {
+                //TODO factor in the rate we get new messages
+                //int avg = 0;
+                //int sum = 0;
+
+                //for (int i = 0; i < mailServer.InboxCountHistory.Count(); i++)
+                //{
+                //    sum += mailServer.InboxCountHistory[i];
+                //}
+
+                //avg = sum / mailServer.InboxCountHistory.Count();
+
+                //for (int i = mailServer.InboxCountHistory.Count() - 1; i >= 0; i--)
+                //{
+                //    //Remove any 0 counts reported when we have a large average size, these were probably the result of server errors incorrectly reporting the count
+                //    if (mailServer.InboxCountHistory[i] == 0 && avg > 50)
+                //    {
+                //        mailServer.InboxCountHistory.RemoveAt(i);
+                //    }
+                //    else
+                //    {
+
+                //    }
+                //}
+
+                int secondsBetweenSends = trckBar.Value;
+                int totalTimeNeeded = mailServer.LastInboxCount * secondsBetweenSends;
+                TimeSpan ts = TimeSpan.FromSeconds(totalTimeNeeded);
+                lblCountdown.Text = "Estimated Time till Mailbox Cleared: ";
+                if (ts.Days > 0)
+                {
+                    if(ts.Days > 1)
+                        lblCountdown.Text += ts.Days.ToString() + " days ";
+                    else
+                        lblCountdown.Text += ts.Days.ToString() + " day ";
+                }
+                if (ts.Days > 0 || ts.Hours > 0)
+                {
+                    if (ts.Hours > 1)
+                        lblCountdown.Text += ts.Hours.ToString() + " hours ";
+                    else
+                        lblCountdown.Text += ts.Hours.ToString() + " hour ";
+                }
+                if (ts.Days > 0 || ts.Hours > 0 || ts.Minutes > 0)
+                {
+                    if (ts.Minutes > 1)
+                        lblCountdown.Text += ts.Minutes.ToString() + " minutes ";
+                    else
+                        lblCountdown.Text += ts.Minutes.ToString() + " minute ";
+                }
+                if (ts.Days > 0 || ts.Hours > 0 || ts.Minutes > 0 || ts.Seconds > 0)
+                {
+                    if (ts.Seconds > 1)
+                        lblCountdown.Text += ts.Seconds.ToString() + " seconds ";
+                    else
+                        lblCountdown.Text += ts.Seconds.ToString() + " second ";
+                }
+            }
+
             lblMessageInfo.Text = "Sent Messages: " + storage.Count(t => t.Replied).ToString("#,##0") + "   Skipped Messages: " + skippedCount.ToString("#,##0") + "   Pending Messages: " + storage.Count(t => !t.Replied).ToString("#,##0") + "   Unprocessed Messages: " + mailServer.LastInboxCount.ToString("#,##0");
         }
     }
