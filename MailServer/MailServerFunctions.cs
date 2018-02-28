@@ -2744,6 +2744,17 @@ public class MailServerFunctions
             preProcessedBody.Trim().ToUpper().Contains("GUTEN TAG") ||
             preProcessedBody.Trim().ToUpper().Contains("HOLA") ||
             preProcessedBody.Trim().ToUpper().Contains("BONJOUR") ||
+            preProcessedBody.Trim().ToUpper().Contains("CRÉDIT") ||
+            preProcessedBody.Trim().ToUpper().Contains("SOCIÉTÉS") ||
+            preProcessedBody.Trim().ToUpper().Contains("CHARGÉ") ||
+            preProcessedBody.Trim().ToUpper().Contains("À ÉTÉ") ||
+            preProcessedBody.Trim().ToUpper().Contains("ÊTES") ||
+            preProcessedBody.Trim().ToUpper().Contains("AFIN QUE VOS") ||
+            preProcessedBody.Trim().ToUpper().Contains("CAS OU VOTRE") ||
+            preProcessedBody.Trim().ToUpper().Contains("DE VOS RÊVES") ||
+            preProcessedBody.Trim().ToUpper().Contains("BUENOS DÍAS") ||
+            preProcessedBody.Trim().ToUpper().Contains("DE LUTTER") ||
+            preProcessedBody.Trim().ToUpper().Contains("QUI NOUS") ||
             preProcessedBody.Trim().ToUpper().Contains("ß"))
         {
             type = EmailType.ForeignLanguage;
