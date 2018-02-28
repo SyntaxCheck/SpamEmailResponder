@@ -12,11 +12,12 @@ public class Settings
     private List<string> responseOpeningBlankEmailWithAttachment, responseOpeningLottery, responseOpeningOilAndGas, responseOpeningOilAndGasQuestionList, responseOpeningIlluminati, 
         responseOpeningConsignmentBox, responseOpeningDeathOrDying, responseOpeningLoanOffer, responseOpeningMoneyStorage, responseOpeningAtmCard, responseOpeningPolice, 
         responseOpeningGenericPayment, responseOpeningInvestor, responseOpeningMoneyHack, responseOpeningJobOffer, responseOpeningSellingProducts, responseOpeningFreeMoney, 
-        responseOpeningInformationGathering, responseOpeningPhishing, responseOpeningScamVictim;
+        responseOpeningInformationGathering, responseOpeningPhishing, responseOpeningScamVictim, responseOpeningForeignLanguage, responseOpeningGenericAdvertisement;
     private List<string> responseContinuedBlankEmailWithAttachment, responseContinuedLottery, responseContinuedOilAndGas, responseContinuedIlluminati, responseContinuedConsignmentBox, 
         responseContinuedDeathOrDying, responseContinuedLoanOffer, responseContinuedMoneyStorage, responseContinuedAtmCard, responseContinuedPolice, responseContinuedGenericPayment, 
         responseContinuedInvestor, responseContinuedMoneyHack, responseContinuedBuildTrust, responseContinuedInheritance, responseContinuedBeneficiary, responseContinuedJobOffer, 
-        responseContinuedSellingProducts, responseContinuedFreeMoney, responseContinuedInformationGathering, responseContinuedPhishing, responseContinuedScamVictim;
+        responseContinuedSellingProducts, responseContinuedFreeMoney, responseContinuedInformationGathering, responseContinuedPhishing, responseContinuedScamVictim,
+        responseContinuedForeignLanguage, responseContinuedGenericAdvertisement;
 
     #region Get/sets
     public string EmailAddress
@@ -353,6 +354,26 @@ public class Settings
     {
         get { return responseContinuedScamVictim; }
         set { responseContinuedScamVictim = value; }
+    }
+    public List<string> ResponseContinuedForeignLanguage
+    {
+        get { return responseContinuedForeignLanguage; }
+        set { responseContinuedForeignLanguage = value; }
+    }
+    public List<string> ResponseContinuedGenericAdvertisement
+    {
+        get { return responseContinuedGenericAdvertisement; }
+        set { responseContinuedGenericAdvertisement = value; }
+    }
+    public List<string> ResponseOpeningForeignLanguage
+    {
+        get { return responseOpeningForeignLanguage; }
+        set { responseOpeningForeignLanguage = value; }
+    }
+    public List<string> ResponseOpeningGenericAdvertisement
+    {
+        get { return responseOpeningGenericAdvertisement; }
+        set { responseOpeningGenericAdvertisement = value; }
     }
     public List<string> QuestionsHowAreYou
     {

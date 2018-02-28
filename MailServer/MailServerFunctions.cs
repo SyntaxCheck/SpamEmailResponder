@@ -53,7 +53,9 @@ public class MailServerFunctions
         FreeMoney = 22,
         InformationGathering = 23,
         Phishing = 24,
-        ScamVictim = 25
+        ScamVictim = 25,
+        ForeignLanguage = 26,
+        GenericAdvertisement = 27
     };
 
     public MailServerFunctions()
@@ -140,6 +142,8 @@ public class MailServerFunctions
             settings.ResponseOpeningSellingProducts = new List<string>() { "I am interested in your product. Can you tell me more about it?" };
             settings.ResponseOpeningInformationGathering = new List<string> { "Glad to receive your email. Can you tell me about yourself?" };
             settings.ResponseOpeningPhishing = new List<string>() { "The link you sent did not work. I get a 404 error, please help." };
+            settings.ResponseContinuedForeignLanguage = new List<string>() { "I only speak english.", "Can you resend the email in english?" };
+            settings.ResponseContinuedGenericAdvertisement = new List<string>() { "I am very interested. Can you tell me why I would go with you over your competitor?", "Can you tell me more about it?" };
 
             //Continued responses
             settings.ResponseContinuedAtmCard = new List<string>() { "I understand what you are saying but can you just provide the card numbers?", "Thank you again for your patience, I think it would be easiest if you just provided the card numbers over email." };
@@ -162,6 +166,8 @@ public class MailServerFunctions
             settings.ResponseContinuedSellingProducts = new List<string>() { "How much product do you have?", "Can you accept payment in cryptocurrencies?" };
             settings.ResponseContinuedInformationGathering = new List<string>() { "Do you have a family?", "Have you ever been to |GetRandomLocation|?" };
             settings.ResponseContinuedPhishing = new List<string>() { "The link you sent isn't working and I really want to resolve this issue today.", "That isn't working for me. Is there another way to fix it?" };
+            settings.ResponseContinuedForeignLanguage = new List<string>() { "Please send the english version.", "I only speak english." };
+            settings.ResponseContinuedGenericAdvertisement = new List<string>() { "I would be happy to hear any additional information you have.", "Interesting, do you have more information?" };
 
             string json = new JavaScriptSerializer().Serialize(settings);
             File.WriteAllText(settingFileLocation, JsonHelper.FormatJson(json));
@@ -773,6 +779,18 @@ public class MailServerFunctions
 
         return greetings + " " + name + ". " + directResponse + SettingPostProcessing(settings.ResponseOpeningScamVictim[rand.Next(0, settings.ResponseOpeningScamVictim.Count())], rand);
     }
+    private string GetRandomOpeningResponseForForeignLanguage(Random rand, string greetings, string name, MailStorage currentMessage)
+    {
+        string directResponse = HandleDirectQuestions(MakeEmailEasierToRead(currentMessage.EmailBodyPlain), ref currentMessage, rand);
+
+        return greetings + " " + name + ". " + directResponse + SettingPostProcessing(settings.ResponseOpeningForeignLanguage[rand.Next(0, settings.ResponseOpeningForeignLanguage.Count())], rand);
+    }
+    private string GetRandomOpeningResponseForGenericAdvertisement(Random rand, string greetings, string name, MailStorage currentMessage)
+    {
+        string directResponse = HandleDirectQuestions(MakeEmailEasierToRead(currentMessage.EmailBodyPlain), ref currentMessage, rand);
+
+        return greetings + " " + name + ". " + directResponse + SettingPostProcessing(settings.ResponseOpeningGenericAdvertisement[rand.Next(0, settings.ResponseOpeningGenericAdvertisement.Count())], rand);
+    }
     #endregion
 
     //Unsubscribe
@@ -951,6 +969,18 @@ public class MailServerFunctions
         string directResponse = HandleDirectQuestions(MakeEmailEasierToRead(currentMessage.EmailBodyPlain), ref currentMessage, rand);
 
         return greetings + " " + name + ". " + directResponse + SettingPostProcessing(settings.ResponseContinuedScamVictim[rand.Next(0, settings.ResponseContinuedScamVictim.Count())], rand);
+    }
+    private string GetRandomContinuedResponseForForeignLanguage(Random rand, string greetings, string name, MailStorage currentMessage)
+    {
+        string directResponse = HandleDirectQuestions(MakeEmailEasierToRead(currentMessage.EmailBodyPlain), ref currentMessage, rand);
+
+        return greetings + " " + name + ". " + directResponse + SettingPostProcessing(settings.ResponseContinuedForeignLanguage[rand.Next(0, settings.ResponseContinuedForeignLanguage.Count())], rand);
+    }
+    private string GetRandomContinuedResponseForGenericAdvertisement(Random rand, string greetings, string name, MailStorage currentMessage)
+    {
+        string directResponse = HandleDirectQuestions(MakeEmailEasierToRead(currentMessage.EmailBodyPlain), ref currentMessage, rand);
+
+        return greetings + " " + name + ". " + directResponse + SettingPostProcessing(settings.ResponseContinuedGenericAdvertisement[rand.Next(0, settings.ResponseContinuedGenericAdvertisement.Count())], rand);
     }
     #endregion
 
@@ -2677,7 +2707,46 @@ public class MailServerFunctions
         }
         else if (preProcessedBody.Trim().ToUpper().Contains("CONSIDER TRADING WITH"))
         {
-            //type = EmailType.ConsignmentBox;
+            type = EmailType.GenericAdvertisement;
+        }
+        else if (preProcessedBody.Trim().ToUpper().Contains("ı") ||
+            preProcessedBody.Trim().ToUpper().Contains("Ӳ") ||
+            preProcessedBody.Trim().ToUpper().Contains("ӳ") ||
+            preProcessedBody.Trim().ToUpper().Contains("Ő") ||
+            preProcessedBody.Trim().ToUpper().Contains("ő") ||
+            preProcessedBody.Trim().ToUpper().Contains("Ű") ||
+            preProcessedBody.Trim().ToUpper().Contains("ű") ||
+            preProcessedBody.Trim().ToUpper().Contains("eeuw") ||
+            preProcessedBody.Trim().ToUpper().Contains("ieuw") ||
+            preProcessedBody.Trim().ToUpper().Contains("tsch") ||
+            preProcessedBody.Trim().ToUpper().Contains("dsch") ||
+            preProcessedBody.Trim().ToUpper().Contains("NAY HOH") ||
+            preProcessedBody.Trim().ToUpper().Contains("NI HAU") ||
+            preProcessedBody.Trim().ToUpper().Contains("HABARI") ||
+            preProcessedBody.Trim().ToUpper().Contains("JAMBO") ||
+            preProcessedBody.Trim().ToUpper().Contains("SANNU") ||
+            preProcessedBody.Trim().ToUpper().Contains("SALAMA ALEIKUM") ||
+            preProcessedBody.Trim().ToUpper().Contains("MARHABA") ||
+            preProcessedBody.Trim().ToUpper().Contains("SZIA") ||
+            preProcessedBody.Trim().ToUpper().Contains("SALEMETSIZ BE") ||
+            preProcessedBody.Trim().ToUpper().Contains("SAIN BAINUU") ||
+            preProcessedBody.Trim().ToUpper().Contains("MERHABA") ||
+            preProcessedBody.Trim().ToUpper().Contains("AHN-YOUNG-HA-SE-YO") ||
+            preProcessedBody.Trim().ToUpper().Contains("OHAYO") ||
+            preProcessedBody.Trim().ToUpper().Contains("KONNICHIWA") ||
+            preProcessedBody.Trim().ToUpper().Contains("KONBAN WA") ||
+            preProcessedBody.Trim().ToUpper().Contains("ZDRAS-TVUY-TE") ||
+            preProcessedBody.Trim().ToUpper().Contains("SALAAM") ||
+            preProcessedBody.Trim().ToUpper().Contains("NAMASTE") ||
+            preProcessedBody.Trim().ToUpper().Contains("OLÀ") ||
+            preProcessedBody.Trim().ToUpper().Contains("CIAO") ||
+            preProcessedBody.Trim().ToUpper().Contains("HALLO") ||
+            preProcessedBody.Trim().ToUpper().Contains("GUTEN TAG") ||
+            preProcessedBody.Trim().ToUpper().Contains("HOLA") ||
+            preProcessedBody.Trim().ToUpper().Contains("BONJOUR") ||
+            preProcessedBody.Trim().ToUpper().Contains("ß"))
+        {
+            type = EmailType.ForeignLanguage;
         }
         else if (preProcessedBody.Trim().ToUpper().Contains("BOX")) //If no other hits then just look for the word BOX
         {
@@ -2966,6 +3035,18 @@ public class MailServerFunctions
                     rtnResponse = GetRandomContinuedResponseForScamVictims(rand, greeting, name, currentMessage);
                 else
                     rtnResponse = GetRandomOpeningResponseForScamVictims(rand, greeting, name, currentMessage);
+                break;
+            case EmailType.ForeignLanguage:
+                if (pastMessages.Count() > 0)
+                    rtnResponse = GetRandomContinuedResponseForForeignLanguage(rand, greeting, name, currentMessage);
+                else
+                    rtnResponse = GetRandomOpeningResponseForForeignLanguage(rand, greeting, name, currentMessage);
+                break;
+            case EmailType.GenericAdvertisement:
+                if (pastMessages.Count() > 0)
+                    rtnResponse = GetRandomContinuedResponseForGenericAdvertisement(rand, greeting, name, currentMessage);
+                else
+                    rtnResponse = GetRandomOpeningResponseForGenericAdvertisement(rand, greeting, name, currentMessage);
                 break;
         }
 
