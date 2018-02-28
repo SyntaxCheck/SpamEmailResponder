@@ -280,6 +280,10 @@ namespace MailServer
             processTimer.Interval = trckBar.Value * 1000;
             lblTrackBarValue.Text = "(" + trckBar.Value.ToString() + ") seconds";
         }
+        private void exitToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Close();
+        }
 
         //Private functions
         private int CheckForMessages()

@@ -2140,6 +2140,21 @@ public class MailServerFunctions
 
         return text;
     }
+    public bool IsEnglish(string text)
+    {
+        Regex regex = new Regex(@"[A-Za-z0-9 .,-=+(){}\[\]\\]");
+        MatchCollection matches = regex.Matches(text);
+
+        //If over 90% of the characters match the above english characters then assume it is an english message
+        if (matches.Count > Math.Round(text.Length * 0.9))
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
     public string GetResponseForType(ref MailStorage currentMessage, List<MailStorage> pastMessages)
     {
         Random rand = new Random();
@@ -2755,7 +2770,8 @@ public class MailServerFunctions
             preProcessedBody.Trim().ToUpper().Contains("BUENOS DÍAS") ||
             preProcessedBody.Trim().ToUpper().Contains("DE LUTTER") ||
             preProcessedBody.Trim().ToUpper().Contains("QUI NOUS") ||
-            preProcessedBody.Trim().ToUpper().Contains("ß"))
+            preProcessedBody.Trim().ToUpper().Contains("ß") ||
+            !IsEnglish(preProcessedBody.Trim()))
         {
             type = EmailType.ForeignLanguage;
         }
