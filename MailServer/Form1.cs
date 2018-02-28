@@ -174,16 +174,20 @@ namespace MailServer
 
             //Start the visual countdown on screen
             countdownRemaining = trckBar.Value;
-            countdownTimer.Interval = trckBar.Value * 1000;
-            countdownTimer.Start();
+            if (!countdownTimer.Enabled)
+            {
+                countdownTimer.Start();
+            }
         }
         private void countdownTimer_Tick(object sender, EventArgs e)
         {
-            countdownRemaining--;
-            lblTimeTillNextSend.Text = "Next: " + countdownRemaining.ToString();
+            countdownRemaining = countdownRemaining - 1;
+            lblTimeTillNextSend.Text = countdownRemaining.ToString();
 
             if (countdownRemaining <= 0)
+            {
                 countdownTimer.Stop();
+            }
         }
         private void btnSendEmail_Click(object sender, EventArgs e)
         {
@@ -274,7 +278,7 @@ namespace MailServer
         private void trckBar_Scroll(object sender, EventArgs e)
         {
             processTimer.Interval = trckBar.Value * 1000;
-            lblTrackBarValue.Text = trckBar.Value.ToString();
+            lblTrackBarValue.Text = "(" + trckBar.Value.ToString() + ") seconds";
         }
 
         //Private functions
@@ -588,13 +592,6 @@ namespace MailServer
                         lblCountdown.Text += ts.Minutes.ToString() + " minutes ";
                     else
                         lblCountdown.Text += ts.Minutes.ToString() + " minute ";
-                }
-                if (ts.Days > 0 || ts.Hours > 0 || ts.Minutes > 0 || ts.Seconds > 0)
-                {
-                    if (ts.Seconds > 1)
-                        lblCountdown.Text += ts.Seconds.ToString() + " seconds ";
-                    else
-                        lblCountdown.Text += ts.Seconds.ToString() + " second ";
                 }
             }
 

@@ -29,14 +29,22 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle16 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle17 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle18 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle19 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle20 = new System.Windows.Forms.DataGridViewCellStyle();
             this.processTimer = new System.Windows.Forms.Timer(this.components);
             this.tbxOutput = new System.Windows.Forms.TextBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.lblNext = new System.Windows.Forms.Label();
+            this.lblTimeTillNextSend = new System.Windows.Forms.Label();
+            this.lblTrackBarValue = new System.Windows.Forms.Label();
+            this.lblSendFreq = new System.Windows.Forms.Label();
+            this.trckBar = new System.Windows.Forms.TrackBar();
+            this.lblCountdown = new System.Windows.Forms.Label();
+            this.cbxDebug = new System.Windows.Forms.CheckBox();
+            this.lblMessageInfo = new System.Windows.Forms.Label();
             this.cbxAutoSend = new System.Windows.Forms.CheckBox();
             this.btnSaveChanges = new System.Windows.Forms.Button();
             this.tbxAttachmentNames = new System.Windows.Forms.TextBox();
@@ -70,18 +78,10 @@
             this.label3 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
-            this.lblMessageInfo = new System.Windows.Forms.Label();
-            this.cbxDebug = new System.Windows.Forms.CheckBox();
-            this.lblCountdown = new System.Windows.Forms.Label();
-            this.trckBar = new System.Windows.Forms.TrackBar();
-            this.lblSendFreq = new System.Windows.Forms.Label();
-            this.lblTrackBarValue = new System.Windows.Forms.Label();
-            this.lblTimeTillNextSend = new System.Windows.Forms.Label();
             this.countdownTimer = new System.Windows.Forms.Timer(this.components);
-            this.lblNext = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.dgvPastEmail)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.trckBar)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dgvPastEmail)).BeginInit();
             this.SuspendLayout();
             // 
             // processTimer
@@ -90,11 +90,10 @@
             // 
             // tbxOutput
             // 
-            this.tbxOutput.Location = new System.Drawing.Point(16, 999);
-            this.tbxOutput.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.tbxOutput.Location = new System.Drawing.Point(12, 812);
             this.tbxOutput.Multiline = true;
             this.tbxOutput.Name = "tbxOutput";
-            this.tbxOutput.Size = new System.Drawing.Size(2265, 94);
+            this.tbxOutput.Size = new System.Drawing.Size(1700, 77);
             this.tbxOutput.TabIndex = 0;
             // 
             // groupBox1
@@ -135,22 +134,112 @@
             this.groupBox1.Controls.Add(this.label3);
             this.groupBox1.Controls.Add(this.label2);
             this.groupBox1.Controls.Add(this.label1);
-            this.groupBox1.Location = new System.Drawing.Point(16, 15);
-            this.groupBox1.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.groupBox1.Location = new System.Drawing.Point(12, 12);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
-            this.groupBox1.Size = new System.Drawing.Size(2267, 954);
+            this.groupBox1.Size = new System.Drawing.Size(1700, 775);
             this.groupBox1.TabIndex = 1;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Current Message";
             // 
+            // lblNext
+            // 
+            this.lblNext.AutoSize = true;
+            this.lblNext.Location = new System.Drawing.Point(732, 754);
+            this.lblNext.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.lblNext.Name = "lblNext";
+            this.lblNext.Size = new System.Drawing.Size(32, 13);
+            this.lblNext.TabIndex = 34;
+            this.lblNext.Text = "Next:";
+            this.lblNext.Visible = false;
+            // 
+            // lblTimeTillNextSend
+            // 
+            this.lblTimeTillNextSend.AutoSize = true;
+            this.lblTimeTillNextSend.ForeColor = System.Drawing.Color.DarkRed;
+            this.lblTimeTillNextSend.Location = new System.Drawing.Point(764, 754);
+            this.lblTimeTillNextSend.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.lblTimeTillNextSend.Name = "lblTimeTillNextSend";
+            this.lblTimeTillNextSend.Size = new System.Drawing.Size(13, 13);
+            this.lblTimeTillNextSend.TabIndex = 33;
+            this.lblTimeTillNextSend.Text = "0";
+            this.lblTimeTillNextSend.Visible = false;
+            // 
+            // lblTrackBarValue
+            // 
+            this.lblTrackBarValue.AutoSize = true;
+            this.lblTrackBarValue.Location = new System.Drawing.Point(860, 754);
+            this.lblTrackBarValue.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.lblTrackBarValue.Name = "lblTrackBarValue";
+            this.lblTrackBarValue.Size = new System.Drawing.Size(74, 13);
+            this.lblTrackBarValue.TabIndex = 32;
+            this.lblTrackBarValue.Text = "(240 seconds)";
+            this.lblTrackBarValue.Visible = false;
+            // 
+            // lblSendFreq
+            // 
+            this.lblSendFreq.AutoSize = true;
+            this.lblSendFreq.Location = new System.Drawing.Point(848, 733);
+            this.lblSendFreq.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.lblSendFreq.Name = "lblSendFreq";
+            this.lblSendFreq.Size = new System.Drawing.Size(88, 13);
+            this.lblSendFreq.TabIndex = 31;
+            this.lblSendFreq.Text = "Send Frequency:";
+            this.lblSendFreq.Visible = false;
+            // 
+            // trckBar
+            // 
+            this.trckBar.Location = new System.Drawing.Point(939, 722);
+            this.trckBar.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.trckBar.Maximum = 500;
+            this.trckBar.Minimum = 200;
+            this.trckBar.Name = "trckBar";
+            this.trckBar.Size = new System.Drawing.Size(484, 45);
+            this.trckBar.TabIndex = 30;
+            this.trckBar.TickFrequency = 10;
+            this.trckBar.Value = 240;
+            this.trckBar.Visible = false;
+            this.trckBar.Scroll += new System.EventHandler(this.trckBar_Scroll);
+            // 
+            // lblCountdown
+            // 
+            this.lblCountdown.AutoSize = true;
+            this.lblCountdown.Location = new System.Drawing.Point(1348, 38);
+            this.lblCountdown.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.lblCountdown.Name = "lblCountdown";
+            this.lblCountdown.Size = new System.Drawing.Size(19, 13);
+            this.lblCountdown.TabIndex = 29;
+            this.lblCountdown.Text = "....";
+            // 
+            // cbxDebug
+            // 
+            this.cbxDebug.AutoSize = true;
+            this.cbxDebug.Location = new System.Drawing.Point(1599, 732);
+            this.cbxDebug.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.cbxDebug.Name = "cbxDebug";
+            this.cbxDebug.Size = new System.Drawing.Size(94, 17);
+            this.cbxDebug.TabIndex = 28;
+            this.cbxDebug.Text = "Enable Debug";
+            this.cbxDebug.UseVisualStyleBackColor = true;
+            this.cbxDebug.CheckedChanged += new System.EventHandler(this.cbxDebug_CheckedChanged);
+            // 
+            // lblMessageInfo
+            // 
+            this.lblMessageInfo.AutoSize = true;
+            this.lblMessageInfo.Location = new System.Drawing.Point(1180, 15);
+            this.lblMessageInfo.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.lblMessageInfo.Name = "lblMessageInfo";
+            this.lblMessageInfo.Size = new System.Drawing.Size(515, 13);
+            this.lblMessageInfo.TabIndex = 27;
+            this.lblMessageInfo.Text = "Sent Messages: 0,000   Skipped Messages: 000   Pending Messages: 000   Unprocesse" +
+    "d Messages: 0,000";
+            this.lblMessageInfo.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            // 
             // cbxAutoSend
             // 
             this.cbxAutoSend.AutoSize = true;
-            this.cbxAutoSend.Location = new System.Drawing.Point(965, 903);
-            this.cbxAutoSend.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.cbxAutoSend.Location = new System.Drawing.Point(724, 734);
             this.cbxAutoSend.Name = "cbxAutoSend";
-            this.cbxAutoSend.Size = new System.Drawing.Size(96, 21);
+            this.cbxAutoSend.Size = new System.Drawing.Size(76, 17);
             this.cbxAutoSend.TabIndex = 26;
             this.cbxAutoSend.Text = "Auto Send";
             this.cbxAutoSend.UseVisualStyleBackColor = true;
@@ -158,10 +247,10 @@
             // 
             // btnSaveChanges
             // 
-            this.btnSaveChanges.Location = new System.Drawing.Point(819, 225);
-            this.btnSaveChanges.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.btnSaveChanges.Location = new System.Drawing.Point(614, 183);
+            this.btnSaveChanges.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.btnSaveChanges.Name = "btnSaveChanges";
-            this.btnSaveChanges.Size = new System.Drawing.Size(129, 28);
+            this.btnSaveChanges.Size = new System.Drawing.Size(97, 23);
             this.btnSaveChanges.TabIndex = 25;
             this.btnSaveChanges.Text = "Save Changes";
             this.btnSaveChanges.UseVisualStyleBackColor = true;
@@ -169,18 +258,16 @@
             // 
             // tbxAttachmentNames
             // 
-            this.tbxAttachmentNames.Location = new System.Drawing.Point(172, 135);
-            this.tbxAttachmentNames.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.tbxAttachmentNames.Location = new System.Drawing.Point(129, 110);
             this.tbxAttachmentNames.Name = "tbxAttachmentNames";
-            this.tbxAttachmentNames.Size = new System.Drawing.Size(776, 22);
+            this.tbxAttachmentNames.Size = new System.Drawing.Size(583, 20);
             this.tbxAttachmentNames.TabIndex = 24;
             // 
             // btnRegenerate
             // 
-            this.btnRegenerate.Location = new System.Drawing.Point(120, 896);
-            this.btnRegenerate.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.btnRegenerate.Location = new System.Drawing.Point(90, 728);
             this.btnRegenerate.Name = "btnRegenerate";
-            this.btnRegenerate.Size = new System.Drawing.Size(100, 28);
+            this.btnRegenerate.Size = new System.Drawing.Size(75, 23);
             this.btnRegenerate.TabIndex = 23;
             this.btnRegenerate.Text = "ReGen";
             this.btnRegenerate.UseVisualStyleBackColor = true;
@@ -188,10 +275,9 @@
             // 
             // btnRefresh
             // 
-            this.btnRefresh.Location = new System.Drawing.Point(12, 896);
-            this.btnRefresh.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.btnRefresh.Location = new System.Drawing.Point(9, 728);
             this.btnRefresh.Name = "btnRefresh";
-            this.btnRefresh.Size = new System.Drawing.Size(100, 28);
+            this.btnRefresh.Size = new System.Drawing.Size(75, 23);
             this.btnRefresh.TabIndex = 22;
             this.btnRefresh.Text = "Refresh";
             this.btnRefresh.UseVisualStyleBackColor = true;
@@ -200,10 +286,9 @@
             // btnIgnore
             // 
             this.btnIgnore.Enabled = false;
-            this.btnIgnore.Location = new System.Drawing.Point(380, 896);
-            this.btnIgnore.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.btnIgnore.Location = new System.Drawing.Point(285, 728);
             this.btnIgnore.Name = "btnIgnore";
-            this.btnIgnore.Size = new System.Drawing.Size(100, 28);
+            this.btnIgnore.Size = new System.Drawing.Size(75, 23);
             this.btnIgnore.TabIndex = 21;
             this.btnIgnore.Text = "Ignore";
             this.btnIgnore.UseVisualStyleBackColor = true;
@@ -212,10 +297,9 @@
             // btnNext
             // 
             this.btnNext.Enabled = false;
-            this.btnNext.Location = new System.Drawing.Point(272, 896);
-            this.btnNext.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.btnNext.Location = new System.Drawing.Point(204, 728);
             this.btnNext.Name = "btnNext";
-            this.btnNext.Size = new System.Drawing.Size(100, 28);
+            this.btnNext.Size = new System.Drawing.Size(75, 23);
             this.btnNext.TabIndex = 20;
             this.btnNext.Text = "Next";
             this.btnNext.UseVisualStyleBackColor = true;
@@ -224,10 +308,9 @@
             // btnSendEmail
             // 
             this.btnSendEmail.Enabled = false;
-            this.btnSendEmail.Location = new System.Drawing.Point(644, 898);
-            this.btnSendEmail.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.btnSendEmail.Location = new System.Drawing.Point(483, 730);
             this.btnSendEmail.Name = "btnSendEmail";
-            this.btnSendEmail.Size = new System.Drawing.Size(100, 28);
+            this.btnSendEmail.Size = new System.Drawing.Size(75, 23);
             this.btnSendEmail.TabIndex = 19;
             this.btnSendEmail.Text = "Send Email";
             this.btnSendEmail.UseVisualStyleBackColor = true;
@@ -236,10 +319,9 @@
             // label10
             // 
             this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(961, 47);
-            this.label10.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label10.Location = new System.Drawing.Point(721, 38);
             this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(144, 17);
+            this.label10.Size = new System.Drawing.Size(107, 13);
             this.label10.TabIndex = 18;
             this.label10.Text = "Past emails in thread:";
             // 
@@ -255,18 +337,17 @@
             this.Date,
             this.Body,
             this.Response});
-            this.dgvPastEmail.Location = new System.Drawing.Point(965, 75);
-            this.dgvPastEmail.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.dgvPastEmail.Location = new System.Drawing.Point(724, 61);
             this.dgvPastEmail.Name = "dgvPastEmail";
             this.dgvPastEmail.ReadOnly = true;
-            this.dgvPastEmail.Size = new System.Drawing.Size(1293, 807);
+            this.dgvPastEmail.Size = new System.Drawing.Size(970, 656);
             this.dgvPastEmail.TabIndex = 17;
             this.dgvPastEmail.CellContentDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvPastEmail_CellContentDoubleClick);
             // 
             // Subject
             // 
-            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.TopLeft;
-            this.Subject.DefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle16.Alignment = System.Windows.Forms.DataGridViewContentAlignment.TopLeft;
+            this.Subject.DefaultCellStyle = dataGridViewCellStyle16;
             this.Subject.FillWeight = 125F;
             this.Subject.HeaderText = "Subject";
             this.Subject.Name = "Subject";
@@ -275,8 +356,8 @@
             // 
             // FromAddress
             // 
-            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.TopLeft;
-            this.FromAddress.DefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle17.Alignment = System.Windows.Forms.DataGridViewContentAlignment.TopLeft;
+            this.FromAddress.DefaultCellStyle = dataGridViewCellStyle17;
             this.FromAddress.FillWeight = 150F;
             this.FromAddress.HeaderText = "From Address";
             this.FromAddress.Name = "FromAddress";
@@ -285,8 +366,8 @@
             // 
             // Date
             // 
-            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.TopCenter;
-            this.Date.DefaultCellStyle = dataGridViewCellStyle3;
+            dataGridViewCellStyle18.Alignment = System.Windows.Forms.DataGridViewContentAlignment.TopCenter;
+            this.Date.DefaultCellStyle = dataGridViewCellStyle18;
             this.Date.FillWeight = 125F;
             this.Date.HeaderText = "Date";
             this.Date.Name = "Date";
@@ -295,8 +376,8 @@
             // 
             // Body
             // 
-            dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.TopLeft;
-            this.Body.DefaultCellStyle = dataGridViewCellStyle4;
+            dataGridViewCellStyle19.Alignment = System.Windows.Forms.DataGridViewContentAlignment.TopLeft;
+            this.Body.DefaultCellStyle = dataGridViewCellStyle19;
             this.Body.FillWeight = 310F;
             this.Body.HeaderText = "Body";
             this.Body.Name = "Body";
@@ -305,8 +386,8 @@
             // 
             // Response
             // 
-            dataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.TopLeft;
-            this.Response.DefaultCellStyle = dataGridViewCellStyle5;
+            dataGridViewCellStyle20.Alignment = System.Windows.Forms.DataGridViewContentAlignment.TopLeft;
+            this.Response.DefaultCellStyle = dataGridViewCellStyle20;
             this.Response.FillWeight = 350F;
             this.Response.HeaderText = "Response";
             this.Response.Name = "Response";
@@ -315,274 +396,174 @@
             // 
             // tbxDeterminedReply
             // 
-            this.tbxDeterminedReply.Location = new System.Drawing.Point(12, 594);
-            this.tbxDeterminedReply.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.tbxDeterminedReply.Location = new System.Drawing.Point(9, 483);
             this.tbxDeterminedReply.Multiline = true;
             this.tbxDeterminedReply.Name = "tbxDeterminedReply";
             this.tbxDeterminedReply.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.tbxDeterminedReply.Size = new System.Drawing.Size(936, 287);
+            this.tbxDeterminedReply.Size = new System.Drawing.Size(703, 234);
             this.tbxDeterminedReply.TabIndex = 16;
             // 
             // label9
             // 
             this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(8, 575);
-            this.label9.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label9.Location = new System.Drawing.Point(6, 467);
             this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(153, 17);
+            this.label9.Size = new System.Drawing.Size(115, 13);
             this.label9.TabIndex = 15;
             this.label9.Text = "Determined Response:";
             // 
             // label8
             // 
             this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(15, 263);
-            this.label8.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label8.Location = new System.Drawing.Point(11, 214);
             this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(104, 17);
+            this.label8.Size = new System.Drawing.Size(79, 13);
             this.label8.TabIndex = 14;
             this.label8.Text = "Body plain text:";
             // 
             // tbxBodyPlainText
             // 
-            this.tbxBodyPlainText.Location = new System.Drawing.Point(13, 283);
-            this.tbxBodyPlainText.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.tbxBodyPlainText.Location = new System.Drawing.Point(10, 230);
             this.tbxBodyPlainText.Multiline = true;
             this.tbxBodyPlainText.Name = "tbxBodyPlainText";
             this.tbxBodyPlainText.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.tbxBodyPlainText.Size = new System.Drawing.Size(936, 287);
+            this.tbxBodyPlainText.Size = new System.Drawing.Size(703, 234);
             this.tbxBodyPlainText.TabIndex = 2;
             // 
             // tbxDateReceived
             // 
-            this.tbxDateReceived.Location = new System.Drawing.Point(144, 107);
-            this.tbxDateReceived.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.tbxDateReceived.Location = new System.Drawing.Point(108, 87);
             this.tbxDateReceived.Name = "tbxDateReceived";
-            this.tbxDateReceived.Size = new System.Drawing.Size(253, 22);
+            this.tbxDateReceived.Size = new System.Drawing.Size(191, 20);
             this.tbxDateReceived.TabIndex = 13;
             // 
             // tbxDeterminedName
             // 
-            this.tbxDeterminedName.Location = new System.Drawing.Point(144, 228);
-            this.tbxDeterminedName.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.tbxDeterminedName.Location = new System.Drawing.Point(108, 185);
             this.tbxDeterminedName.Name = "tbxDeterminedName";
-            this.tbxDeterminedName.Size = new System.Drawing.Size(253, 22);
+            this.tbxDeterminedName.Size = new System.Drawing.Size(191, 20);
             this.tbxDeterminedName.TabIndex = 12;
             // 
             // tbxDeterminedType
             // 
             this.tbxDeterminedType.Enabled = false;
-            this.tbxDeterminedType.Location = new System.Drawing.Point(144, 196);
-            this.tbxDeterminedType.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.tbxDeterminedType.Location = new System.Drawing.Point(108, 159);
             this.tbxDeterminedType.Name = "tbxDeterminedType";
-            this.tbxDeterminedType.Size = new System.Drawing.Size(253, 22);
+            this.tbxDeterminedType.Size = new System.Drawing.Size(191, 20);
             this.tbxDeterminedType.TabIndex = 11;
             // 
             // cbxHasAttachments
             // 
             this.cbxHasAttachments.AutoSize = true;
-            this.cbxHasAttachments.Location = new System.Drawing.Point(144, 139);
-            this.cbxHasAttachments.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.cbxHasAttachments.Location = new System.Drawing.Point(108, 113);
             this.cbxHasAttachments.Name = "cbxHasAttachments";
-            this.cbxHasAttachments.Size = new System.Drawing.Size(18, 17);
+            this.cbxHasAttachments.Size = new System.Drawing.Size(15, 14);
             this.cbxHasAttachments.TabIndex = 10;
             this.cbxHasAttachments.UseVisualStyleBackColor = true;
             // 
             // tbxMessageId
             // 
-            this.tbxMessageId.Location = new System.Drawing.Point(144, 164);
-            this.tbxMessageId.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.tbxMessageId.Location = new System.Drawing.Point(108, 133);
             this.tbxMessageId.Name = "tbxMessageId";
-            this.tbxMessageId.Size = new System.Drawing.Size(804, 22);
+            this.tbxMessageId.Size = new System.Drawing.Size(604, 20);
             this.tbxMessageId.TabIndex = 9;
             // 
             // tbxFromAddress
             // 
-            this.tbxFromAddress.Location = new System.Drawing.Point(144, 75);
-            this.tbxFromAddress.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.tbxFromAddress.Location = new System.Drawing.Point(108, 61);
             this.tbxFromAddress.Name = "tbxFromAddress";
-            this.tbxFromAddress.Size = new System.Drawing.Size(804, 22);
+            this.tbxFromAddress.Size = new System.Drawing.Size(604, 20);
             this.tbxFromAddress.TabIndex = 8;
             // 
             // tbxSubject
             // 
-            this.tbxSubject.Location = new System.Drawing.Point(144, 43);
-            this.tbxSubject.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.tbxSubject.Location = new System.Drawing.Point(108, 35);
             this.tbxSubject.Name = "tbxSubject";
-            this.tbxSubject.Size = new System.Drawing.Size(804, 22);
+            this.tbxSubject.Size = new System.Drawing.Size(604, 20);
             this.tbxSubject.TabIndex = 7;
             // 
             // label7
             // 
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(15, 199);
-            this.label7.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label7.Location = new System.Drawing.Point(11, 162);
             this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(121, 17);
+            this.label7.Size = new System.Drawing.Size(91, 13);
             this.label7.TabIndex = 6;
             this.label7.Text = "Determined Type:";
             // 
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(9, 231);
-            this.label6.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label6.Location = new System.Drawing.Point(7, 188);
             this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(126, 17);
+            this.label6.Size = new System.Drawing.Size(95, 13);
             this.label6.TabIndex = 5;
             this.label6.Text = "Determined Name:";
             // 
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(47, 167);
-            this.label5.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label5.Location = new System.Drawing.Point(35, 136);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(86, 17);
+            this.label5.Size = new System.Drawing.Size(67, 13);
             this.label5.TabIndex = 4;
             this.label5.Text = "Message ID:";
             // 
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(21, 139);
-            this.label4.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label4.Location = new System.Drawing.Point(16, 113);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(112, 17);
+            this.label4.Size = new System.Drawing.Size(86, 13);
             this.label4.TabIndex = 3;
             this.label4.Text = "Has Attachment:";
             // 
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(27, 111);
-            this.label3.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label3.Location = new System.Drawing.Point(20, 90);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(105, 17);
+            this.label3.Size = new System.Drawing.Size(82, 13);
             this.label3.TabIndex = 2;
             this.label3.Text = "Date Received:";
             // 
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(37, 79);
-            this.label2.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label2.Location = new System.Drawing.Point(28, 64);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(100, 17);
+            this.label2.Size = new System.Drawing.Size(74, 13);
             this.label2.TabIndex = 1;
             this.label2.Text = "From Address:";
             // 
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(44, 47);
-            this.label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label1.Location = new System.Drawing.Point(33, 38);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(90, 17);
+            this.label1.Size = new System.Drawing.Size(69, 13);
             this.label1.TabIndex = 0;
             this.label1.Text = "Subject Line:";
-            // 
-            // lblMessageInfo
-            // 
-            this.lblMessageInfo.AutoSize = true;
-            this.lblMessageInfo.Location = new System.Drawing.Point(1574, 19);
-            this.lblMessageInfo.Name = "lblMessageInfo";
-            this.lblMessageInfo.Size = new System.Drawing.Size(684, 17);
-            this.lblMessageInfo.TabIndex = 27;
-            this.lblMessageInfo.Text = "Sent Messages: 0,000   Skipped Messages: 000   Pending Messages: 000   Unprocesse" +
-    "d Messages: 0,000";
-            this.lblMessageInfo.TextAlign = System.Drawing.ContentAlignment.TopRight;
-            // 
-            // cbxDebug
-            // 
-            this.cbxDebug.AutoSize = true;
-            this.cbxDebug.Location = new System.Drawing.Point(2132, 901);
-            this.cbxDebug.Name = "cbxDebug";
-            this.cbxDebug.Size = new System.Drawing.Size(120, 21);
-            this.cbxDebug.TabIndex = 28;
-            this.cbxDebug.Text = "Enable Debug";
-            this.cbxDebug.UseVisualStyleBackColor = true;
-            this.cbxDebug.CheckedChanged += new System.EventHandler(this.cbxDebug_CheckedChanged);
-            // 
-            // lblCountdown
-            // 
-            this.lblCountdown.AutoSize = true;
-            this.lblCountdown.Location = new System.Drawing.Point(1755, 48);
-            this.lblCountdown.Name = "lblCountdown";
-            this.lblCountdown.Size = new System.Drawing.Size(486, 17);
-            this.lblCountdown.TabIndex = 29;
-            this.lblCountdown.Text = "Estimated Time till Mailbox Cleared: 15 days 4 hours 33 minutes 23 seconds";
-            // 
-            // trckBar
-            // 
-            this.trckBar.Location = new System.Drawing.Point(1252, 889);
-            this.trckBar.Maximum = 500;
-            this.trckBar.Minimum = 200;
-            this.trckBar.Name = "trckBar";
-            this.trckBar.Size = new System.Drawing.Size(645, 56);
-            this.trckBar.SmallChange = 10;
-            this.trckBar.TabIndex = 30;
-            this.trckBar.TickFrequency = 10;
-            this.trckBar.Value = 240;
-            this.trckBar.Scroll += new System.EventHandler(this.trckBar_Scroll);
-            // 
-            // lblSendFreq
-            // 
-            this.lblSendFreq.AutoSize = true;
-            this.lblSendFreq.Location = new System.Drawing.Point(1130, 902);
-            this.lblSendFreq.Name = "lblSendFreq";
-            this.lblSendFreq.Size = new System.Drawing.Size(116, 17);
-            this.lblSendFreq.TabIndex = 31;
-            this.lblSendFreq.Text = "Send Frequency:";
-            // 
-            // lblTrackBarValue
-            // 
-            this.lblTrackBarValue.AutoSize = true;
-            this.lblTrackBarValue.Location = new System.Drawing.Point(1147, 928);
-            this.lblTrackBarValue.Name = "lblTrackBarValue";
-            this.lblTrackBarValue.Size = new System.Drawing.Size(99, 17);
-            this.lblTrackBarValue.TabIndex = 32;
-            this.lblTrackBarValue.Text = "(240 seconds)";
-            // 
-            // lblTimeTillNextSend
-            // 
-            this.lblTimeTillNextSend.AutoSize = true;
-            this.lblTimeTillNextSend.ForeColor = System.Drawing.Color.DarkRed;
-            this.lblTimeTillNextSend.Location = new System.Drawing.Point(1012, 928);
-            this.lblTimeTillNextSend.Name = "lblTimeTillNextSend";
-            this.lblTimeTillNextSend.Size = new System.Drawing.Size(32, 17);
-            this.lblTimeTillNextSend.TabIndex = 33;
-            this.lblTimeTillNextSend.Text = "125";
             // 
             // countdownTimer
             // 
             this.countdownTimer.Interval = 1000;
             this.countdownTimer.Tick += new System.EventHandler(this.countdownTimer_Tick);
             // 
-            // lblNext
-            // 
-            this.lblNext.AutoSize = true;
-            this.lblNext.Location = new System.Drawing.Point(976, 928);
-            this.lblNext.Name = "lblNext";
-            this.lblNext.Size = new System.Drawing.Size(40, 17);
-            this.lblNext.TabIndex = 34;
-            this.lblNext.Text = "Next:";
-            // 
             // Form1
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(2299, 1106);
+            this.ClientSize = new System.Drawing.Size(1724, 856);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.tbxOutput);
-            this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.Name = "Form1";
             this.RightToLeftLayout = true;
             this.Text = "Mail Server";
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.dgvPastEmail)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.trckBar)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dgvPastEmail)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 

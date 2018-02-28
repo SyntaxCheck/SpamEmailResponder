@@ -476,7 +476,7 @@ public class MailServerFunctions
                 storageObj.MsgId = msg.MessageId;
                 storageObj.DateReceived = msg.MessageDttm;
                 storageObj.NumberOfAttachments = msg.FileAttachments.Count();
-                storageObj.SubjectLine = msg.Subject.Replace("RE: ","").Replace("FW: ","");
+                storageObj.SubjectLine = msg.Subject.Replace("RE: ", "").Replace("FW: ", "");
 
                 //Extract the Body information
                 foreach (TextPart txtPart in msg.TextParts)
@@ -505,14 +505,14 @@ public class MailServerFunctions
 
                 foreach (var v in msg.FromAddress)
                 {
-                    if(msg.FromAddress.Count() <= 1 || !v.ToString().Trim().ToLower().Contains(".ocn.ne.jp")) //Often times they include multiple email addresses, the ocn.ne.jp ones tend to get rejected so exclude that email in the reply if it is not the only address
+                    if (msg.FromAddress.Count() <= 1 || !v.ToString().Trim().ToLower().Contains(".ocn.ne.jp")) //Often times they include multiple email addresses, the ocn.ne.jp ones tend to get rejected so exclude that email in the reply if it is not the only address
                         storageObj.ToAddress += v.ToString() + ";";
                 }
                 foreach (var v in msg.ReplyTo)
                 {
                     storageObj.ToAddress += v.ToString() + ";";
                 }
-                foreach(var v in msg.FileAttachments)
+                foreach (var v in msg.FileAttachments)
                 {
                     storageObj.AtachmentTypes += v.FileExtension + ",";
                     storageObj.AttachmentNames += v.FileName + ",";
@@ -553,6 +553,10 @@ public class MailServerFunctions
                 storageObj.DeterminedReply = GetResponseForType(ref storageObj, previousMessagesInThread.OrderBy(t => t.DateReceived).ToList());
 
                 storage.Add(storageObj);
+            }
+            else
+            {
+                response.Code = 50;
             }
         }
         catch (Exception ex)
@@ -2108,6 +2112,7 @@ public class MailServerFunctions
             preProcessedBody.Trim().ToUpper().Contains("SUFFERING FROM CANCER") ||
             preProcessedBody.Trim().ToUpper().Contains("DIED LEAVING BEHIND") ||
             preProcessedBody.Trim().ToUpper().Contains("WHO DIED A COUPLE") ||
+            preProcessedBody.Trim().ToUpper().Contains("WHO DIED COUPLE") ||
             preProcessedBody.Trim().ToUpper().Contains("WHO DIED A FEW") ||
             preProcessedBody.Trim().ToUpper().Contains("WHO DIED SOME") ||
             (preProcessedBody.Trim().ToUpper().Contains("DIAGNOSED") && preProcessedBody.Trim().ToUpper().Contains("CANCER")) ||
@@ -2594,6 +2599,7 @@ public class MailServerFunctions
             preProcessedBody.Trim().ToUpper().Contains("VERY IMPORTANT THING TO TELL YOU") ||
             preProcessedBody.Trim().ToUpper().Contains("I URGENTLY NEED YOUR ASSISTANCE") ||
             preProcessedBody.Trim().ToUpper().Contains("CAN WE TALK") ||
+            preProcessedBody.Trim().ToUpper().Contains("ARE YOU STILL INTERESTED") ||
             (preProcessedBody.Trim().ToUpper().Contains("GOOD MORNING AND HOW ARE YOU") && preProcessedBody.Trim().ToUpper().Contains("MY NAME IS") && (preProcessedBody.Length - currentMessage.SubjectLine.Length) < 100) ||
             (preProcessedBody.Trim().ToUpper().Contains("HI") || preProcessedBody.Trim().ToUpper().Contains("HELLO") || preProcessedBody.Trim().ToUpper().Contains("DEAR FRIEND")) && (preProcessedBody.Length - currentMessage.SubjectLine.Length) <= 10)
         {
