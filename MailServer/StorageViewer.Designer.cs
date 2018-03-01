@@ -106,7 +106,7 @@
             this.groupBox1.Size = new System.Drawing.Size(971, 291);
             this.groupBox1.TabIndex = 1;
             this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Emails not sent";
+            this.groupBox1.Text = "Emails";
             // 
             // dgvEmails
             // 
