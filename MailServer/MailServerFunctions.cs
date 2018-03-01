@@ -1903,7 +1903,7 @@ public class MailServerFunctions
     {
         try
         {
-            email = email.Replace("<", "").Replace(">", "").Trim();
+            email = email.Replace("<", "").Replace(">", "").Replace("\"", " ").Trim();
 
             if (!email.Contains('@') || email.Trim().Contains(' ') || email.Trim().Contains('?') || 
                 email.Trim().ToUpper() == settings.EmailAddress.Trim().ToUpper() || email.Trim().Contains('/') || 
@@ -2269,6 +2269,8 @@ public class MailServerFunctions
         else if (preProcessedBody.Trim().ToUpper().Contains("OIL AND GAS") ||
             preProcessedBody.Trim().ToUpper().Contains("PETROLEUM COMMODITIES AVAILABLE") ||
             preProcessedBody.Trim().ToUpper().Contains("CRUDE OIL BUSINES") ||
+            preProcessedBody.Trim().ToUpper().Contains("CRUDE OIL PROPOSAL") ||
+            preProcessedBody.Trim().ToUpper().Contains("CRUDE OIL SALES VENTURE") ||
             preProcessedBody.Trim().ToUpper().Contains("GAS AND OIL"))
         {
             type = EmailType.OilAndGas;
@@ -2319,7 +2321,9 @@ public class MailServerFunctions
             type = EmailType.OnlineMarketingConsult;
         }
         else if (preProcessedBody.Trim().ToUpper().Contains("FINANCIAL ASSISTANCE") || 
-            preProcessedBody.Trim().ToUpper().Contains("FINANCIAL HELP") || 
+            preProcessedBody.Trim().ToUpper().Contains("FINANCIAL HELP") ||
+            preProcessedBody.Trim().ToUpper().Contains("FINANCIAL PACKAGE") ||
+            preProcessedBody.Trim().ToUpper().Contains("PROJECT FINANCING") ||
             preProcessedBody.Trim().ToUpper().Contains("LOAN") || 
             preProcessedBody.Trim().ToUpper().Contains("APPLY FOR CASH"))
         {
@@ -2458,6 +2462,8 @@ public class MailServerFunctions
             preProcessedBody.Trim().ToUpper().Contains("BUSINESS CONTRACT") ||
             preProcessedBody.Trim().ToUpper().Contains("BUSINESS PROPOSAL") ||
             preProcessedBody.Trim().ToUpper().Contains("BUSINESS OFFER") ||
+            preProcessedBody.Trim().ToUpper().Contains("BUSINESS COOPERATION") ||
+            preProcessedBody.Trim().ToUpper().Contains("BUSINESS TO DISCUSS WITH YOU") ||
             preProcessedBody.Trim().ToUpper().Contains("INTERESTED IN A BUSINESS") ||
             preProcessedBody.Trim().ToUpper().Contains("MIDDLEMAN BETWEEN OUR COMPANY") ||
             preProcessedBody.Trim().ToUpper().Contains("BUSINESS PARTNER") ||
@@ -2483,7 +2489,6 @@ public class MailServerFunctions
             preProcessedBody.Trim().ToUpper().Contains("WE CAN WORK OUT THIS FOR OUR BENEFIT") ||
             preProcessedBody.Trim().ToUpper().Contains("WE CAN WORK THIS OUT FOR OUR BENEFIT") ||
             preProcessedBody.Trim().ToUpper().Contains("INTERESTING DEAL WORTH") ||
-            preProcessedBody.Trim().ToUpper().Contains("BUSINESS COOPERATION") ||
             (preProcessedBody.Trim().ToUpper().Contains("PROJECT") && preProcessedBody.Trim().ToUpper().Contains("BENEFIT TO YOU")) ||
             preProcessedBody.Trim().ToUpper().Contains("BUSINESS THAT COULD BE BROUGHT YOUR WAY"))
         {
@@ -2537,6 +2542,8 @@ public class MailServerFunctions
             preProcessedBody.Trim().ToUpper().Contains("CONVINCED THAT I AM COMMUNICATING WITH THE RIGHT PERSON") ||
             preProcessedBody.Trim().ToUpper().Contains("CONVINCED THAT I AM TALKING WITH THE RIGHT PERSON") ||
             preProcessedBody.Trim().ToUpper().Contains("I PICK INTEREST ON YOU") ||
+            preProcessedBody.Trim().ToUpper().Contains("MORE DETAIL ABOUT MYSELF") ||
+            preProcessedBody.Trim().ToUpper().Contains("MORE DETAIL ABOUT YOU") ||
             (preProcessedBody.Trim().ToUpper().Contains("TRUST") && preProcessedBody.Trim().ToUpper().Contains("FRIENDSHIP")) ||
             (preProcessedBody.Trim().ToUpper().Contains("I AM WOMAN OF") && preProcessedBody.Trim().ToUpper().Contains("YEARS OLD FROM")) ||
             preProcessedBody.Trim().ToUpper().Contains("I WANT TO MAKE A NEW AND SPECIAL FRIEND"))
@@ -2591,6 +2598,8 @@ public class MailServerFunctions
             preProcessedBody.Trim().ToUpper().Contains("POSSIBLE UNAUTHORIZED ACCOUNT") ||
             preProcessedBody.Trim().ToUpper().Contains("POSSIBLE UNAUTHORISED ACCOUNT") ||
             preProcessedBody.Trim().ToUpper().Contains("LINK BELOW TO RESOLVE YOUR ACCOUNT") ||
+            preProcessedBody.Trim().ToUpper().Contains("CLICK HERE TO ACCESS MESSAGE") ||
+            (preProcessedBody.Trim().ToUpper().Contains("YOU HAVE (") && preProcessedBody.Trim().ToUpper().Contains(") NEW SECURITY MESSAGE")) ||
             (preProcessedBody.Trim().ToUpper().Contains("YOUR EMAIL ACCOUNT WILL BE PERM") && preProcessedBody.Trim().ToUpper().Contains("DISABLE")) ||
             preProcessedBody.Trim().ToUpper().Contains("VISITED FROM AN UNUSUAL PLACE"))
         {
@@ -2678,6 +2687,20 @@ public class MailServerFunctions
             preProcessedBody.Trim().ToUpper().Contains("FUNDS IN A CASHIER CHEQUE") ||
             preProcessedBody.Trim().ToUpper().Contains("FUND IN A CASHIER CHECK") ||
             preProcessedBody.Trim().ToUpper().Contains("FUNDS IN A CASHIER CHECK") ||
+            preProcessedBody.Trim().ToUpper().Contains("REFLECT IN YOUR BANK") ||
+            preProcessedBody.Trim().ToUpper().Contains("CHOOSEN TO RECEIVE $") ||
+            preProcessedBody.Trim().ToUpper().Contains("CHOSEN TO RECEIVE $") ||
+            preProcessedBody.Trim().ToUpper().Contains("CHOOSING TO RECEIVE $") ||
+            preProcessedBody.Trim().ToUpper().Contains("USD WAS DANATED TO YOU") ||
+            preProcessedBody.Trim().ToUpper().Contains("USD WAS DONATED TO YOU") ||
+            preProcessedBody.Trim().ToUpper().Contains("CASH GRANT DONATION") ||
+            preProcessedBody.Trim().ToUpper().Contains("WE HAVE DECIDED TO DONATE THE SUM") ||
+            preProcessedBody.Trim().ToUpper().Contains("RECEIVING YOUR SUM") ||
+            preProcessedBody.Trim().ToUpper().Contains("RECEIVING YOUR FUND") ||
+            preProcessedBody.Trim().ToUpper().Contains("RECEIVING YOUR MONEY") ||
+            preProcessedBody.Trim().ToUpper().Contains("RECEIVING YOUR WEALTH") ||
+            preProcessedBody.Trim().ToUpper().Contains("RECEIVING THEIR MONEY") ||
+            preProcessedBody.Trim().ToUpper().Contains("CLAIM HIS DEPOSITED FUND") ||
             (preProcessedBody.Trim().ToUpper().Contains("FUND") && preProcessedBody.Trim().ToUpper().Contains("UNCLAIMED") && preProcessedBody.Trim().ToUpper().Contains("DEPOSITED")) ||
             (preProcessedBody.Trim().ToUpper().Contains("OF THIS MONEY") && preProcessedBody.Trim().ToUpper().Contains("OFFER YOU")) ||
             preProcessedBody.Trim().ToUpper().Contains("I WISH TO BEQUEATH YOU IN SPECIES THIS SU M") || //How can we possibly predict emails with wording/grammer like this?
@@ -2818,6 +2841,13 @@ public class MailServerFunctions
             preProcessedBody.Trim().ToUpper().Contains("BUENOS DÍAS") ||
             preProcessedBody.Trim().ToUpper().Contains("DE LUTTER") ||
             preProcessedBody.Trim().ToUpper().Contains("QUI NOUS") ||
+            preProcessedBody.Trim().ToUpper().Contains("EZ AZ ") ||
+            preProcessedBody.Trim().ToUpper().Contains("NEM AZ ") ||
+            preProcessedBody.Trim().ToUpper().Contains("ANNAK BARMELY") ||
+            preProcessedBody.Trim().ToUpper().Contains("WENNA JA") ||
+            preProcessedBody.Trim().ToUpper().Contains("STUUR ONS") ||
+            preProcessedBody.Trim().ToUpper().Contains("ONS DAN EEN") ||
+            preProcessedBody.Trim().ToUpper().Contains("BEHOEFTE") ||
             preProcessedBody.Trim().ToUpper().Contains("ß") ||
             !IsEnglish(preProcessedBody.Trim()))
         {
