@@ -246,12 +246,11 @@
             // lblMessageInfo
             // 
             this.lblMessageInfo.AutoSize = true;
-            this.lblMessageInfo.Location = new System.Drawing.Point(1573, 18);
+            this.lblMessageInfo.Location = new System.Drawing.Point(1855, 18);
             this.lblMessageInfo.Name = "lblMessageInfo";
-            this.lblMessageInfo.Size = new System.Drawing.Size(648, 17);
+            this.lblMessageInfo.Size = new System.Drawing.Size(381, 17);
             this.lblMessageInfo.TabIndex = 27;
-            this.lblMessageInfo.Text = "Sent Messages: 0,000   Skipped Messages: 000   Pending Messages: 000   Unprocesse" +
-    "d Messages: 0,000";
+            this.lblMessageInfo.Text = "Sent: 0,000   Skipped: 0,000   Pending: 000   Unread: 0,000";
             this.lblMessageInfo.TextAlign = System.Drawing.ContentAlignment.TopRight;
             // 
             // cbxAutoSend

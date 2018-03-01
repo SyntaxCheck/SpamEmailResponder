@@ -26,21 +26,7 @@ namespace MailServer
             {
                 storage = new List<MailStorage>();
                 serializeHelper = new SerializeHelper();
-                string currentDirectory = Directory.GetCurrentDirectory();
 
-                string fullPath = Path.Combine(currentDirectory, STORAGE_OBJECT_FILENAME);
-                if (File.Exists(fullPath))
-                {
-                    storage = serializeHelper.ReadFromBinaryFile<List<MailStorage>>(fullPath);
-                }
-
-                dgvEmails.Rows.Clear();
-
-                foreach (MailStorage ms in storage)
-                {
-                    if(!ms.Replied)
-                        dgvEmails.Rows.Add(ms.ToAddress, ms.SubjectLine, ms.DateReceived.ToString("yyyy-MM-dd hh:mm"), ms.PersonName, ((EmailType)ms.MessageType).ToString(), ms.Replied.ToString(), ms.EmailBodyPlain, ms.DeterminedReply, ms.NumberOfAttachments.ToString(), ms.MsgId);
-                }
             }
             catch (Exception ex)
             {
@@ -52,7 +38,6 @@ namespace MailServer
         {
             Close();
         }
-
         private void dgvEmails_RowEnter(object sender, DataGridViewCellEventArgs e)
         {
             try
@@ -83,5 +68,33 @@ namespace MailServer
                 MessageBox.Show("Error: " + ex.Message + Environment.NewLine + "Stack: " + ex.StackTrace, "Failed");
             }
 }
+        private void cbxShowAll_CheckedChanged(object sender, EventArgs e)
+        {
+
+        }
+        private void btnRefresh_Click(object sender, EventArgs e)
+        {
+            LoadScreen();
+        }
+
+        //Private functions
+        private void LoadScreen()
+        {
+            string currentDirectory = Directory.GetCurrentDirectory();
+
+            string fullPath = Path.Combine(currentDirectory, STORAGE_OBJECT_FILENAME);
+            if (File.Exists(fullPath))
+            {
+                storage = serializeHelper.ReadFromBinaryFile<List<MailStorage>>(fullPath);
+            }
+
+            dgvEmails.Rows.Clear();
+
+            foreach (MailStorage ms in storage)
+            {
+                if (cbxShowAll.Checked || !ms.Replied)
+                    dgvEmails.Rows.Add(ms.ToAddress, ms.SubjectLine, ms.DateReceived.ToString("yyyy-MM-dd hh:mm"), ms.PersonName, ((EmailType)ms.MessageType).ToString(), ms.Replied.ToString(), ms.EmailBodyPlain, ms.DeterminedReply, ms.NumberOfAttachments.ToString(), ms.MsgId);
+            }
+        }
     }
 }

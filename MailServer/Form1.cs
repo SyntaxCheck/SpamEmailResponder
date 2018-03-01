@@ -614,7 +614,7 @@ namespace MailServer
                 }
             }
 
-            lblMessageInfo.Text = "Sent Messages: " + storage.Count(t => t.Replied).ToString("#,##0") + "   Skipped Messages: " + skippedCount.ToString("#,##0") + "   Pending Messages: " + storage.Count(t => !t.Replied).ToString("#,##0") + "   Unprocessed Messages: " + mailServer.LastInboxCount.ToString("#,##0");
+            lblMessageInfo.Text = "Sent: " + storage.Count(t => t.Replied).ToString("#,##0") + "   Skipped: " + skippedCount.ToString("#,##0") + "   Pending: " + storage.Count(t => !t.Replied).ToString("#,##0") + "   Unread: " + mailServer.LastInboxCount.ToString("#,##0");
         }
     }
 }
