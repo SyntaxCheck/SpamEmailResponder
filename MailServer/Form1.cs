@@ -97,8 +97,14 @@ namespace MailServer
             if (response.Code < 0)
             {
                 tbxOutput.Text = response.AsString();
+                Logger.Write(loggerInfo, "Process Timer/MailServer.GetMessage()", response);
             }
+            
             int postCount = storage.Count();
+            if (preCount == postCount)
+            {
+                Logger.Write(loggerInfo, "Pre and post counts match. Pre: " + preCount.ToString() + ", Post: " + postCount.ToString());
+            }
 
             //Write Storage object to disk
             if (storage.Count() > 0)
@@ -284,6 +290,11 @@ namespace MailServer
         {
             Close();
         }
+        private void storageViewerToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            StorageViewer sv = new StorageViewer();
+            sv.Show();
+        }
 
         //Private functions
         private int CheckForMessages()
@@ -435,6 +446,10 @@ namespace MailServer
                         found = true;
                         LoadScreen(storage[i], previousMessagesInThread);
                         break;
+                    }
+                    else
+                    {
+                        Logger.WriteDbg(loggerInfo, "Skipping new message. Received: " + storage[i].DateReceived.ToString() + ". Message is only " + hours.ToString() + " old.");
                     }
                 }
             }

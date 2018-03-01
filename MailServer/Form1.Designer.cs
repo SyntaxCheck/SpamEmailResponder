@@ -38,11 +38,12 @@
             this.processTimer = new System.Windows.Forms.Timer(this.components);
             this.tbxOutput = new System.Windows.Forms.TextBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.panel1 = new System.Windows.Forms.Panel();
+            this.trckBar = new System.Windows.Forms.TrackBar();
             this.lblNext = new System.Windows.Forms.Label();
             this.lblTimeTillNextSend = new System.Windows.Forms.Label();
             this.lblTrackBarValue = new System.Windows.Forms.Label();
             this.lblSendFreq = new System.Windows.Forms.Label();
-            this.trckBar = new System.Windows.Forms.TrackBar();
             this.lblCountdown = new System.Windows.Forms.Label();
             this.cbxDebug = new System.Windows.Forms.CheckBox();
             this.lblMessageInfo = new System.Windows.Forms.Label();
@@ -85,12 +86,12 @@
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.optionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.responseConfigToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.panel1 = new System.Windows.Forms.Panel();
+            this.storageViewerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.groupBox1.SuspendLayout();
+            this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trckBar)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dgvPastEmail)).BeginInit();
             this.menuStrip1.SuspendLayout();
-            this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
             // processTimer
@@ -100,7 +101,7 @@
             // tbxOutput
             // 
             this.tbxOutput.Location = new System.Drawing.Point(16, 998);
-            this.tbxOutput.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.tbxOutput.Margin = new System.Windows.Forms.Padding(4);
             this.tbxOutput.Multiline = true;
             this.tbxOutput.Name = "tbxOutput";
             this.tbxOutput.Size = new System.Drawing.Size(2265, 97);
@@ -147,13 +148,38 @@
             this.groupBox1.Font = new System.Drawing.Font("Tahoma", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.groupBox1.ForeColor = System.Drawing.Color.Black;
             this.groupBox1.Location = new System.Drawing.Point(16, 36);
-            this.groupBox1.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.groupBox1.Margin = new System.Windows.Forms.Padding(4);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.groupBox1.Padding = new System.Windows.Forms.Padding(4);
             this.groupBox1.Size = new System.Drawing.Size(2267, 954);
             this.groupBox1.TabIndex = 1;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Current Message";
+            // 
+            // panel1
+            // 
+            this.panel1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panel1.Controls.Add(this.trckBar);
+            this.panel1.Location = new System.Drawing.Point(1250, 889);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(396, 58);
+            this.panel1.TabIndex = 35;
+            // 
+            // trckBar
+            // 
+            this.trckBar.BackColor = System.Drawing.Color.White;
+            this.trckBar.Location = new System.Drawing.Point(0, 0);
+            this.trckBar.Margin = new System.Windows.Forms.Padding(0);
+            this.trckBar.Maximum = 500;
+            this.trckBar.Minimum = 200;
+            this.trckBar.Name = "trckBar";
+            this.trckBar.Size = new System.Drawing.Size(394, 56);
+            this.trckBar.TabIndex = 30;
+            this.trckBar.TickFrequency = 10;
+            this.trckBar.TickStyle = System.Windows.Forms.TickStyle.Both;
+            this.trckBar.Value = 240;
+            this.trckBar.Visible = false;
+            this.trckBar.Scroll += new System.EventHandler(this.trckBar_Scroll);
             // 
             // lblNext
             // 
@@ -196,22 +222,6 @@
             this.lblSendFreq.Text = "Send Frequency:";
             this.lblSendFreq.Visible = false;
             // 
-            // trckBar
-            // 
-            this.trckBar.BackColor = System.Drawing.Color.White;
-            this.trckBar.Location = new System.Drawing.Point(0, 0);
-            this.trckBar.Margin = new System.Windows.Forms.Padding(0);
-            this.trckBar.Maximum = 500;
-            this.trckBar.Minimum = 200;
-            this.trckBar.Name = "trckBar";
-            this.trckBar.Size = new System.Drawing.Size(394, 56);
-            this.trckBar.TabIndex = 30;
-            this.trckBar.TickFrequency = 10;
-            this.trckBar.TickStyle = System.Windows.Forms.TickStyle.Both;
-            this.trckBar.Value = 240;
-            this.trckBar.Visible = false;
-            this.trckBar.Scroll += new System.EventHandler(this.trckBar_Scroll);
-            // 
             // lblCountdown
             // 
             this.lblCountdown.AutoSize = true;
@@ -248,7 +258,7 @@
             // 
             this.cbxAutoSend.AutoSize = true;
             this.cbxAutoSend.Location = new System.Drawing.Point(965, 897);
-            this.cbxAutoSend.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.cbxAutoSend.Margin = new System.Windows.Forms.Padding(4);
             this.cbxAutoSend.Name = "cbxAutoSend";
             this.cbxAutoSend.Size = new System.Drawing.Size(94, 21);
             this.cbxAutoSend.TabIndex = 26;
@@ -270,7 +280,7 @@
             // tbxAttachmentNames
             // 
             this.tbxAttachmentNames.Location = new System.Drawing.Point(172, 116);
-            this.tbxAttachmentNames.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.tbxAttachmentNames.Margin = new System.Windows.Forms.Padding(4);
             this.tbxAttachmentNames.Name = "tbxAttachmentNames";
             this.tbxAttachmentNames.Size = new System.Drawing.Size(776, 23);
             this.tbxAttachmentNames.TabIndex = 24;
@@ -279,7 +289,7 @@
             // 
             this.btnRegenerate.BackColor = System.Drawing.Color.AliceBlue;
             this.btnRegenerate.Location = new System.Drawing.Point(18, 896);
-            this.btnRegenerate.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.btnRegenerate.Margin = new System.Windows.Forms.Padding(4);
             this.btnRegenerate.Name = "btnRegenerate";
             this.btnRegenerate.Size = new System.Drawing.Size(100, 28);
             this.btnRegenerate.TabIndex = 23;
@@ -291,7 +301,7 @@
             // 
             this.btnRefresh.BackColor = System.Drawing.Color.AliceBlue;
             this.btnRefresh.Location = new System.Drawing.Point(2000, 896);
-            this.btnRefresh.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.btnRefresh.Margin = new System.Windows.Forms.Padding(4);
             this.btnRefresh.Name = "btnRefresh";
             this.btnRefresh.Size = new System.Drawing.Size(100, 28);
             this.btnRefresh.TabIndex = 22;
@@ -304,7 +314,7 @@
             this.btnIgnore.BackColor = System.Drawing.Color.AliceBlue;
             this.btnIgnore.Enabled = false;
             this.btnIgnore.Location = new System.Drawing.Point(371, 896);
-            this.btnIgnore.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.btnIgnore.Margin = new System.Windows.Forms.Padding(4);
             this.btnIgnore.Name = "btnIgnore";
             this.btnIgnore.Size = new System.Drawing.Size(100, 28);
             this.btnIgnore.TabIndex = 21;
@@ -317,7 +327,7 @@
             this.btnNext.BackColor = System.Drawing.Color.AliceBlue;
             this.btnNext.Enabled = false;
             this.btnNext.Location = new System.Drawing.Point(252, 896);
-            this.btnNext.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.btnNext.Margin = new System.Windows.Forms.Padding(4);
             this.btnNext.Name = "btnNext";
             this.btnNext.Size = new System.Drawing.Size(100, 28);
             this.btnNext.TabIndex = 20;
@@ -330,7 +340,7 @@
             this.btnSendEmail.BackColor = System.Drawing.Color.AliceBlue;
             this.btnSendEmail.Enabled = false;
             this.btnSendEmail.Location = new System.Drawing.Point(644, 898);
-            this.btnSendEmail.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.btnSendEmail.Margin = new System.Windows.Forms.Padding(4);
             this.btnSendEmail.Name = "btnSendEmail";
             this.btnSendEmail.Size = new System.Drawing.Size(100, 28);
             this.btnSendEmail.TabIndex = 19;
@@ -361,7 +371,7 @@
             this.Body,
             this.Response});
             this.dgvPastEmail.Location = new System.Drawing.Point(965, 75);
-            this.dgvPastEmail.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.dgvPastEmail.Margin = new System.Windows.Forms.Padding(4);
             this.dgvPastEmail.Name = "dgvPastEmail";
             this.dgvPastEmail.ReadOnly = true;
             this.dgvPastEmail.Size = new System.Drawing.Size(1293, 807);
@@ -421,7 +431,7 @@
             // tbxDeterminedReply
             // 
             this.tbxDeterminedReply.Location = new System.Drawing.Point(12, 558);
-            this.tbxDeterminedReply.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.tbxDeterminedReply.Margin = new System.Windows.Forms.Padding(4);
             this.tbxDeterminedReply.Multiline = true;
             this.tbxDeterminedReply.Name = "tbxDeterminedReply";
             this.tbxDeterminedReply.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
@@ -451,7 +461,7 @@
             // tbxBodyPlainText
             // 
             this.tbxBodyPlainText.Location = new System.Drawing.Point(13, 199);
-            this.tbxBodyPlainText.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.tbxBodyPlainText.Margin = new System.Windows.Forms.Padding(4);
             this.tbxBodyPlainText.Multiline = true;
             this.tbxBodyPlainText.Name = "tbxBodyPlainText";
             this.tbxBodyPlainText.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
@@ -461,7 +471,7 @@
             // tbxDateReceived
             // 
             this.tbxDateReceived.Location = new System.Drawing.Point(144, 88);
-            this.tbxDateReceived.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.tbxDateReceived.Margin = new System.Windows.Forms.Padding(4);
             this.tbxDateReceived.Name = "tbxDateReceived";
             this.tbxDateReceived.Size = new System.Drawing.Size(253, 23);
             this.tbxDateReceived.TabIndex = 13;
@@ -469,7 +479,7 @@
             // tbxDeterminedName
             // 
             this.tbxDeterminedName.Location = new System.Drawing.Point(540, 146);
-            this.tbxDeterminedName.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.tbxDeterminedName.Margin = new System.Windows.Forms.Padding(4);
             this.tbxDeterminedName.Name = "tbxDeterminedName";
             this.tbxDeterminedName.Size = new System.Drawing.Size(253, 23);
             this.tbxDeterminedName.TabIndex = 12;
@@ -478,7 +488,7 @@
             // 
             this.tbxDeterminedType.Enabled = false;
             this.tbxDeterminedType.Location = new System.Drawing.Point(145, 146);
-            this.tbxDeterminedType.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.tbxDeterminedType.Margin = new System.Windows.Forms.Padding(4);
             this.tbxDeterminedType.Name = "tbxDeterminedType";
             this.tbxDeterminedType.Size = new System.Drawing.Size(253, 23);
             this.tbxDeterminedType.TabIndex = 11;
@@ -487,7 +497,7 @@
             // 
             this.cbxHasAttachments.AutoSize = true;
             this.cbxHasAttachments.Location = new System.Drawing.Point(144, 120);
-            this.cbxHasAttachments.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.cbxHasAttachments.Margin = new System.Windows.Forms.Padding(4);
             this.cbxHasAttachments.Name = "cbxHasAttachments";
             this.cbxHasAttachments.Size = new System.Drawing.Size(18, 17);
             this.cbxHasAttachments.TabIndex = 10;
@@ -497,7 +507,7 @@
             // 
             this.tbxMessageId.Enabled = false;
             this.tbxMessageId.Location = new System.Drawing.Point(500, 89);
-            this.tbxMessageId.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.tbxMessageId.Margin = new System.Windows.Forms.Padding(4);
             this.tbxMessageId.Name = "tbxMessageId";
             this.tbxMessageId.Size = new System.Drawing.Size(449, 23);
             this.tbxMessageId.TabIndex = 9;
@@ -505,7 +515,7 @@
             // tbxFromAddress
             // 
             this.tbxFromAddress.Location = new System.Drawing.Point(144, 56);
-            this.tbxFromAddress.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.tbxFromAddress.Margin = new System.Windows.Forms.Padding(4);
             this.tbxFromAddress.Name = "tbxFromAddress";
             this.tbxFromAddress.Size = new System.Drawing.Size(804, 23);
             this.tbxFromAddress.TabIndex = 8;
@@ -513,7 +523,7 @@
             // tbxSubject
             // 
             this.tbxSubject.Location = new System.Drawing.Point(144, 24);
-            this.tbxSubject.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.tbxSubject.Margin = new System.Windows.Forms.Padding(4);
             this.tbxSubject.Name = "tbxSubject";
             this.tbxSubject.Size = new System.Drawing.Size(804, 23);
             this.tbxSubject.TabIndex = 7;
@@ -595,7 +605,7 @@
             // 
             // menuStrip1
             // 
-            this.menuStrip1.BackColor = System.Drawing.Color.Gold;
+            this.menuStrip1.BackColor = System.Drawing.Color.Orange;
             this.menuStrip1.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.fileToolStripMenuItem,
@@ -617,14 +627,15 @@
             // exitToolStripMenuItem
             // 
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(181, 26);
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(108, 26);
             this.exitToolStripMenuItem.Text = "Exit";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
             // 
             // optionsToolStripMenuItem
             // 
             this.optionsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.responseConfigToolStripMenuItem});
+            this.responseConfigToolStripMenuItem,
+            this.storageViewerToolStripMenuItem});
             this.optionsToolStripMenuItem.Name = "optionsToolStripMenuItem";
             this.optionsToolStripMenuItem.Size = new System.Drawing.Size(73, 24);
             this.optionsToolStripMenuItem.Text = "Options";
@@ -635,14 +646,12 @@
             this.responseConfigToolStripMenuItem.Size = new System.Drawing.Size(195, 26);
             this.responseConfigToolStripMenuItem.Text = "Response Config";
             // 
-            // panel1
+            // storageViewerToolStripMenuItem
             // 
-            this.panel1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.panel1.Controls.Add(this.trckBar);
-            this.panel1.Location = new System.Drawing.Point(1250, 889);
-            this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(396, 58);
-            this.panel1.TabIndex = 35;
+            this.storageViewerToolStripMenuItem.Name = "storageViewerToolStripMenuItem";
+            this.storageViewerToolStripMenuItem.Size = new System.Drawing.Size(195, 26);
+            this.storageViewerToolStripMenuItem.Text = "Storage Viewer";
+            this.storageViewerToolStripMenuItem.Click += new System.EventHandler(this.storageViewerToolStripMenuItem_Click);
             // 
             // Form1
             // 
@@ -655,18 +664,18 @@
             this.Controls.Add(this.menuStrip1);
             this.ForeColor = System.Drawing.Color.Black;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.Margin = new System.Windows.Forms.Padding(4);
             this.Name = "Form1";
             this.RightToLeftLayout = true;
             this.Text = "Mail Server";
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
+            this.panel1.ResumeLayout(false);
+            this.panel1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trckBar)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.dgvPastEmail)).EndInit();
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
-            this.panel1.ResumeLayout(false);
-            this.panel1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -725,6 +734,7 @@
         private System.Windows.Forms.ToolStripMenuItem optionsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem responseConfigToolStripMenuItem;
         private System.Windows.Forms.Panel panel1;
+        private System.Windows.Forms.ToolStripMenuItem storageViewerToolStripMenuItem;
     }
 }
 
