@@ -2233,7 +2233,7 @@ public class MailServerFunctions
 
         preProcessedBody = RemoveUselessText(MakeEmailEasierToRead(preProcessedBody));
 
-        bool allTheSame = true;
+        bool foundSame = false;
         foreach (MailStorage ms in pastMessages)
         {
             string tmpPastMsg = RemoveUselessText(ms.SubjectLine + " " + ms.EmailBodyPlain);
@@ -2265,22 +2265,22 @@ public class MailServerFunctions
 
                         //If the amount of 3 word pairs successfully found is less than 80% return a fail
                         double triFoundPercent = (double)foundSuccessCount / (foundSuccessCount + foundFailCount);
-                        if ((triFoundPercent * 100) < 80)
+                        if ((triFoundPercent * 100) > 90)
                         {
-                            allTheSame = false;
+                            foundSame = true;
                             break;
                         }
                     }
-                    else
-                    {
-                        allTheSame = false;
-                        break;
-                    }
                 }
+            }
+            else
+            {
+                foundSame = true;
+                break;
             }
         }
 
-        if (!allTheSame)
+        if (foundSame)
         {
             currentMessage.Ignored = true;
             currentMessage.Replied = true;

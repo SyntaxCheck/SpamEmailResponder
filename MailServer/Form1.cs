@@ -642,5 +642,80 @@ namespace MailServer
 
             lblMessageInfo.Text = "Sent: " + storage.Count(t => t.Replied).ToString("#,##0") + "   Skipped: " + skippedCount.ToString("#,##0") + "   Ignored: " + storage.Count(t => t.Ignored).ToString("#,##0") + "   Pending: " + storage.Count(t => !t.Replied).ToString("#,##0") + "   Unread: " + mailServer.LastInboxCount.ToString("#,##0");
         }
+
+        private void label3_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void tbxDateReceived_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void tbxDeterminedName_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void tbxDeterminedType_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void cbxHasAttachments_CheckedChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void tbxMessageId_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void tbxFromAddress_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void tbxSubject_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label7_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label6_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label5_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label4_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void tbxAttachmentNames_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label2_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label1_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }
