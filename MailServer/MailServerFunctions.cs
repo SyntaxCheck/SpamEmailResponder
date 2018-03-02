@@ -494,7 +494,7 @@ public class MailServerFunctions
                     string msgType = txtPart.ContentType.MediaType + "/" + txtPart.ContentType.MediaSubtype;
                     if (msgType.Trim().ToLower() == "text/plain")
                     {
-                        storageObj.EmailBodyPlain = txtPart.Text;
+                        storageObj.EmailBodyPlain = MakeEmailEasierToRead(txtPart.Text);
                     }
                     else if (msgType.Trim().ToLower() == "text/html")
                     {
@@ -1349,6 +1349,7 @@ public class MailServerFunctions
 
         string[] lineSplit = body.Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
         string[] regardsSplit = regards.ToUpper().Split(new string[] { ";" }, StringSplitOptions.RemoveEmptyEntries);
+
         for (int i = lineSplit.Count() - 1; i >= 0; i--)
         {
             lineSplit[i] = lineSplit[i].Trim().Trim('\r').Trim('\n');

@@ -27,6 +27,7 @@ namespace MailServer
                 storage = new List<MailStorage>();
                 serializeHelper = new SerializeHelper();
 
+                LoadScreen();
             }
             catch (Exception ex)
             {

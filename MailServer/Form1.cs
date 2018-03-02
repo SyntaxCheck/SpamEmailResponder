@@ -75,7 +75,6 @@ namespace MailServer
 
         private void processTimer_Tick(object sender, EventArgs e)
         {
-            bool stopped = false;
             StandardResponse response = new StandardResponse() { Code = 0, Message = String.Empty, Data = String.Empty };
             processTimer.Interval = SEND_INTERVAL;
 
@@ -119,7 +118,6 @@ namespace MailServer
                 {
                     tbxOutput.Text = response.AsString();
                     processTimer.Stop();
-                    stopped = true;
                     MessageBox.Show(response.AsString(), "Failed to get new mail");
                 }
                 else
@@ -172,7 +170,6 @@ namespace MailServer
                 }
                 else if (postCount > preCount)
                 {
-                    stopped = true;
                     processTimer.Stop();
                     LoadMessage();
                 }
@@ -266,6 +263,12 @@ namespace MailServer
                 lblSendFreq.Visible = true;
                 lblTrackBarValue.Visible = true;
                 trckBar.Visible = true;
+
+                countdownRemaining = trckBar.Value;
+                if (!countdownTimer.Enabled)
+                {
+                    countdownTimer.Start();
+                }
             }
             else
             {
