@@ -219,6 +219,7 @@ namespace MailServer
                 if (storage[i].MsgId == workingOnMsg)
                 {
                     storage[i].Replied = true;
+                    storage[i].Ignored = true;
                     workingOnMsg = String.Empty;
                     CheckForMessages();
 
@@ -288,6 +289,7 @@ namespace MailServer
         {
             processTimer.Interval = trckBar.Value * 1000;
             lblTrackBarValue.Text = "(" + trckBar.Value.ToString() + ") seconds";
+            mailServer.InboxCountHistory = new List<int>(); //If they adjust the send interval we need to clear the inbox count since we do not track the amount of time between each InboxCount
         }
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -418,7 +420,7 @@ namespace MailServer
 
             for (int i = 0; i < storage.Count(); i++)
             {
-                if (!storage[i].Replied && !skippedMessages.Contains(";;;" + storage[i].MsgId + ";;;"))
+                if (!storage[i].Replied && !storage[i].Ignored && !skippedMessages.Contains(";;;" + storage[i].MsgId + ";;;"))
                 {
                     //Make sure it has been atleast 5 hours
                     double hours = (DateTime.Now - storage[i].DateReceived).TotalHours;
@@ -519,7 +521,7 @@ namespace MailServer
                     List<MailStorage> previousMessagesInThread = new List<MailStorage>();
                     foreach (MailStorage ms in storage)
                     {
-                        if (ms.SubjectLine == storage[i].SubjectLine && ms.MsgId != storage[i].MsgId)
+                        if (ms.SubjectLine.ToUpper().Replace("RE:","").Replace("FW:", "").Trim() == storage[i].SubjectLine.ToUpper().Replace("RE:", "").Replace("FW:", "").Trim() && ms.MsgId != storage[i].MsgId)
                         {
                             int foundCount = 0;
                             foreach (var v in storage[i].ToAddressList)
@@ -566,33 +568,54 @@ namespace MailServer
         {
             if (mailServer.InboxCountHistory.Count() > 0)
             {
-                //TODO factor in the rate we get new messages
-                //int avg = 0;
-                //int sum = 0;
+                
+                int avg = 0;
+                int sum = 0;
+                int diffSum = 0;
+                double diffAvg = 0;
 
-                //for (int i = 0; i < mailServer.InboxCountHistory.Count(); i++)
-                //{
-                //    sum += mailServer.InboxCountHistory[i];
-                //}
+                if (mailServer.InboxCountHistory.Count() > 1)
+                {
+                    for (int i = 0; i < mailServer.InboxCountHistory.Count(); i++)
+                    {
+                        sum += mailServer.InboxCountHistory[i];
+                    }
 
-                //avg = sum / mailServer.InboxCountHistory.Count();
+                    avg = sum / mailServer.InboxCountHistory.Count();
 
-                //for (int i = mailServer.InboxCountHistory.Count() - 1; i >= 0; i--)
-                //{
-                //    //Remove any 0 counts reported when we have a large average size, these were probably the result of server errors incorrectly reporting the count
-                //    if (mailServer.InboxCountHistory[i] == 0 && avg > 50)
-                //    {
-                //        mailServer.InboxCountHistory.RemoveAt(i);
-                //    }
-                //    else
-                //    {
+                    for (int i = mailServer.InboxCountHistory.Count() - 1; i >= 0; i--)
+                    {
+                        //Remove any 0 counts reported when we have a large average size, these were probably the result of server errors incorrectly reporting the count
+                        //Also cleanup any counts that are old so that Old data does not keep affecting current rates
+                        if (mailServer.InboxCountHistory[i] == 0 && avg > 50 || Math.Abs(mailServer.InboxCountHistory[i] - (avg * 0.5)) > (avg * 0.5))
+                        {
+                            mailServer.InboxCountHistory.RemoveAt(i);
+                        }
+                    }
 
-                //    }
-                //}
+                    for (int i = 0; i < mailServer.InboxCountHistory.Count() - 1; i++)
+                    {
+                        diffSum += Math.Abs(mailServer.InboxCountHistory[i] - mailServer.InboxCountHistory[i + 1]);
+                    }
 
+                    diffAvg = (double)diffSum / mailServer.InboxCountHistory.Count() - 1;
+                }
+
+                TimeSpan ts = new TimeSpan();
+                int totalTimeNeeded = 0;
                 int secondsBetweenSends = trckBar.Value;
-                int totalTimeNeeded = mailServer.LastInboxCount * secondsBetweenSends;
-                TimeSpan ts = TimeSpan.FromSeconds(totalTimeNeeded);
+
+                if (mailServer.InboxCountHistory.Count() > 1)
+                {
+                    totalTimeNeeded = (int)Math.Round((mailServer.LastInboxCount * secondsBetweenSends) / diffAvg, 0);
+                    ts = TimeSpan.FromSeconds(totalTimeNeeded);
+                }
+                else
+                {
+                    totalTimeNeeded = mailServer.LastInboxCount * secondsBetweenSends;
+                    ts = TimeSpan.FromSeconds(totalTimeNeeded);
+                }
+
                 lblCountdown.Text = "Estimated Time till Mailbox Cleared: ";
                 if (ts.Days > 0)
                 {
@@ -617,7 +640,7 @@ namespace MailServer
                 }
             }
 
-            lblMessageInfo.Text = "Sent: " + storage.Count(t => t.Replied).ToString("#,##0") + "   Skipped: " + skippedCount.ToString("#,##0") + "   Pending: " + storage.Count(t => !t.Replied).ToString("#,##0") + "   Unread: " + mailServer.LastInboxCount.ToString("#,##0");
+            lblMessageInfo.Text = "Sent: " + storage.Count(t => t.Replied).ToString("#,##0") + "   Skipped: " + skippedCount.ToString("#,##0") + "   Ignored: " + storage.Count(t => t.Ignored).ToString("#,##0") + "   Pending: " + storage.Count(t => !t.Replied).ToString("#,##0") + "   Unread: " + mailServer.LastInboxCount.ToString("#,##0");
         }
     }
 }

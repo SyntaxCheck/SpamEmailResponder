@@ -2228,6 +2228,61 @@ public class MailServerFunctions
 
         preProcessedBody = RemoveUselessText(MakeEmailEasierToRead(preProcessedBody));
 
+        bool allTheSame = true;
+        foreach (MailStorage ms in pastMessages)
+        {
+            string tmpPastMsg = RemoveUselessText(ms.SubjectLine + " " + ms.EmailBodyPlain);
+            if (tmpPastMsg != preProcessedBody)
+            {
+                if (preProcessedBody.Length > 0 && tmpPastMsg.Length > 0)
+                {
+                    int sizeDifference = Math.Abs(tmpPastMsg.Length - preProcessedBody.Length);
+                    double percentChange = (double)sizeDifference / preProcessedBody.Length;
+                    if ((percentChange * 100) < 20) //If we have less than a 20% change in size move to the next check
+                    {
+                        //I am going to take 3 word chunks and search for each set of 3 word pairs to attempt to see if the email is mostly the same
+                        string[] words = preProcessedBody.Split(new char[] { ' ' });
+
+                        int foundSuccessCount = 0;
+                        int foundFailCount = 0;
+                        for (int i = 0; i < words.Length - 2; i++)
+                        {
+                            string tmpTri = words[i] + ' ' + words[i + 1] + ' ' + words[i + 2];
+                            if (tmpPastMsg.Contains(tmpTri))
+                            {
+                                foundSuccessCount++;
+                            }
+                            else
+                            {
+                                foundFailCount++;
+                            }
+                        }
+
+                        //If the amount of 3 word pairs successfully found is less than 80% return a fail
+                        double triFoundPercent = (double)foundSuccessCount / (foundSuccessCount + foundFailCount);
+                        if ((triFoundPercent * 100) < 80)
+                        {
+                            allTheSame = false;
+                            break;
+                        }
+                    }
+                    else
+                    {
+                        allTheSame = false;
+                        break;
+                    }
+                }
+            }
+        }
+
+        if (!allTheSame)
+        {
+            currentMessage.Ignored = true;
+            currentMessage.Replied = true;
+            currentMessage.IsDuplicateMessage = true;
+            return String.Empty;
+        }
+
         //Types of emails
         if (currentMessage.SubjectLine.Contains("Test ") || currentMessage.SubjectLine.Contains(" Test"))
         {

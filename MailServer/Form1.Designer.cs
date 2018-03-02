@@ -246,11 +246,11 @@
             // lblMessageInfo
             // 
             this.lblMessageInfo.AutoSize = true;
-            this.lblMessageInfo.Location = new System.Drawing.Point(1855, 18);
+            this.lblMessageInfo.Location = new System.Drawing.Point(1761, 18);
             this.lblMessageInfo.Name = "lblMessageInfo";
-            this.lblMessageInfo.Size = new System.Drawing.Size(381, 17);
+            this.lblMessageInfo.Size = new System.Drawing.Size(486, 17);
             this.lblMessageInfo.TabIndex = 27;
-            this.lblMessageInfo.Text = "Sent: 0,000   Skipped: 0,000   Pending: 000   Unread: 0,000";
+            this.lblMessageInfo.Text = "Sent: 0,000   Skipped: 0,000   Ignored: 0,000   Pending: 000   Unread: 0,000";
             this.lblMessageInfo.TextAlign = System.Drawing.ContentAlignment.TopRight;
             // 
             // cbxAutoSend
@@ -654,8 +654,7 @@
             // 
             // Form1
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.BackColor = System.Drawing.Color.LightSteelBlue;
             this.ClientSize = new System.Drawing.Size(2299, 1102);
             this.Controls.Add(this.groupBox1);

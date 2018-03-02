@@ -31,7 +31,7 @@ namespace MailServer
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error: " + ex.Message + Environment.NewLine + "Stack: " + ex.StackTrace, "Failed");
+                MessageBox.Show("Error: " + ex.Message + Environment.NewLine + "Stack: " + ex.StackTrace, "Failed to init screen");
             }
         }
 
@@ -48,13 +48,13 @@ namespace MailServer
                     tbxFromAddress.Text = (string)dgvEmails[0, e.RowIndex].Value;
                     tbxSubject.Text = (string)dgvEmails[1, e.RowIndex].Value;
                     tbxDateReceived.Text = (string)dgvEmails[2, e.RowIndex].Value;
-                    tbxDeterminedName.Text = (string)dgvEmails[3, e.RowIndex].Value;
-                    tbxDeterminedType.Text = (string)dgvEmails[4, e.RowIndex].Value;
-                    tbxBodyPlainText.Text = (string)dgvEmails[6, e.RowIndex].Value;
-                    tbxDeterminedReply.Text = (string)dgvEmails[7, e.RowIndex].Value;
-                    tbxMessageId.Text = (string)dgvEmails[9, e.RowIndex].Value;
+                    tbxDeterminedName.Text = (string)dgvEmails[4, e.RowIndex].Value;
+                    tbxDeterminedType.Text = (string)dgvEmails[5, e.RowIndex].Value;
+                    tbxBodyPlainText.Text = (string)dgvEmails[8, e.RowIndex].Value;
+                    tbxDeterminedReply.Text = (string)dgvEmails[9, e.RowIndex].Value;
+                    tbxMessageId.Text = (string)dgvEmails[11, e.RowIndex].Value;
 
-                    if (dgvEmails[8, e.RowIndex].Value.ToString().ToUpper() == "TRUE")
+                    if (dgvEmails[10, e.RowIndex].Value.ToString().ToUpper() == "TRUE")
                     {
                         cbxHasAttachments.Checked = true;
                     }
@@ -66,7 +66,7 @@ namespace MailServer
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error: " + ex.Message + Environment.NewLine + "Stack: " + ex.StackTrace, "Failed");
+                MessageBox.Show("Error: " + ex.Message + Environment.NewLine + "Stack: " + ex.StackTrace, "Failed to load Grid");
             }
 }
         private void cbxShowAll_CheckedChanged(object sender, EventArgs e)
@@ -81,20 +81,27 @@ namespace MailServer
         //Private functions
         private void LoadScreen()
         {
-            string currentDirectory = Directory.GetCurrentDirectory();
-
-            string fullPath = Path.Combine(currentDirectory, STORAGE_OBJECT_FILENAME);
-            if (File.Exists(fullPath))
+            try
             {
-                storage = serializeHelper.ReadFromBinaryFile<List<MailStorage>>(fullPath);
+                string currentDirectory = Directory.GetCurrentDirectory();
+
+                string fullPath = Path.Combine(currentDirectory, STORAGE_OBJECT_FILENAME);
+                if (File.Exists(fullPath))
+                {
+                    storage = serializeHelper.ReadFromBinaryFile<List<MailStorage>>(fullPath);
+                }
+
+                dgvEmails.Rows.Clear();
+
+                foreach (MailStorage ms in storage)
+                {
+                    if (cbxShowAll.Checked || !ms.Replied)
+                        dgvEmails.Rows.Add(ms.ToAddress, ms.SubjectLine, ms.DateReceived.ToString("yyyy-MM-dd hh:mm"), ms.DateProcessed.ToString("yyyy-MM-dd hh:mm"), ms.PersonName, ((EmailType)ms.MessageType).ToString(), ms.Replied.ToString(), ms.Ignored.ToString(), ms.EmailBodyPlain, ms.DeterminedReply, ms.NumberOfAttachments.ToString(), ms.MsgId);
+                }
             }
-
-            dgvEmails.Rows.Clear();
-
-            foreach (MailStorage ms in storage)
+            catch (Exception ex)
             {
-                if (cbxShowAll.Checked || !ms.Replied)
-                    dgvEmails.Rows.Add(ms.ToAddress, ms.SubjectLine, ms.DateReceived.ToString("yyyy-MM-dd hh:mm"), ms.PersonName, ((EmailType)ms.MessageType).ToString(), ms.Replied.ToString(), ms.EmailBodyPlain, ms.DeterminedReply, ms.NumberOfAttachments.ToString(), ms.MsgId);
+                MessageBox.Show("Error: " + ex.Message + Environment.NewLine + "Stack: " + ex.StackTrace, "Failed to LoadScreen()");
             }
         }
     }
