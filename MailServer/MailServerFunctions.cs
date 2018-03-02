@@ -2031,7 +2031,7 @@ public class MailServerFunctions
         replaceList += "interesting,compelling,engaging,though-provoking|";
         replaceList += "mention,acknowledgment,comment,indication,remark|";
         replaceList += "safe,secure,protected|";
-        replaceList += "money,cash,fund,pay,wealth|";
+        replaceList += "money,cash,fund,pay,wealth,coin|";
         replaceList += "small,tiny,little,miniature|";
         replaceList += "remember,relive,recall,commemorate|";
         replaceList += "different,contrasting,diverse,various|";
@@ -2039,6 +2039,11 @@ public class MailServerFunctions
         replaceList += "start,begin,kickoff|";
         replaceList += "quickly,hastily,hurriedly,immediately,instantly,promptly,rapidly,swiftly|";
         replaceList += "help,aide,assist|";
+        replaceList += "hard,difficult,tough,burdensome,complicated|";
+        replaceList += "easy,effortless,painless,simple,straightforward,uncomplicated|";
+        replaceList += "willing,eager,prepared,ready|";
+        replaceList += "admit,confess,acknowledge|";
+        replaceList += "joy,delight,great pleasure,glee,jubilation,happiness,elation|";
 
         string[] groupSplit = replaceList.Split(new char[] { '|' }, StringSplitOptions.RemoveEmptyEntries);
         List<string[]> synonymList = new List<string[]>();
