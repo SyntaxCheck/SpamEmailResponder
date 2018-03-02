@@ -479,7 +479,7 @@ public class MailServerFunctions
         try
         {
             //Ignore No-Reply emails, no reason to process an email that is not monitored or that was a real email sent to our mailbox.
-            if (msg.FromAddress.Count() > 0 && !msg.FromAddress[0].ToString().ToUpper().Contains("NO-REPLY@") && !msg.FromAddress[0].ToString().ToUpper().Contains("NOREPLY@") && !msg.FromAddress[0].ToString().ToUpper().Contains("MAILER-DAEMON@") && !msg.FromAddress[0].ToString().ToUpper().Contains("POSTMASTER@"))
+            if (msg.FromAddress.Count() > 0 && !msg.FromAddress[0].ToString().ToUpper().Contains("NO-REPLY@") && !msg.FromAddress[0].ToString().ToUpper().Contains("NOREPLY@") && !msg.FromAddress[0].ToString().ToUpper().Contains("MAILER-DAEMON@") && !msg.FromAddress[0].ToString().ToUpper().Contains("POSTMASTER@") && !msg.FromAddress[0].ToString().ToUpper().Contains("NOTIFICATIONS@LIVE.NEXT"))
             {
                 MailStorage storageObj = new MailStorage();
 
@@ -2784,6 +2784,7 @@ public class MailServerFunctions
             preProcessedBody.Trim().ToUpper().Contains("USD WAS DANATED TO YOU") ||
             preProcessedBody.Trim().ToUpper().Contains("USD WAS DONATED TO YOU") ||
             preProcessedBody.Trim().ToUpper().Contains("WE HAVE DECIDED TO DONATE THE SUM") ||
+            preProcessedBody.Trim().ToUpper().Contains("WILL THIS FORTUNE TO YOU") ||
             preProcessedBody.Trim().ToUpper().Contains("WITH THE SUM AMOUNT") ||
             preProcessedBody.Trim().ToUpper().Contains("YOU HAVE AN UNCLAIMED FUNDS") ||
             preProcessedBody.Trim().ToUpper().Contains("YOU WILL BE RECEIVING THE FUNDS") ||
