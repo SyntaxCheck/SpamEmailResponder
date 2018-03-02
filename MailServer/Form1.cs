@@ -259,6 +259,8 @@ namespace MailServer
             if (cbxAutoSend.Checked)
             {
                 processTimer.Start();
+                lblCountdown.Visible = true;
+                panel1.Visible = true;
                 lblNext.Visible = true;
                 lblTimeTillNextSend.Visible = true;
                 lblSendFreq.Visible = true;
@@ -274,6 +276,8 @@ namespace MailServer
             else
             {
                 processTimer.Stop();
+                lblCountdown.Visible = false;
+                panel1.Visible = false;
                 lblNext.Visible = false;
                 lblTimeTillNextSend.Visible = false;
                 lblSendFreq.Visible = false;

@@ -2543,6 +2543,7 @@ public class MailServerFunctions
             preProcessedBody.Trim().ToUpper().Contains("BUSINESS COOPERATION") ||
             preProcessedBody.Trim().ToUpper().Contains("BUSINESS DEAL") ||
             preProcessedBody.Trim().ToUpper().Contains("BUSINESS DISCUSSION") ||
+            preProcessedBody.Trim().ToUpper().Contains("BUSINESS JOINT PARTNER") ||
             preProcessedBody.Trim().ToUpper().Contains("BUSINESS OFFER") ||
             preProcessedBody.Trim().ToUpper().Contains("BUSINESS PARTNER") ||
             preProcessedBody.Trim().ToUpper().Contains("BUSINESS PROPOSAL") ||
@@ -2577,6 +2578,7 @@ public class MailServerFunctions
             preProcessedBody.Trim().ToUpper().Contains("WE CAN WORK OUT THIS FOR OUR BENEFIT") ||
             preProcessedBody.Trim().ToUpper().Contains("WE CAN WORK THIS OUT FOR OUR BENEFIT") ||
             preProcessedBody.Trim().ToUpper().Contains("WE CAN WORK TOGETHER") ||
+            (preProcessedBody.Trim().ToUpper().Contains("LETS SPLIT") && (preProcessedBody.Trim().ToUpper().Contains("IN THIS DEAL") || preProcessedBody.Trim().ToUpper().Contains("ON THIS DEAL"))) ||
             (preProcessedBody.Trim().ToUpper().Contains("PROJECT") && preProcessedBody.Trim().ToUpper().Contains("BENEFIT TO YOU")))
         {
             type = EmailType.Investor;
@@ -2724,6 +2726,7 @@ public class MailServerFunctions
             preProcessedBody.Trim().ToUpper().Contains("EFFECT THE SUM") ||
             preProcessedBody.Trim().ToUpper().Contains("EXPECTING TO RECEIVE IS A CASH") ||
             preProcessedBody.Trim().ToUpper().Contains("FREE CRYPTOCURRENCY") ||
+            preProcessedBody.Trim().ToUpper().Contains("FUND BELONGING TO MY DECEASED CLIENT") ||
             preProcessedBody.Trim().ToUpper().Contains("FUND IN A CASHIER CHECK") ||
             preProcessedBody.Trim().ToUpper().Contains("FUND IN A CASHIER CHEQUE") ||
             preProcessedBody.Trim().ToUpper().Contains("FUND THE SUM OF") ||
@@ -2817,7 +2820,12 @@ public class MailServerFunctions
             preProcessedBody.Trim().ToUpper().Contains("CONFIDENTIAL BRIEF") ||
             preProcessedBody.Trim().ToUpper().Contains("CONTACT ME") ||
             preProcessedBody.Trim().ToUpper().Contains("DEAR HOW ARE YOU") ||
+            preProcessedBody.Trim().ToUpper().Contains("DID YOU GET MY LAST EMAIL") ||
+            preProcessedBody.Trim().ToUpper().Contains("DID YOU GET MY PREVIOUS EMAIL") ||
             preProcessedBody.Trim().ToUpper().Contains("DID YOU RECEIVE MY PREVIOUS EMAIL") ||
+            preProcessedBody.Trim().ToUpper().Contains("DID YOU GET MY LAST E-MAIL") ||
+            preProcessedBody.Trim().ToUpper().Contains("DID YOU GET MY PREVIOUS E-MAIL") ||
+            preProcessedBody.Trim().ToUpper().Contains("DID YOU RECEIVE MY PREVIOUS E-MAIL") ||
             preProcessedBody.Trim().ToUpper().Contains("DISCUSS A IMPORTANT ISSUE") ||
             preProcessedBody.Trim().ToUpper().Contains("DISCUSS A ISSUE") ||
             preProcessedBody.Trim().ToUpper().Contains("DISCUSS A VERY IMPORTANT ISSUE") ||
@@ -2847,6 +2855,7 @@ public class MailServerFunctions
             preProcessedBody.Trim().ToUpper().Contains("I SHALL PROVIDE YOU WITH DETAILS ON YOUR RESPONSE") ||
             preProcessedBody.Trim().ToUpper().Contains("I SHALL PROVIDE YOU WITH DETAILS UPON YOUR RESPONSE") ||
             preProcessedBody.Trim().ToUpper().Contains("I URGENTLY NEED YOUR ASSISTANCE") ||
+            preProcessedBody.Trim().ToUpper().Contains("I WANT TO MEET YOU") ||
             preProcessedBody.Trim().ToUpper().Contains("IMPORTANT I LIKE TO SHARE") ||
             preProcessedBody.Trim().ToUpper().Contains("IMPORTANT INFORMATION FOR YOU") ||
             preProcessedBody.Trim().ToUpper().Contains("IMPORTANT TO DISCUSS WITH YOU") ||
@@ -2863,7 +2872,10 @@ public class MailServerFunctions
             preProcessedBody.Trim().ToUpper().Contains("PLEASE CONTACT MY SON") ||
             preProcessedBody.Trim().ToUpper().Contains("PLEASE HELP ME") ||
             preProcessedBody.Trim().ToUpper().Contains("PLEASE WRITE ME") ||
+            preProcessedBody.Trim().ToUpper().Contains("PLEASE I WANT YOU TO ASSIST") ||
+            preProcessedBody.Trim().ToUpper().Contains("PLEASE I WANT YOUR ASSIST") ||
             preProcessedBody.Trim().ToUpper().Contains("RANDOMLY SELECTED INDIVID") ||
+            preProcessedBody.Trim().ToUpper().Contains("SEND YOU MY PICTURE") ||
             preProcessedBody.Trim().ToUpper().Contains("SOME THING IMPORTANT FOR YOU") ||
             preProcessedBody.Trim().ToUpper().Contains("SOMETHING IMPORTANT FOR YOU") ||
             preProcessedBody.Trim().ToUpper().Contains("SOMETHING URGENT") ||
@@ -2952,6 +2964,10 @@ public class MailServerFunctions
         else if (((preProcessedBody.Length - currentMessage.SubjectLine.Length) < 40 && (preProcessedBody.Trim().ToUpper().Contains("INLINE IMAGE"))) ||
             preProcessedBody.Trim().ToUpper().Contains("ATTACHED LETTER FOR DETAIL") ||
             preProcessedBody.Trim().ToUpper().Contains("DETAILS IN THE ATTACHED") ||
+            preProcessedBody.Trim().ToUpper().Contains("MY MESSAGE ATTACHED") ||
+            preProcessedBody.Trim().ToUpper().Contains("MY MESSAGE INCLUDED") ||
+            preProcessedBody.Trim().ToUpper().Contains("MY LETTER ATTACHED") ||
+            preProcessedBody.Trim().ToUpper().Contains("MY LETTER INCLUDED") ||
             preProcessedBody.Trim().ToUpper().Contains("KINDLY OPEN THE ATTACHED") ||
             preProcessedBody.Trim().ToUpper().Contains("KINDLY READ THE ATTACHED") ||
             preProcessedBody.Trim().ToUpper().Contains("KINDLY SEE THE ATTACHED") ||
