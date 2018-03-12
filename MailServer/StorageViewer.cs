@@ -17,6 +17,7 @@ namespace MailServer
         private List<MailStorage> storage;
         private SerializeHelper serializeHelper;
         private const string STORAGE_OBJECT_FILENAME = "MailStorage.store";
+        private MailServerFunctions mailServer;
 
         public StorageViewer()
         {
@@ -26,6 +27,7 @@ namespace MailServer
             {
                 storage = new List<MailStorage>();
                 serializeHelper = new SerializeHelper();
+                mailServer = new MailServerFunctions();
 
                 LoadScreen();
             }
@@ -71,7 +73,7 @@ namespace MailServer
 }
         private void cbxShowAll_CheckedChanged(object sender, EventArgs e)
         {
-
+            LoadScreen();
         }
         private void btnRefresh_Click(object sender, EventArgs e)
         {
@@ -96,7 +98,7 @@ namespace MailServer
                 foreach (MailStorage ms in storage)
                 {
                     if (cbxShowAll.Checked || !ms.Replied)
-                        dgvEmails.Rows.Add(ms.ToAddress, ms.SubjectLine, ms.DateReceived.ToString("yyyy-MM-dd hh:mm"), ms.DateProcessed.ToString("yyyy-MM-dd hh:mm"), ms.PersonName, ((EmailType)ms.MessageType).ToString(), ms.Replied.ToString(), ms.Ignored.ToString(), ms.EmailBodyPlain, ms.DeterminedReply, ms.NumberOfAttachments.ToString(), ms.MsgId);
+                        dgvEmails.Rows.Add(ms.ToAddress, ms.SubjectLine, ms.DateReceived.ToString("yyyy-MM-dd hh:mm"), ms.DateProcessed.ToString("yyyy-MM-dd hh:mm"), ms.PersonName, ((EmailType)ms.MessageType).ToString(), ms.Replied.ToString(), ms.Ignored.ToString(), mailServer.MakeEmailEasierToRead(ms.EmailBodyPlain), mailServer.MakeEmailEasierToRead(ms.DeterminedReply), ms.NumberOfAttachments.ToString(), ms.MsgId);
                 }
             }
             catch (Exception ex)

@@ -164,6 +164,7 @@
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(396, 48);
             this.panel1.TabIndex = 35;
+            this.panel1.Visible = false;
             // 
             // trckBar
             // 
@@ -283,7 +284,6 @@
             this.tbxAttachmentNames.Name = "tbxAttachmentNames";
             this.tbxAttachmentNames.Size = new System.Drawing.Size(545, 20);
             this.tbxAttachmentNames.TabIndex = 24;
-            this.tbxAttachmentNames.TextChanged += new System.EventHandler(this.tbxAttachmentNames_TextChanged);
             // 
             // btnRegenerate
             // 
@@ -475,7 +475,6 @@
             this.tbxDateReceived.Name = "tbxDateReceived";
             this.tbxDateReceived.Size = new System.Drawing.Size(116, 20);
             this.tbxDateReceived.TabIndex = 13;
-            this.tbxDateReceived.TextChanged += new System.EventHandler(this.tbxDateReceived_TextChanged);
             // 
             // tbxDeterminedName
             // 
@@ -484,7 +483,6 @@
             this.tbxDeterminedName.Name = "tbxDeterminedName";
             this.tbxDeterminedName.Size = new System.Drawing.Size(223, 20);
             this.tbxDeterminedName.TabIndex = 12;
-            this.tbxDeterminedName.TextChanged += new System.EventHandler(this.tbxDeterminedName_TextChanged);
             // 
             // tbxDeterminedType
             // 
@@ -494,7 +492,6 @@
             this.tbxDeterminedType.Name = "tbxDeterminedType";
             this.tbxDeterminedType.Size = new System.Drawing.Size(117, 20);
             this.tbxDeterminedType.TabIndex = 11;
-            this.tbxDeterminedType.TextChanged += new System.EventHandler(this.tbxDeterminedType_TextChanged);
             // 
             // cbxHasAttachments
             // 
@@ -505,7 +502,6 @@
             this.cbxHasAttachments.Size = new System.Drawing.Size(15, 14);
             this.cbxHasAttachments.TabIndex = 10;
             this.cbxHasAttachments.UseVisualStyleBackColor = true;
-            this.cbxHasAttachments.CheckedChanged += new System.EventHandler(this.cbxHasAttachments_CheckedChanged);
             // 
             // tbxMessageId
             // 
@@ -515,7 +511,6 @@
             this.tbxMessageId.Name = "tbxMessageId";
             this.tbxMessageId.Size = new System.Drawing.Size(373, 20);
             this.tbxMessageId.TabIndex = 9;
-            this.tbxMessageId.TextChanged += new System.EventHandler(this.tbxMessageId_TextChanged);
             // 
             // tbxFromAddress
             // 
@@ -524,7 +519,6 @@
             this.tbxFromAddress.Name = "tbxFromAddress";
             this.tbxFromAddress.Size = new System.Drawing.Size(573, 20);
             this.tbxFromAddress.TabIndex = 8;
-            this.tbxFromAddress.TextChanged += new System.EventHandler(this.tbxFromAddress_TextChanged);
             // 
             // tbxSubject
             // 
@@ -533,7 +527,6 @@
             this.tbxSubject.Name = "tbxSubject";
             this.tbxSubject.Size = new System.Drawing.Size(574, 20);
             this.tbxSubject.TabIndex = 7;
-            this.tbxSubject.TextChanged += new System.EventHandler(this.tbxSubject_TextChanged);
             // 
             // label7
             // 
@@ -544,7 +537,6 @@
             this.label7.Size = new System.Drawing.Size(93, 13);
             this.label7.TabIndex = 6;
             this.label7.Text = "Determined Type:";
-            this.label7.Click += new System.EventHandler(this.label7_Click);
             // 
             // label6
             // 
@@ -555,7 +547,6 @@
             this.label6.Size = new System.Drawing.Size(96, 13);
             this.label6.TabIndex = 5;
             this.label6.Text = "Determined Name:";
-            this.label6.Click += new System.EventHandler(this.label6_Click);
             // 
             // label5
             // 
@@ -566,7 +557,6 @@
             this.label5.Size = new System.Drawing.Size(67, 13);
             this.label5.TabIndex = 4;
             this.label5.Text = "Message ID:";
-            this.label5.Click += new System.EventHandler(this.label5_Click);
             // 
             // label4
             // 
@@ -577,7 +567,6 @@
             this.label4.Size = new System.Drawing.Size(88, 13);
             this.label4.TabIndex = 3;
             this.label4.Text = "Has Attachment:";
-            this.label4.Click += new System.EventHandler(this.label4_Click);
             // 
             // label3
             // 
@@ -588,7 +577,6 @@
             this.label3.Size = new System.Drawing.Size(81, 13);
             this.label3.TabIndex = 2;
             this.label3.Text = "Date Received:";
-            this.label3.Click += new System.EventHandler(this.label3_Click);
             // 
             // label2
             // 
@@ -599,7 +587,6 @@
             this.label2.Size = new System.Drawing.Size(77, 13);
             this.label2.TabIndex = 1;
             this.label2.Text = "From Address:";
-            this.label2.Click += new System.EventHandler(this.label2_Click);
             // 
             // label1
             // 
@@ -610,7 +597,6 @@
             this.label1.Size = new System.Drawing.Size(69, 13);
             this.label1.TabIndex = 0;
             this.label1.Text = "Subject Line:";
-            this.label1.Click += new System.EventHandler(this.label1_Click);
             // 
             // countdownTimer
             // 
@@ -619,7 +605,7 @@
             // 
             // menuStrip1
             // 
-            this.menuStrip1.BackColor = System.Drawing.Color.Orange;
+            this.menuStrip1.BackColor = System.Drawing.Color.Turquoise;
             this.menuStrip1.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.fileToolStripMenuItem,

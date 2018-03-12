@@ -7,8 +7,9 @@ public class Settings
         locations, products, paymentMethods, randomThoughts;
     private List<string> questionsNotListening, questionsJokingAround, questionsNotAnswering, questionsHowAreYou, 
         questionsNotUnderstanding, questionsPermission, questionsSpokenLanguage, questionsTrust, questionsWhyNoAnswer,
-        questionsPhoneNumber, questionsAddress, questionsID, questionsAlreadyIncludedID, questionsCannotOpenAttachment,
-        questionsBirthdate, questionsBetterPhoto, questionsOccupation, questionsGender, questionsMaritalStatus, questionsCountry, questionsName;
+        questionsPhoneNumber, questionsAddress, questionsID, questionsAlreadyIncludedID, questionsCannotOpenAttachment, questionsWeAreCaught,
+        questionsBirthdate, questionsBetterPhoto, questionsOccupation, questionsGender, questionsMaritalStatus, questionsCountry, questionsName, questionsProvideDetails,
+        questionsAreYouReady;
     private List<string> responseOpeningBlankEmailWithAttachment, responseOpeningLottery, responseOpeningOilAndGas, responseOpeningOilAndGasQuestionList, responseOpeningIlluminati, 
         responseOpeningConsignmentBox, responseOpeningDeathOrDying, responseOpeningLoanOffer, responseOpeningMoneyStorage, responseOpeningAtmCard, responseOpeningPolice, 
         responseOpeningGenericPayment, responseOpeningInvestor, responseOpeningMoneyHack, responseOpeningJobOffer, responseOpeningSellingProducts, responseOpeningFreeMoney, 
@@ -479,6 +480,21 @@ public class Settings
     {
         get { return questionsName; }
         set { questionsName = value; }
+    }
+    public List<string> QuestionsWeAreCaught
+    {
+        get { return questionsWeAreCaught; }
+        set { questionsWeAreCaught = value; }
+    }
+    public List<string> QuestionsProvideDetails
+    {
+        get { return questionsProvideDetails; }
+        set { questionsProvideDetails = value; }
+    }
+    public List<string> QuestionsAreYouReady
+    {
+        get { return questionsAreYouReady; }
+        set { questionsAreYouReady = value; }
     }
 
     public List<string> RandomThoughts

@@ -79,26 +79,26 @@ namespace MailServer
             processTimer.Interval = SEND_INTERVAL;
 
             int preCount = storage.Count();
-            //if ((storage.Count(t => !t.Replied) - skippedCount) <= 0)
-            //{
-            //    response = mailServer.GetMessages(loggerInfo, ref storage);
-            //    if (response.Code < 0)
-            //    {
-            //        tbxOutput.Text = response.AsString();
-            //    }
-            //}
-            //else
-            //{
-            //    response = new StandardResponse() { Code = 0 };
-            //    Logger.Write(loggerInfo, "Skipping the check for messages. Unreplied count: " + storage.Count(t => !t.Replied).ToString() + ", Skip count: " + skippedCount.ToString());
-            //}
-            response = mailServer.GetMessages(loggerInfo, ref storage);
-            if (response.Code < 0)
+            if ((storage.Count(t => !t.Replied) - skippedCount) <= 10)
             {
-                tbxOutput.Text = response.AsString();
-                Logger.Write(loggerInfo, "Process Timer/MailServer.GetMessage()", response);
+                response = mailServer.GetMessages(loggerInfo, ref storage);
+                if (response.Code < 0)
+                {
+                    tbxOutput.Text = response.AsString();
+                }
             }
-            
+            else
+            {
+                response = new StandardResponse() { Code = 0 };
+                Logger.Write(loggerInfo, "Skipping the check for messages. Unreplied count: " + storage.Count(t => !t.Replied).ToString() + ", Skip count: " + skippedCount.ToString());
+            }
+            //response = mailServer.GetMessages(loggerInfo, ref storage);
+            //if (response.Code < 0)
+            //{
+            //    tbxOutput.Text = response.AsString();
+            //    Logger.Write(loggerInfo, "Process Timer/MailServer.GetMessage()", response);
+            //}
+
             int postCount = storage.Count();
             if (preCount == postCount)
             {
@@ -311,8 +311,14 @@ namespace MailServer
             StandardResponse response = new StandardResponse() { Code = 0, Message = String.Empty, Data = String.Empty };
             int rtn = 0;
 
+            //response = mailServer.GetMessages(loggerInfo, ref storage);
+            //if (response.Code < 0)
+            //{
+            //    tbxOutput.Text = response.AsString();
+            //}
+
             //Check for new messages
-            if ((storage.Count(t => !t.Replied) - skippedCount) <= 0)
+            if ((storage.Count(t => !t.Replied) - skippedCount) <= 10)
             {
                 response = mailServer.GetMessages(loggerInfo, ref storage);
                 if (response.Code < 0)
@@ -386,10 +392,15 @@ namespace MailServer
             }
 
             workingOnMsg = ms.MsgId;
-            if (((EmailType)ms.MessageType) != EmailType.Unknown)
-                btnSendEmail.Enabled = true;
-            else
+            if (((EmailType)ms.MessageType) == EmailType.Unknown)
+            {
                 tbxOutput.Text = "Unknown email type. Please add code to handle this type of email or ignore it.";
+            }
+            if (((EmailType)ms.MessageType) != EmailType.Unknown || !String.IsNullOrEmpty(tbxDeterminedReply.Text))
+            {
+                btnSendEmail.Enabled = true;
+            }
+
             btnNext.Enabled = true;
             btnIgnore.Enabled = true;
             btnRegenerate.Enabled = true;
@@ -433,7 +444,7 @@ namespace MailServer
                         List<MailStorage> previousMessagesInThread = new List<MailStorage>();
                         foreach (MailStorage ms in storage)
                         {
-                            if (ms.SubjectLine == storage[i].SubjectLine && ms.MsgId != storage[i].MsgId)
+                            if ((ms.SubjectLine == storage[i].SubjectLine || ms.MyReplyMsgId == storage[i].InReplyToMsgId) && ms.MsgId != storage[i].MsgId)
                             {
                                 int foundCount = 0;
                                 foreach (var v in storage[i].ToAddressList)
@@ -454,6 +465,10 @@ namespace MailServer
 
                         found = true;
                         LoadScreen(storage[i], previousMessagesInThread);
+                        if (String.IsNullOrEmpty(tbxDeterminedReply.Text))
+                        {
+                            Regen();
+                        }
                         break;
                     }
                     else
@@ -497,18 +512,28 @@ namespace MailServer
             {
                 if (storage[i].MsgId == workingOnMsg)
                 {
-                    response = mailServer.SendSMTP(loggerInfo, storage[i].ToAddress, storage[i].SubjectLine, storage[i].DeterminedReply, storage[i].IncludeID);
-                    if (response.Code >= 0)
+                    if (!storage[i].DeterminedReply.Contains("|Get"))
                     {
-                        storage[i].Replied = true;
-                        workingOnMsg = String.Empty;
-                        CheckForMessages();
+                        string newMsgId = String.Empty;
+                        response = mailServer.SendSMTP(loggerInfo, storage[i].ToAddress, storage[i].SubjectLine, storage[i].DeterminedReply, storage[i].IncludeID, storage[i].MsgId, ref newMsgId);
+                        if (response.Code >= 0)
+                        {
+                            storage[i].MyReplyMsgId = newMsgId;
+                            storage[i].Replied = true;
+                            workingOnMsg = String.Empty;
+                            CheckForMessages();
+                        }
+                        else
+                        {
+                            tbxOutput.Text = response.AsString();
+
+                            return response.Code;
+                        }
                     }
                     else
                     {
-                        tbxOutput.Text = response.AsString();
-
-                        return response.Code;
+                        Logger.Write(loggerInfo, "Bad reply replace: " + storage[i].DeterminedReply);
+                        MessageBox.Show("Bad reply replace: " + storage[i].DeterminedReply);
                     }
                     break;
                 }
@@ -525,7 +550,7 @@ namespace MailServer
                     List<MailStorage> previousMessagesInThread = new List<MailStorage>();
                     foreach (MailStorage ms in storage)
                     {
-                        if (ms.SubjectLine.ToUpper().Replace("RE:","").Replace("FW:", "").Trim() == storage[i].SubjectLine.ToUpper().Replace("RE:", "").Replace("FW:", "").Trim() && ms.MsgId != storage[i].MsgId)
+                        if ((ms.SubjectLine.ToUpper().Replace("RE:","").Replace("FW:", "").Trim() == storage[i].SubjectLine.ToUpper().Replace("RE:", "").Replace("FW:", "").Trim() || ms.MyReplyMsgId == storage[i].InReplyToMsgId) && ms.MsgId != storage[i].MsgId)
                         {
                             int foundCount = 0;
                             foreach (var v in storage[i].ToAddressList)
@@ -645,81 +670,6 @@ namespace MailServer
             }
 
             lblMessageInfo.Text = "Sent: " + storage.Count(t => t.Replied).ToString("#,##0") + "   Skipped: " + skippedCount.ToString("#,##0") + "   Ignored: " + storage.Count(t => t.Ignored).ToString("#,##0") + "   Pending: " + storage.Count(t => !t.Replied).ToString("#,##0") + "   Unread: " + mailServer.LastInboxCount.ToString("#,##0");
-        }
-
-        private void label3_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void tbxDateReceived_TextChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void tbxDeterminedName_TextChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void tbxDeterminedType_TextChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void cbxHasAttachments_CheckedChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void tbxMessageId_TextChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void tbxFromAddress_TextChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void tbxSubject_TextChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void label7_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void label6_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void label5_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void label4_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void tbxAttachmentNames_TextChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void label2_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void label1_Click(object sender, EventArgs e)
-        {
-
         }
     }
 }

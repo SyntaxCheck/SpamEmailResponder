@@ -337,35 +337,38 @@ public class EmailMessage
                         m.ContentObject.DecodeTo(mainStream);
                         mainStream.Position = 0; //reset the memoryStream position, in order to read from the stream it must be set back to the beginning
 
-                        if (m.FileName.ToLower().EndsWith(".zip"))
+                        if (m != null && !String.IsNullOrEmpty(m.FileName))
                         {
-                            //unzip and process contents accordingly. This function will populate the list directly
-                            response = ProcessZip(loggerInfo, mainStream, m.FileName);
-                            if (response.Code < 0)
+                            if (m.FileName.ToLower().EndsWith(".zip"))
                             {
-                                //If we receive an error back we cannot process the message. An invalid zip should be handled and would NOT return a Code -1
-                                returnResponse = response;
-                                processZipFailure++;
-                                break;
+                                //unzip and process contents accordingly. This function will populate the list directly
+                                response = ProcessZip(loggerInfo, mainStream, m.FileName);
+                                if (response.Code < 0)
+                                {
+                                    //If we receive an error back we cannot process the message. An invalid zip should be handled and would NOT return a Code -1
+                                    returnResponse = response;
+                                    processZipFailure++;
+                                    break;
+                                }
                             }
-                        }
-                        else
-                        {
-                            string processingMessage = String.Empty;
-                            bool exception = true;
-                            FileAttachment attch = new FileAttachment();
+                            else
+                            {
+                                string processingMessage = String.Empty;
+                                bool exception = true;
+                                FileAttachment attch = new FileAttachment();
 
-                            attch.FileName = m.FileName;
-                            attch.FileBytes = mainStream.ToArray();
-                            attch.ContentType = fileMimeType.GetContentType(mainStream, m.FileName);
-                            attch.ContainsBinary = fileMimeType.ContainsBinary(attch.FileBytes);
-                            attch.ProcessingMessage = processingMessage;
-                            attch.FileException = exception;
-                            attch.ParentZipName = "";
+                                attch.FileName = m.FileName;
+                                attch.FileBytes = mainStream.ToArray();
+                                attch.ContentType = fileMimeType.GetContentType(mainStream, m.FileName);
+                                attch.ContainsBinary = fileMimeType.ContainsBinary(attch.FileBytes);
+                                attch.ProcessingMessage = processingMessage;
+                                attch.FileException = exception;
+                                attch.ParentZipName = "";
 
-                            fileAttachments.Add(attch);
-                            attch = null;
-                            processSuccess++;
+                                fileAttachments.Add(attch);
+                                attch = null;
+                                processSuccess++;
+                            }
                         }
                     }
                 }

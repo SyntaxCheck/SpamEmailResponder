@@ -124,6 +124,9 @@ public class MailServerFunctions
             settings.QuestionsMaritalStatus = new List<string>() { "I am |MaritalStatus|" };
             settings.QuestionsCountry = new List<string>() { "I live in |Country|" };
             settings.QuestionsName = new List<string>() { "My name is |Name|" };
+            settings.QuestionsWeAreCaught = new List<string>() { "I am not sure what you mean." };
+            settings.QuestionsProvideDetails = new List<string>() { "What information do you need?" };
+            settings.QuestionsAreYouReady = new List<string>() { "I am ready." };
 
             //Opening responses
             settings.ResponseOpeningAtmCard = new List<string>() { "I am glad to see progress with my ATM card, please send card numbers over email." };
@@ -325,11 +328,11 @@ public class MailServerFunctions
 
         return response;
     }
-    public StandardResponse SendSMTP(LoggerInfo loggerInfo, string toAddress, string subject, string bodyText, bool includeID)
+    public StandardResponse SendSMTP(LoggerInfo loggerInfo, string toAddress, string subject, string bodyText, bool includeID, string inReplyTo, ref string myMessageId)
     {
-        return SendSMTP(loggerInfo, UserName, Password, UserName, UserName, toAddress, toAddress, subject, bodyText, Timeout, includeID);
+        return SendSMTP(loggerInfo, UserName, Password, UserName, UserName, toAddress, toAddress, subject, bodyText, Timeout, includeID, inReplyTo, ref myMessageId);
     }
-    public StandardResponse SendSMTP(LoggerInfo loggerInfo, string username, string password, string fromAddress, string fromAddressReadable, string toAddress, string toAddressReadable, string subject, string bodyText, int timeout, bool includeID)
+    public StandardResponse SendSMTP(LoggerInfo loggerInfo, string username, string password, string fromAddress, string fromAddressReadable, string toAddress, string toAddressReadable, string subject, string bodyText, int timeout, bool includeID, string inReplyTo, ref string myMessageId)
     {
         string hostName = "smtp.gmail.com";
         int port = 465;
@@ -343,6 +346,15 @@ public class MailServerFunctions
             if (String.IsNullOrEmpty(toAddressReadable)) toAddressReadable = toAddress;
 
             string[] toSplit = toAddress.Split(new string[] { ";" }, StringSplitOptions.RemoveEmptyEntries);
+
+            message.InReplyTo = inReplyTo;
+            string inReplyToPartial = String.Empty;
+            if (inReplyTo.Length >= 5)
+            {
+                inReplyToPartial = inReplyTo.Substring(0, 5);
+            }
+            message.MessageId = CalculateMD5Hash(DateTime.Now.ToString()) + inReplyToPartial + "@mail.gmail.com"; //Imitate the gmail message ID
+            myMessageId = message.MessageId;
 
             message.From.Add(new MailboxAddress(fromAddress, fromAddress));
             foreach (string s in toSplit)
@@ -379,6 +391,19 @@ public class MailServerFunctions
                 {
                     //friendly = s;
                     realAddress = s;
+                }
+
+                if (realAddress.Contains('+'))
+                {
+                    string[] addrSplit = realAddress.Split(new char[] { '+' });
+                    foreach (string addrS in addrSplit)
+                    {
+                        if (addrS.Contains('@'))
+                        {
+                            realAddress = addrS;
+                            break;
+                        }
+                    }
                 }
 
                 if (IsValidEmail(realAddress))
@@ -485,8 +510,10 @@ public class MailServerFunctions
 
                 storageObj.MsgId = msg.MessageId;
                 storageObj.DateReceived = msg.MessageDttm;
+                storageObj.DateProcessed = DateTime.Now;
                 storageObj.NumberOfAttachments = msg.FileAttachments.Count();
                 storageObj.SubjectLine = msg.Subject.Replace("RE: ", "").Replace("FW: ", "");
+                storageObj.InReplyToMsgId = msg.InReplyTo;
 
                 //Extract the Body information
                 foreach (TextPart txtPart in msg.TextParts)
@@ -556,6 +583,10 @@ public class MailServerFunctions
                         {
                             previousMessagesInThread.Add(ms);
                         }
+                    }
+                    else if (ms.MyReplyMsgId == storageObj.InReplyToMsgId)
+                    {
+                        previousMessagesInThread.Add(ms);
                     }
                 }
 
@@ -1283,6 +1314,24 @@ public class MailServerFunctions
 
         return lst[rand.Next(0, lst.Count())];
     }
+    private string GetRandomQuestionsWeAreCaught(Random rand)
+    {
+        List<string> lst = settings.QuestionsWeAreCaught;
+
+        return lst[rand.Next(0, lst.Count())];
+    }
+    private string GetRandomQuestionsProvideDetails(Random rand)
+    {
+        List<string> lst = settings.QuestionsProvideDetails;
+
+        return lst[rand.Next(0, lst.Count())];
+    }
+    private string GetRandomQuestionsAreYouReady(Random rand)
+    {
+        List<string> lst = settings.QuestionsAreYouReady;
+
+        return lst[rand.Next(0, lst.Count())];
+    }
     #endregion
 
     //Helper functions
@@ -1414,7 +1463,7 @@ public class MailServerFunctions
         }
 
         //Sometimes they mistype ">" with "?", we don't need punctuation when parsing so just replace with space
-        body.Replace("?", " ");
+        body = body.Replace("?", " ").Replace("&", " ").Replace("'", " ");
 
         string[] lineSplit = body.Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
         string[] lineKeywordSplit = lineKeywordList.ToUpper().Split(new string[] { ";" }, StringSplitOptions.RemoveEmptyEntries);
@@ -1544,9 +1593,14 @@ public class MailServerFunctions
     private string HandleDirectQuestions(string body, ref MailStorage currentMessage, Random rand)
     {
         string response = String.Empty;
-        string preProcessedBody = body.Replace("\r\n", " ");
+        string preProcessedBody = body.Replace("\r\n", " ").Replace("---","...");
         bool alreadyRepliedNotAnswering = false;
+        bool askedForDetails = false;
 
+        if (preProcessedBody.Trim().ToUpper().Contains("YOUR 419 FORMAT IS TOO MUCH"))
+        {
+            response += GetRandomQuestionsWeAreCaught(rand) + " ";
+        }
         if (preProcessedBody.Trim().ToUpper().Contains("HOW ARE YOU DOING") ||
             preProcessedBody.Trim().ToUpper().Contains("HOW YOU DOING") ||
             preProcessedBody.Trim().ToUpper().Contains("HOW ARE YOU OVER THERE") ||
@@ -1554,12 +1608,22 @@ public class MailServerFunctions
         {
             response += GetRandomQuestionsHowAreYou(rand) + " ";
         }
+        if (preProcessedBody.Trim().ToUpper().Contains("ARE YOU READY?") ||
+            preProcessedBody.Trim().ToUpper().Contains("ARE YOU READY TO PAY THE FEE") ||
+            preProcessedBody.Trim().ToUpper().Contains("ARE YOU READY TO RECEIVE YOUR TRANSFER"))
+        {
+            response += GetRandomQuestionsAreYouReady(rand) + " ";
+        }
         if (preProcessedBody.Trim().ToUpper().Contains("IS THIS A JOKE") ||
             preProcessedBody.Trim().ToUpper().Contains("ARE YOU MAKING FUN") ||
+            preProcessedBody.Trim().ToUpper().Contains("ARE YOU HERE FOR JOKE") ||
             preProcessedBody.Trim().ToUpper().Contains("DO YOU THINK THIS IS JOKE") ||
             preProcessedBody.Trim().ToUpper().Contains("ARE YOU PLAYING WITH US") ||
             preProcessedBody.Trim().ToUpper().Contains("IF YOU KNOW YOU ARE NOT SERIOUS") ||
             preProcessedBody.Trim().ToUpper().Contains("DO YOU TAKE US FOR A FOOL") ||
+            preProcessedBody.Trim().ToUpper().Contains("I AM NOT HERE TO DO FAKE BUSINES") ||
+            preProcessedBody.Trim().ToUpper().Contains("THIS IS A SERIOUS TRANSACTION AND NOT A CHILD'S PLAY") ||
+            preProcessedBody.Trim().ToUpper().Contains("YOU HAVE TIME FOR RUBBISH I DON'T HAVE YOUR TIME MY TIME IS MONEY") ||
             preProcessedBody.Trim().ToUpper().Contains("DO YOU THINK YOU ARE FUNNY"))
         {
             response += GetRandomQuestionsJokingAround(rand) + " ";
@@ -1622,7 +1686,9 @@ public class MailServerFunctions
         }
         if (preProcessedBody.Trim().ToUpper().Contains("NOT UNDERSTANDING MY") ||
             preProcessedBody.Trim().ToUpper().Contains("NOT UNDERSTANDING ME") ||
+            preProcessedBody.Trim().ToUpper().Contains("NOT UNDERSTAND WHAT YOU") ||
             preProcessedBody.Trim().ToUpper().Contains("CONFUSED BY MY") ||
+            preProcessedBody.Trim().ToUpper().Contains("WHAT ARE YOU REALLY SAYING") ||
             preProcessedBody.Trim().ToUpper().Contains("WHY SO CONFUSED"))
         {
             response += GetRandomQuestionsNotUnderstanding(rand) + " ";
@@ -1653,21 +1719,29 @@ public class MailServerFunctions
             preProcessedBody.Trim().ToUpper().Contains("WHAT IS YOUR LEGAL NAME") ||
             preProcessedBody.Trim().ToUpper().Contains("WHAT IS YOUR LEGAL FULL NAME") ||
             preProcessedBody.Trim().ToUpper().Contains("WHAT IS YOUR FIRST AND LAST NAME") ||
+            preProcessedBody.Trim().ToUpper().Contains("SEND YOU NAME") ||
+            preProcessedBody.Trim().ToUpper().Contains("SEND YOUR NAME") ||
             preProcessedBody.Trim().ToUpper().Contains("STATING YOUR NAME") ||
             preProcessedBody.Trim().ToUpper().Contains("STATING YOUR FULL NAME") ||
             preProcessedBody.Trim().ToUpper().Contains("STATING YOUR LEGAL NAME") ||
             preProcessedBody.Trim().ToUpper().Contains("STATING YOUR LEGAL FULL NAME") ||
             preProcessedBody.Trim().ToUpper().Contains("STATING YOUR FIRST AND LAST NAME") ||
-            preProcessedBody.Trim().ToUpper().StartsWith("NAME.....") ||
-            preProcessedBody.Trim().ToUpper().StartsWith("NAME___") ||
-            preProcessedBody.Trim().ToUpper().StartsWith("NAME :") ||
-            preProcessedBody.Trim().ToUpper().StartsWith("NAME:") ||
-            preProcessedBody.Trim().ToUpper().StartsWith("NAMES.....") ||
-            preProcessedBody.Trim().ToUpper().StartsWith("NAMES___") ||
-            preProcessedBody.Trim().ToUpper().StartsWith("NAMES :") ||
-            preProcessedBody.Trim().ToUpper().StartsWith("NAMES:") ||
-            preProcessedBody.Trim().ToUpper().Contains("WHAT NAME DO YOU GO BY"))
+            preProcessedBody.Trim().ToUpper().Contains("NAME.....") ||
+            preProcessedBody.Trim().ToUpper().Contains("NAME___") ||
+            preProcessedBody.Trim().ToUpper().Contains("NAME :") ||
+            preProcessedBody.Trim().ToUpper().Contains("NAME:") ||
+            preProcessedBody.Trim().ToUpper().Contains("NAMES.....") ||
+            preProcessedBody.Trim().ToUpper().Contains("NAMES___") ||
+            preProcessedBody.Trim().ToUpper().Contains("NAMES :") ||
+            preProcessedBody.Trim().ToUpper().Contains("NAMES:") ||
+            preProcessedBody.Trim().ToUpper().Contains("NAME INFULL.....") ||
+            preProcessedBody.Trim().ToUpper().Contains("WHAT NAME DO YOU GO BY") ||
+            preProcessedBody.Trim().ToUpper().Contains("WHO ARE YOU") ||
+            preProcessedBody.Trim().ToUpper().Contains("RECONFIRM YOUR FULL NAME") ||
+            preProcessedBody.Trim().ToUpper().Contains("WHO DO YOU REALLY ARE") ||
+            preProcessedBody.Trim().ToUpper().Contains("YOUR FULL NAME."))
         {
+            askedForDetails = true;
             response += GetRandomQuestionsName(rand) + " ";
         }
         if (preProcessedBody.Trim().ToUpper().Contains("WHAT IS YOUR ADDRESS") ||
@@ -1680,76 +1754,100 @@ public class MailServerFunctions
             preProcessedBody.Trim().ToUpper().Contains("INCLUDE YOUR ADDRESS") ||
             preProcessedBody.Trim().ToUpper().Contains("BILLING ADDRESS") ||
             preProcessedBody.Trim().ToUpper().Contains("RESIDENTIAL ADDRESS") ||
-            preProcessedBody.Trim().ToUpper().StartsWith("ADDRESS.....") ||
-            preProcessedBody.Trim().ToUpper().StartsWith("ADDRESS___") ||
-            preProcessedBody.Trim().ToUpper().StartsWith("ADDRESS :") ||
-            preProcessedBody.Trim().ToUpper().StartsWith("ADDRESS:") ||
+            preProcessedBody.Trim().ToUpper().Contains("ADDRESS.....") ||
+            preProcessedBody.Trim().ToUpper().Contains("ADDRESS___") ||
+            preProcessedBody.Trim().ToUpper().Contains("ADDRESS :") ||
+            preProcessedBody.Trim().ToUpper().Contains("ADDRESS:") ||
+            preProcessedBody.Trim().ToUpper().Contains("OFFICE ADDRESS.") ||
+            preProcessedBody.Trim().ToUpper().Contains("OFFICE ADDRESS_") ||
+            preProcessedBody.Trim().ToUpper().Contains("OFFICE ADDRESS:") ||
+            preProcessedBody.Trim().ToUpper().Contains("OFFICE ADDRESS :") ||
             preProcessedBody.Trim().ToUpper().Contains(", ADDRESS,") ||
             preProcessedBody.Trim().ToUpper().Contains(", MAILING ADDRESS,") ||
             preProcessedBody.Trim().ToUpper().Contains(", POSTAL ADDRESS,") ||
             preProcessedBody.Trim().ToUpper().Contains(", FULL ADDRESS,") ||
+            preProcessedBody.Trim().ToUpper().Contains("ADDRESS WHERE YOU WANT HIM TO SEND THE") ||
+            preProcessedBody.Trim().ToUpper().Contains("ADDRESS WHERE YOU WANT THEM TO SEND THE") ||
+            preProcessedBody.Trim().ToUpper().Contains("SEND ME YOUR DELIVERY INFORMATION") ||
+            preProcessedBody.Trim().ToUpper().Contains("SEND ME YOU DELIVERY INFORMATION") ||
+            preProcessedBody.Trim().ToUpper().Contains("SEND ME YOUR DELIVERY DETAIL") ||
+            preProcessedBody.Trim().ToUpper().Contains("SEND ME YOU DELIVERY DETAIL") ||
+            preProcessedBody.Trim().ToUpper().Contains("CONFIRM YOUR RECEIVING ADDRESS") ||
+            preProcessedBody.Trim().ToUpper().Contains("SEND US YOUR COMPLETE ADDRESS") ||
             preProcessedBody.Trim().ToUpper().Contains("GIVE ME YOUR ADDRESS"))
         {
+            askedForDetails = true;
             response += GetRandomQuestionsAddress(rand) + " ";
         }
         if (preProcessedBody.Trim().ToUpper().Contains("COUNTRY OF ORIGIN") ||
-            preProcessedBody.Trim().ToUpper().StartsWith("COUNTRY.....") ||
-            preProcessedBody.Trim().ToUpper().StartsWith("COUNTRY :") ||
-            preProcessedBody.Trim().ToUpper().StartsWith("COUNTRY:") ||
-            preProcessedBody.Trim().ToUpper().StartsWith("COUNTRY___") ||
-            preProcessedBody.Trim().ToUpper().StartsWith("COUNTRY NAME.....") ||
-            preProcessedBody.Trim().ToUpper().StartsWith("COUNTRY NAME :") ||
-            preProcessedBody.Trim().ToUpper().StartsWith("COUNTRY NAME:") ||
-            preProcessedBody.Trim().ToUpper().StartsWith("COUNTRY NAME___") ||
-            preProcessedBody.Trim().ToUpper().StartsWith("COUNTRY/CITY.....") ||
-            preProcessedBody.Trim().ToUpper().StartsWith("COUNTRY/CITY :") ||
-            preProcessedBody.Trim().ToUpper().StartsWith("COUNTRY/CITY:") ||
-            preProcessedBody.Trim().ToUpper().StartsWith("COUNTRY/CITY___") ||
+            preProcessedBody.Trim().ToUpper().Contains("COUNTRY.....") ||
+            preProcessedBody.Trim().ToUpper().Contains("COUNTRY :") ||
+            preProcessedBody.Trim().ToUpper().Contains("COUNTRY:") ||
+            preProcessedBody.Trim().ToUpper().Contains("COUNTRY___") ||
+            preProcessedBody.Trim().ToUpper().Contains("COUNTRY NAME.....") ||
+            preProcessedBody.Trim().ToUpper().Contains("COUNTRY NAME :") ||
+            preProcessedBody.Trim().ToUpper().Contains("COUNTRY NAME:") ||
+            preProcessedBody.Trim().ToUpper().Contains("COUNTRY NAME___") ||
+            preProcessedBody.Trim().ToUpper().Contains("COUNTRY/CITY.....") ||
+            preProcessedBody.Trim().ToUpper().Contains("COUNTRY/CITY :") ||
+            preProcessedBody.Trim().ToUpper().Contains("COUNTRY/CITY:") ||
+            preProcessedBody.Trim().ToUpper().Contains("COUNTRY/CITY___") ||
+            preProcessedBody.Trim().ToUpper().Contains("YOUR COUNTRY.") ||
+            preProcessedBody.Trim().ToUpper().Contains("YOUR COUNTRY_") ||
+            preProcessedBody.Trim().ToUpper().Contains("YOUR COUNTRY:") ||
+            preProcessedBody.Trim().ToUpper().Contains("YOUR COUNTRY :") ||
             preProcessedBody.Trim().ToUpper().Contains(", COUNTRY,") ||
             preProcessedBody.Trim().ToUpper().Contains(", COUNTRY NAME,") ||
             preProcessedBody.Trim().ToUpper().Contains("WHAT COUNTRY DO YOU LIVE"))
         {
+            askedForDetails = true;
             response += GetRandomQuestionsCountry(rand) + " ";
         }
         if (preProcessedBody.Trim().ToUpper().Contains("YOUR OCCUPATION") ||
-            preProcessedBody.Trim().ToUpper().StartsWith("OCCUPATION.....") ||
-            preProcessedBody.Trim().ToUpper().StartsWith("OCCUPATION :") ||
-            preProcessedBody.Trim().ToUpper().StartsWith("OCCUPATION:") ||
-            preProcessedBody.Trim().ToUpper().StartsWith("OCCUPATION___") ||
-            preProcessedBody.Trim().ToUpper().StartsWith("JOB___") ||
-            preProcessedBody.Trim().ToUpper().StartsWith("JOB.....") ||
-            preProcessedBody.Trim().ToUpper().StartsWith("JOB :") ||
-            preProcessedBody.Trim().ToUpper().StartsWith("JOB:") ||
+            preProcessedBody.Trim().ToUpper().Contains("OCCUPATION.....") ||
+            preProcessedBody.Trim().ToUpper().Contains("OCCUPATION :") ||
+            preProcessedBody.Trim().ToUpper().Contains("OCCUPATION:") ||
+            preProcessedBody.Trim().ToUpper().Contains("OCCUPATION___") ||
+            preProcessedBody.Trim().ToUpper().Contains("YOUR OCCUPATION.") ||
+            preProcessedBody.Trim().ToUpper().Contains("YOUR JOB.") ||
+            preProcessedBody.Trim().ToUpper().Contains("JOB___") ||
+            preProcessedBody.Trim().ToUpper().Contains("JOB.....") ||
+            preProcessedBody.Trim().ToUpper().Contains("JOB :") ||
+            preProcessedBody.Trim().ToUpper().Contains("JOB:") ||
             preProcessedBody.Trim().ToUpper().Contains(", OCCUPATION,") ||
             preProcessedBody.Trim().ToUpper().Contains(", JOB,") ||
             preProcessedBody.Trim().ToUpper().Contains(", JOB TITLE,") ||
             preProcessedBody.Trim().ToUpper().Contains("YOUR JOB"))
         {
+            askedForDetails = true;
             response += GetRandomQuestionsOccupation(rand) + " ";
         }
         if (preProcessedBody.Trim().ToUpper().Contains("YOUR GENDER") ||
-            preProcessedBody.Trim().ToUpper().StartsWith("SEX.....") ||
-            preProcessedBody.Trim().ToUpper().StartsWith("SEX :") ||
-            preProcessedBody.Trim().ToUpper().StartsWith("SEX:") ||
-            preProcessedBody.Trim().ToUpper().StartsWith("SEX___") ||
-            preProcessedBody.Trim().ToUpper().StartsWith("GENDER.....") ||
-            preProcessedBody.Trim().ToUpper().StartsWith("GENDER :") ||
-            preProcessedBody.Trim().ToUpper().StartsWith("GENDER:") ||
-            preProcessedBody.Trim().ToUpper().StartsWith("GENDER___") ||
+            preProcessedBody.Trim().ToUpper().Contains("SEX.....") ||
+            preProcessedBody.Trim().ToUpper().Contains("SEX :") ||
+            preProcessedBody.Trim().ToUpper().Contains("SEX:") ||
+            preProcessedBody.Trim().ToUpper().Contains("SEX___") ||
+            preProcessedBody.Trim().ToUpper().Contains("GENDER.....") ||
+            preProcessedBody.Trim().ToUpper().Contains("GENDER :") ||
+            preProcessedBody.Trim().ToUpper().Contains("GENDER:") ||
+            preProcessedBody.Trim().ToUpper().Contains("GENDER___") ||
             preProcessedBody.Trim().ToUpper().Contains(", SEX,") ||
             preProcessedBody.Trim().ToUpper().Contains(", GENDER,") ||
             preProcessedBody.Trim().ToUpper().Contains("YOUR SEX"))
         {
+            askedForDetails = true;
             response += GetRandomQuestionsGender(rand) + " ";
         }
         if (preProcessedBody.Trim().ToUpper().Contains("YOUR MARITAL STATUS") ||
-            preProcessedBody.Trim().ToUpper().StartsWith("MARITAL STATUS.....") ||
-            preProcessedBody.Trim().ToUpper().StartsWith("MARITAL STATUS___") ||
-            preProcessedBody.Trim().ToUpper().StartsWith("MARITAL STATUS :") ||
-            preProcessedBody.Trim().ToUpper().StartsWith("MARITAL STATUS:") ||
+            preProcessedBody.Trim().ToUpper().Contains("MARITAL STATUS.....") ||
+            preProcessedBody.Trim().ToUpper().Contains("MARITALSTATUS.....") ||
+            preProcessedBody.Trim().ToUpper().Contains("MARITAL STATUS___") ||
+            preProcessedBody.Trim().ToUpper().Contains("MARITAL STATUS :") ||
+            preProcessedBody.Trim().ToUpper().Contains("MARITAL STATUS:") ||
             preProcessedBody.Trim().ToUpper().Contains(", MARITAL STATUS,") ||
             preProcessedBody.Trim().ToUpper().Contains("ARE YOU SINGLE"))
         {
+            askedForDetails = true;
             response += GetRandomQuestionsMaritalStatus(rand) + " ";
         }
         if (preProcessedBody.Trim().ToUpper().Contains("OLD ARE YOU") ||
@@ -1759,23 +1857,29 @@ public class MailServerFunctions
             preProcessedBody.Trim().ToUpper().Contains("BIRTH DAY") ||
             preProcessedBody.Trim().ToUpper().Contains("BIRTH MONTH") ||
             preProcessedBody.Trim().ToUpper().Contains("BIRTH TIME") ||
-            preProcessedBody.Trim().ToUpper().StartsWith("AGE.....") ||
-            preProcessedBody.Trim().ToUpper().StartsWith("AGE :") ||
-            preProcessedBody.Trim().ToUpper().StartsWith("AGE:") ||
-            preProcessedBody.Trim().ToUpper().StartsWith("AGE___") ||
-            preProcessedBody.Trim().ToUpper().StartsWith("BIRTHDATE.....") ||
-            preProcessedBody.Trim().ToUpper().StartsWith("BIRTHDATE :") ||
-            preProcessedBody.Trim().ToUpper().StartsWith("BIRTHDATE:") ||
-            preProcessedBody.Trim().ToUpper().StartsWith("BIRTHDATE___") ||
-            preProcessedBody.Trim().ToUpper().StartsWith("BIRTH DATE.....") ||
-            preProcessedBody.Trim().ToUpper().StartsWith("BIRTH DATE :") ||
-            preProcessedBody.Trim().ToUpper().StartsWith("BIRTH DATE:") ||
-            preProcessedBody.Trim().ToUpper().StartsWith("BIRTH DATE___") ||
+            preProcessedBody.Trim().ToUpper().Contains("AGE.....") ||
+            preProcessedBody.Trim().ToUpper().Contains("AGE :") ||
+            preProcessedBody.Trim().ToUpper().Contains("AGE:") ||
+            preProcessedBody.Trim().ToUpper().Contains("AGE___") ||
+            preProcessedBody.Trim().ToUpper().Contains("BIRTHDATE.....") ||
+            preProcessedBody.Trim().ToUpper().Contains("BIRTHDATE :") ||
+            preProcessedBody.Trim().ToUpper().Contains("BIRTHDATE:") ||
+            preProcessedBody.Trim().ToUpper().Contains("BIRTHDATE___") ||
+            preProcessedBody.Trim().ToUpper().Contains("BIRTH DATE.....") ||
+            preProcessedBody.Trim().ToUpper().Contains("BIRTH DATE :") ||
+            preProcessedBody.Trim().ToUpper().Contains("BIRTH DATE:") ||
+            preProcessedBody.Trim().ToUpper().Contains("BIRTH DATE___") ||
+            preProcessedBody.Trim().ToUpper().Contains("DATE OF BIRTH.....") ||
+            preProcessedBody.Trim().ToUpper().Contains("DATE OF BIRTH :") ||
+            preProcessedBody.Trim().ToUpper().Contains("DATE OF BIRTH:") ||
+            preProcessedBody.Trim().ToUpper().Contains("DATE OF BIRTH___") ||
+            preProcessedBody.Trim().ToUpper().Contains("YOUR AGE.") ||
             preProcessedBody.Trim().ToUpper().Contains(", AGE,") ||
             preProcessedBody.Trim().ToUpper().Contains(", BIRTHDATE,") ||
             preProcessedBody.Trim().ToUpper().Contains(", BIRTH DATE,") ||
             preProcessedBody.Trim().ToUpper().Contains("YOU AGE"))
         {
+            askedForDetails = true;
             response += GetRandomQuestionsBirthdate(rand) + " ";
         }
         if (preProcessedBody.Trim().ToUpper().Contains("WHAT IS YOUR PHONE") ||
@@ -1791,28 +1895,37 @@ public class MailServerFunctions
             preProcessedBody.Trim().ToUpper().Contains("YOUR PRIVATE PHONE") ||
             preProcessedBody.Trim().ToUpper().Contains("YOUR NUMBER") ||
             preProcessedBody.Trim().ToUpper().Contains("DIRECT PHONE NUMBER") ||
-            preProcessedBody.Trim().ToUpper().StartsWith("TELEPHONE.....") ||
-            preProcessedBody.Trim().ToUpper().StartsWith("TELEPHONE___") ||
-            preProcessedBody.Trim().ToUpper().StartsWith("TELEPHONE :") ||
-            preProcessedBody.Trim().ToUpper().StartsWith("TELEPHONE:") ||
-            preProcessedBody.Trim().ToUpper().StartsWith("TELEPHONE NO.....") ||
-            preProcessedBody.Trim().ToUpper().StartsWith("TELEPHONE NO___") ||
-            preProcessedBody.Trim().ToUpper().StartsWith("TELEPHONE NO :") ||
-            preProcessedBody.Trim().ToUpper().StartsWith("TELEPHONE NO:") ||
-            preProcessedBody.Trim().ToUpper().StartsWith("PHONE.....") ||
-            preProcessedBody.Trim().ToUpper().StartsWith("PHONE :") ||
-            preProcessedBody.Trim().ToUpper().StartsWith("PHONE:") ||
-            preProcessedBody.Trim().ToUpper().StartsWith("PHONE___") ||
-            preProcessedBody.Trim().ToUpper().StartsWith("NUMBER.....") ||
-            preProcessedBody.Trim().ToUpper().StartsWith("NUMBER___") ||
-            preProcessedBody.Trim().ToUpper().StartsWith("NUMBER :") ||
-            preProcessedBody.Trim().ToUpper().StartsWith("NUMBER:") ||
+            preProcessedBody.Trim().ToUpper().Contains("TELEPHONE.....") ||
+            preProcessedBody.Trim().ToUpper().Contains("TELEPHONE___") ||
+            preProcessedBody.Trim().ToUpper().Contains("TELEPHONE :") ||
+            preProcessedBody.Trim().ToUpper().Contains("TELEPHONE:") ||
+            preProcessedBody.Trim().ToUpper().Contains("TELEPHONE NO.....") ||
+            preProcessedBody.Trim().ToUpper().Contains("TELEPHONE NO___") ||
+            preProcessedBody.Trim().ToUpper().Contains("TELEPHONE NO :") ||
+            preProcessedBody.Trim().ToUpper().Contains("TELEPHONE NO:") ||
+            preProcessedBody.Trim().ToUpper().Contains("PHONE.....") ||
+            preProcessedBody.Trim().ToUpper().Contains("PHONE :") ||
+            preProcessedBody.Trim().ToUpper().Contains("PHONE:") ||
+            preProcessedBody.Trim().ToUpper().Contains("PHONE___") ||
+            preProcessedBody.Trim().ToUpper().Contains("NUMBER.....") ||
+            preProcessedBody.Trim().ToUpper().Contains("NUMBER___") ||
+            preProcessedBody.Trim().ToUpper().Contains("NUMBER :") ||
+            preProcessedBody.Trim().ToUpper().Contains("NUMBER:") ||
+            preProcessedBody.Trim().ToUpper().Contains("YOUR DIRECT CELL PHONE NUMBER") ||
+            preProcessedBody.Trim().ToUpper().Contains("YOUR PHONE NUMBER.") ||
+            preProcessedBody.Trim().ToUpper().Contains("YOUR NUMBER.") ||
+            preProcessedBody.Trim().ToUpper().Contains("YOUR TELEPHONE NUMBER.") ||
+            preProcessedBody.Trim().ToUpper().Contains("YOUR TELEPHONE NO.") ||
+            preProcessedBody.Trim().ToUpper().Contains("YOUR TELEPHONE.") ||
+            preProcessedBody.Trim().ToUpper().Contains("YOUR CELL NUMBER.") ||
+            preProcessedBody.Trim().ToUpper().Contains("YOU MOBILE TELEPHONE NUMBER") ||
             preProcessedBody.Trim().ToUpper().Contains(", TELEPHONE,") ||
             preProcessedBody.Trim().ToUpper().Contains(", TELEPHONE NUMBER,") ||
             preProcessedBody.Trim().ToUpper().Contains(", PHONE,") ||
             preProcessedBody.Trim().ToUpper().Contains(", PHONE NUMBER,") ||
             preProcessedBody.Trim().ToUpper().Contains("HOW CAN I CALL YOU"))
         {
+            askedForDetails = true;
             response += GetRandomQuestionsPhoneNumber(rand) + " ";
         }
         if (preProcessedBody.Trim().ToUpper().Contains("SEND YOUR ID") ||
@@ -1830,24 +1943,30 @@ public class MailServerFunctions
             preProcessedBody.Trim().ToUpper().Contains("UPLOAD YOUR ID") ||
             preProcessedBody.Trim().ToUpper().Contains("UPLOAD THE ID") ||
             preProcessedBody.Trim().ToUpper().Contains("PASSPORT OR ID CARD") ||
-            preProcessedBody.Trim().ToUpper().StartsWith("ID CARD.....") ||
-            preProcessedBody.Trim().ToUpper().StartsWith("ID CARD___") ||
-            preProcessedBody.Trim().ToUpper().StartsWith("ID CARD :") ||
-            preProcessedBody.Trim().ToUpper().StartsWith("ID CARD:") ||
-            preProcessedBody.Trim().ToUpper().StartsWith("LICENSE.....") ||
-            preProcessedBody.Trim().ToUpper().StartsWith("LICENSE___") ||
-            preProcessedBody.Trim().ToUpper().StartsWith("LICENSE :") ||
-            preProcessedBody.Trim().ToUpper().StartsWith("LICENSE:") ||
-            preProcessedBody.Trim().ToUpper().StartsWith("PASSPORT.....") ||
-            preProcessedBody.Trim().ToUpper().StartsWith("PASSPORT___") ||
-            preProcessedBody.Trim().ToUpper().StartsWith("PASSPORT :") ||
-            preProcessedBody.Trim().ToUpper().StartsWith("PASSPORT:") ||
+            preProcessedBody.Trim().ToUpper().Contains("ID CARD.....") ||
+            preProcessedBody.Trim().ToUpper().Contains("ID CARD___") ||
+            preProcessedBody.Trim().ToUpper().Contains("ID CARD :") ||
+            preProcessedBody.Trim().ToUpper().Contains("ID CARD:") ||
+            preProcessedBody.Trim().ToUpper().Contains("IDENTITY CARD.....") ||
+            preProcessedBody.Trim().ToUpper().Contains("IDENTITY CARD___") ||
+            preProcessedBody.Trim().ToUpper().Contains("IDENTITY CARD :") ||
+            preProcessedBody.Trim().ToUpper().Contains("IDENTITY CARD:") ||
+            preProcessedBody.Trim().ToUpper().Contains("LICENSE.....") ||
+            preProcessedBody.Trim().ToUpper().Contains("LICENSE___") ||
+            preProcessedBody.Trim().ToUpper().Contains("LICENSE :") ||
+            preProcessedBody.Trim().ToUpper().Contains("LICENSE:") ||
+            preProcessedBody.Trim().ToUpper().Contains("PASSPORT.....") ||
+            preProcessedBody.Trim().ToUpper().Contains("PASSPORT___") ||
+            preProcessedBody.Trim().ToUpper().Contains("PASSPORT :") ||
+            preProcessedBody.Trim().ToUpper().Contains("PASSPORT:") ||
+            preProcessedBody.Trim().ToUpper().Contains("IDENTITYCARD.....") ||
             preProcessedBody.Trim().ToUpper().Contains(", ID,") ||
             preProcessedBody.Trim().ToUpper().Contains(", ID CARD,") ||
             preProcessedBody.Trim().ToUpper().Contains(", LICENSE,") ||
             preProcessedBody.Trim().ToUpper().Contains(", LICENSE CARD,") ||
             preProcessedBody.Trim().ToUpper().Contains("EMAIL ME YOUR ID"))
         {
+            askedForDetails = true;
             if (!currentMessage.IncludedIDinPast)
             {
                 response += GetRandomQuestionsID(rand) + " ";
@@ -1902,7 +2021,64 @@ public class MailServerFunctions
         {
             response += GetRandomQuestionsBetterPhoto(rand) + " ";
         }
+        if (preProcessedBody.Trim().ToUpper().Contains("INCLUDE THIS CODE:") ||
+            preProcessedBody.Trim().ToUpper().Contains("INCLUDE THIS CODE :") ||
+            preProcessedBody.Trim().ToUpper().Contains("INCLUDE THE FOLLOWING CODE:") ||
+            preProcessedBody.Trim().ToUpper().Contains("INCLUDE THE FOLLOWING CODE :") ||
+            preProcessedBody.Trim().ToUpper().Contains("INCLUDE THIS FOLLOWING CODE:") ||
+            preProcessedBody.Trim().ToUpper().Contains("INCLUDE THIS FOLLOWING CODE :") ||
+            preProcessedBody.Trim().ToUpper().Contains("SEND THIS CODE :") ||
+            preProcessedBody.Trim().ToUpper().Contains("SEND THIS CODE:") ||
+            preProcessedBody.Trim().ToUpper().Contains("SEND THE CODE:") ||
+            preProcessedBody.Trim().ToUpper().Contains("SEND THE CODE :") ||
+            preProcessedBody.Trim().ToUpper().Contains("SEND THE FOLLOWING CODE:") ||
+            preProcessedBody.Trim().ToUpper().Contains("SEND THE FOLLOWING CODE :"))
+        {
+            string[] split = preProcessedBody.ToUpper().Split(new char[] { ' ' });
+            string code = String.Empty;
+            bool codeNext = false;
 
+            foreach (string s in split)
+            {
+                if (s == "CODE:" || s == "CODE")
+                {
+                    codeNext = true;
+                    continue;
+                }
+                if (codeNext)
+                {
+                    if (s.Trim() == String.Empty || s.Trim().Length < 3)
+                    {
+                        continue;
+                    }
+                    else
+                    {
+                        code = s;
+                        break;
+                    }
+                }
+            }
+
+            if (String.IsNullOrEmpty(code.Trim()))
+            {
+                //Generate a randome code since we couldn't parse it out. They probably will just ignore the fact that it is the wrong code.
+                code = CalculateMD5Hash(DateTime.Now.ToString()).Substring(0,rand.Next(4,10));
+            }
+
+            response += Environment.NewLine + "Here is the code: " + code + Environment.NewLine;
+        }
+        if (!askedForDetails && 
+            (preProcessedBody.Trim().ToUpper().Contains("PROVIDE THE REQUIRED DETAILS") ||
+            preProcessedBody.Trim().ToUpper().Contains("SEND US YOUR FULL INFORMATION") ||
+            preProcessedBody.Trim().ToUpper().Contains("SEND US YOUR INFORMATION") ||
+            preProcessedBody.Trim().ToUpper().Contains("SEND YOUR FULL INFORMATION") ||
+            preProcessedBody.Trim().ToUpper().Contains("SEND US YOU FULL DETAILS") ||
+            preProcessedBody.Trim().ToUpper().Contains("SEND US YOUR FULL DETAILS") ||
+            preProcessedBody.Trim().ToUpper().Contains("SEND YOUR INFORMATION") ||
+            preProcessedBody.Trim().ToUpper().Contains("SEND FULL INFORMATION")))
+        {
+            response += GetRandomQuestionsProvideDetails(rand) + " ";
+        }
         if (!String.IsNullOrEmpty(response))
         {
             response = Environment.NewLine + Environment.NewLine + SettingPostProcessing(response, rand).Trim() + Environment.NewLine + Environment.NewLine;
@@ -2007,6 +2183,15 @@ public class MailServerFunctions
                     message = message.Replace(removeText, " ");
                 }
             }
+        }
+
+        while (message.Contains("&gt;"))
+        {
+            message = message.Replace("&gt;", " ");
+        }
+        while (message.Contains("&lt;"))
+        {
+            message = message.Replace("&lt;", " ");
         }
 
         return message;
@@ -2306,6 +2491,7 @@ public class MailServerFunctions
         }
         else if (preProcessedBody.Trim().ToUpper().Contains("BEFORE I DIE I HAVE AN IMPORTANT") ||
             preProcessedBody.Trim().ToUpper().Contains("CANCER DIAG") ||
+            preProcessedBody.Trim().ToUpper().Contains("CANCER DISEASE") ||
             preProcessedBody.Trim().ToUpper().Contains("CANCER PATIENT") ||
             preProcessedBody.Trim().ToUpper().Contains("CHILD DIED") ||
             preProcessedBody.Trim().ToUpper().Contains("DAUGHTER DIED") ||
@@ -2314,6 +2500,8 @@ public class MailServerFunctions
             preProcessedBody.Trim().ToUpper().Contains("DIAGNOSED CANCER") ||
             preProcessedBody.Trim().ToUpper().Contains("DIAGNOSED FOR CANCER") ||
             preProcessedBody.Trim().ToUpper().Contains("DIED AFTER") ||
+            preProcessedBody.Trim().ToUpper().Contains("DIED AS A RESULT") ||
+            preProcessedBody.Trim().ToUpper().Contains("DIED AS THE RESULT") ||
             preProcessedBody.Trim().ToUpper().Contains("DIED IN") ||
             preProcessedBody.Trim().ToUpper().Contains("DIED LEAVING BEHIND") ||
             preProcessedBody.Trim().ToUpper().Contains("DIED OF CANCER") ||
@@ -2341,6 +2529,7 @@ public class MailServerFunctions
         else if (preProcessedBody.Trim().ToUpper().Contains("SCAM VICTIM") ||
             preProcessedBody.Trim().ToUpper().Contains("VICTIM OF SCAM") ||
             preProcessedBody.Trim().ToUpper().Contains("HAVE BEEN SCAM") ||
+            preProcessedBody.Trim().ToUpper().Contains("HOW EXACTLY WERE YOU SCAMMED") ||
             preProcessedBody.Trim().ToUpper().Contains("SENT FEE TO SCAM") ||
             preProcessedBody.Trim().ToUpper().Contains("MONEY TO THOSE SCAM") ||
             preProcessedBody.Trim().ToUpper().Contains("TO SCAM INNOCENT") ||
@@ -2378,9 +2567,11 @@ public class MailServerFunctions
             preProcessedBody.Trim().ToUpper().Contains("PART TIME JOB") ||
             preProcessedBody.Trim().ToUpper().Contains("POSITION IN COMPANY") ||
             preProcessedBody.Trim().ToUpper().Contains("POSITION IN OUR COMPANY") ||
+            preProcessedBody.Trim().ToUpper().Contains("SEEKING A BROAD VARIETY OF INDIVIDUALS") ||
             preProcessedBody.Trim().ToUpper().Contains("SEND US YOUR RESUME") ||
             preProcessedBody.Trim().ToUpper().Contains("SEND US YOUR UPDATED RESUME") ||
             preProcessedBody.Trim().ToUpper().Contains("THE JOB POSITION") ||
+            preProcessedBody.Trim().ToUpper().Contains("THIS JOB IS APPLICABLE FOR") ||
             preProcessedBody.Trim().ToUpper().Contains("VACANT POST FOR MY COMPANY") ||
             preProcessedBody.Trim().ToUpper().Contains("VACANT POST FOR OUR COMPANY") ||
             preProcessedBody.Trim().ToUpper().Contains("VACANT POST IN MY COMPANY") ||
@@ -2389,6 +2580,9 @@ public class MailServerFunctions
             preProcessedBody.Trim().ToUpper().Contains("WORK HERE") ||
             preProcessedBody.Trim().ToUpper().Contains("WORK TOGETHER AND SHARE COMMISSION") ||
             preProcessedBody.Trim().ToUpper().Contains("WORKING AS PACKAGE RECEIVER") ||
+            (preProcessedBody.Trim().ToUpper().Contains("INTERESTED IN TAKING UP A ") && preProcessedBody.Trim().ToUpper().Contains("POSITION")) ||
+            (preProcessedBody.Trim().ToUpper().Contains("EARN $") && preProcessedBody.Trim().ToUpper().Contains("WEEKLY REPLY FOR MORE")) ||
+            (preProcessedBody.Trim().ToUpper().Contains("EARN US") && preProcessedBody.Trim().ToUpper().Contains("WEEKLY REPLY FOR MORE")) ||
             (preProcessedBody.Trim().ToUpper().Contains("OUR COMPANY") && preProcessedBody.Trim().ToUpper().Contains("WORK")))
         {
             type = EmailType.JobOffer;
@@ -2411,7 +2605,10 @@ public class MailServerFunctions
             preProcessedBody.Trim().ToUpper().Contains("FINANCIAL PACKAGE") ||
             preProcessedBody.Trim().ToUpper().Contains("PROJECT FINANCING") ||
             preProcessedBody.Trim().ToUpper().Contains("CONCERNING FUNDING OF YOUR BUSINESS PROJECT") ||
+            preProcessedBody.Trim().ToUpper().Contains("CREDIT OFFER") ||
+            preProcessedBody.Trim().ToUpper().Contains("LOW INTEREST RATE") ||
             preProcessedBody.Trim().ToUpper().Contains("LOAN") ||
+            preProcessedBody.Trim().ToUpper().Contains("L0AN") ||
             preProcessedBody.Trim().ToUpper().Contains("APPLY FOR CASH"))
         {
             type = EmailType.LoanOffer;
@@ -2424,6 +2621,7 @@ public class MailServerFunctions
             preProcessedBody.Trim().ToUpper().Contains("EMAIL HAS WON") ||
             preProcessedBody.Trim().ToUpper().Contains("GET A FREE IPHONE") ||
             preProcessedBody.Trim().ToUpper().Contains("GET FREE IPHONE") ||
+            preProcessedBody.Trim().ToUpper().Contains("INFORM YOU THAT YOU WERE SELECTED FOR THE") ||
             preProcessedBody.Trim().ToUpper().Contains("LOTTERY") ||
             preProcessedBody.Trim().ToUpper().Contains("LOTTO DRAW") ||
             preProcessedBody.Trim().ToUpper().Contains("MILLION LOTTO") ||
@@ -2448,7 +2646,7 @@ public class MailServerFunctions
         {
             type = EmailType.Lottery;
         }
-        else if (preProcessedBody.Trim().ToUpper().Contains("CONSIGNMENT") || 
+        else if (preProcessedBody.Trim().ToUpper().Contains("CONSIGNMENT") ||
             preProcessedBody.Trim().ToUpper().Contains("TRUNK BOX") ||
             preProcessedBody.Trim().ToUpper().Contains("PACKAGE BOX") ||
             preProcessedBody.Trim().ToUpper().Contains("PACKAGE DELIVER") ||
@@ -2460,6 +2658,7 @@ public class MailServerFunctions
         else if (preProcessedBody.Trim().ToUpper().Contains("POLICE") ||
             preProcessedBody.Trim().ToUpper().Contains("CONVICTED TERRORIST") ||
             preProcessedBody.Trim().ToUpper().Contains("ENFORCEMENT OFFICER") ||
+            preProcessedBody.Trim().ToUpper().Contains(" FBI ") ||
             preProcessedBody.Trim().ToUpper().Contains("WANTED TERRORIST"))
         {
             type = EmailType.Police;
@@ -2469,8 +2668,8 @@ public class MailServerFunctions
         {
             type = EmailType.MoneyHack;
         }
-        else if (preProcessedBody.Trim().ToUpper().Contains("ATM CARD") || 
-            preProcessedBody.Trim().ToUpper().Contains("ATMCARD") || 
+        else if (preProcessedBody.Trim().ToUpper().Contains("ATM CARD") ||
+            preProcessedBody.Trim().ToUpper().Contains("ATMCARD") ||
             preProcessedBody.Trim().ToUpper().Contains("ATM CREDIT CARD") ||
             preProcessedBody.Trim().ToUpper().Contains("VISA CARD") ||
             preProcessedBody.Trim().ToUpper().Contains("ATM MASTER CREDIT CARD") ||
@@ -2498,7 +2697,9 @@ public class MailServerFunctions
             preProcessedBody.Trim().ToUpper().Contains("AMOUNT OF MONEY IN YOU") ||
             preProcessedBody.Trim().ToUpper().Contains("AMOUNT OF MONEY TO YOU") ||
             preProcessedBody.Trim().ToUpper().Contains("AMOUNT OF MONEY YOU") ||
+            preProcessedBody.Trim().ToUpper().Contains("ASSIST ME TO RECEIVE AND INVEST THIS") ||
             preProcessedBody.Trim().ToUpper().Contains("CAN YOUR ACCOUNT RECEIVE $") ||
+            preProcessedBody.Trim().ToUpper().Contains("CANNOT BE ABLE TO MOVE THIS HUGE FUND") ||
             preProcessedBody.Trim().ToUpper().Contains("COMPENSATION FOR YOUR ASSISTANCE") ||
             preProcessedBody.Trim().ToUpper().Contains("DISTRIBUTE FUND WORTH") ||
             preProcessedBody.Trim().ToUpper().Contains("DISTRIBUTE FUNDS WORTH") ||
@@ -2528,6 +2729,7 @@ public class MailServerFunctions
             preProcessedBody.Trim().ToUpper().Contains("SAFE KEEPING OF MONEY") ||
             preProcessedBody.Trim().ToUpper().Contains("SAFE KEEPING OF THE MONEY") ||
             preProcessedBody.Trim().ToUpper().Contains("STORE MY MONEY") ||
+            preProcessedBody.Trim().ToUpper().Contains("VENTURE THAT WILL BENEFIT BOTH PART") ||
             preProcessedBody.Trim().ToUpper().Contains("VENTURE WHICH I WILL LIKE TO HANDLE WITH YOU") ||
             preProcessedBody.Trim().ToUpper().Contains("WORK WITH ME AND CLAIM IT") ||
             preProcessedBody.Trim().ToUpper().Contains("WORK WITH YOU IN SECURING THESE FUND") ||
@@ -2552,14 +2754,17 @@ public class MailServerFunctions
             preProcessedBody.Trim().ToUpper().Contains("BUSINESS THAT WILL BENEFIT BOTH OF US") ||
             preProcessedBody.Trim().ToUpper().Contains("BUSINESS TO DISCUSS WITH YOU") ||
             preProcessedBody.Trim().ToUpper().Contains("CAN YOU WORK WITH ME") ||
+            preProcessedBody.Trim().ToUpper().Contains("CONFIDENTIAL DEAL") ||
             preProcessedBody.Trim().ToUpper().Contains("HAS A PROJECT FOR YOU") ||
             preProcessedBody.Trim().ToUpper().Contains("HAVE A PROJECT FOR YOU") ||
             preProcessedBody.Trim().ToUpper().Contains("HAVE PROJECT FOR YOU") ||
             preProcessedBody.Trim().ToUpper().Contains("IF WE WORK TOGETHER") ||
+            preProcessedBody.Trim().ToUpper().Contains("IMPORTANT PARTNERSHIP") ||
             preProcessedBody.Trim().ToUpper().Contains("INTERESTED IN A BUSINESS") ||
             preProcessedBody.Trim().ToUpper().Contains("INTERESTING DEAL WORTH") ||
             preProcessedBody.Trim().ToUpper().Contains("INVESTMENT") ||
             preProcessedBody.Trim().ToUpper().Contains("INVESTOR") ||
+            preProcessedBody.Trim().ToUpper().Contains("LIKE TO KNOW IF YOU CAN BE OUR DISTRIBUTOR") ||
             preProcessedBody.Trim().ToUpper().Contains("LUCRATIVE PROPOSAL") ||
             preProcessedBody.Trim().ToUpper().Contains("LUCRATIVE/CONFIDENTIAL BUSINES") ||
             preProcessedBody.Trim().ToUpper().Contains("LUCRATIVE/CONFIDENTIAL DEAL") ||
@@ -2583,10 +2788,10 @@ public class MailServerFunctions
         {
             type = EmailType.Investor;
         }
-        else if (preProcessedBody.Trim().ToUpper().Contains("PAYMENT") || 
+        else if (preProcessedBody.Trim().ToUpper().Contains("PAYMENT") ||
             preProcessedBody.Trim().ToUpper().Contains("MONEYGRAM") ||
             preProcessedBody.Trim().ToUpper().Contains("MONEY GRAM") ||
-            preProcessedBody.Trim().ToUpper().Contains("WESTERN UNION") || 
+            preProcessedBody.Trim().ToUpper().Contains("WESTERN UNION") ||
             preProcessedBody.Trim().ToUpper().Contains("TRANSFER THE FUND") ||
             preProcessedBody.Trim().ToUpper().Contains("HELP ME WITH THE RENEW DUES") ||
             preProcessedBody.Trim().ToUpper().Contains("ASSIST ME WITH THE RENEW DUES"))
@@ -2614,6 +2819,7 @@ public class MailServerFunctions
             preProcessedBody.Trim().ToUpper().Contains("I AM A SINGLE YOUNG LADY") ||
             preProcessedBody.Trim().ToUpper().Contains("I NEED YOUR RELATIONSHIP") ||
             preProcessedBody.Trim().ToUpper().Contains("I PICK INTEREST ON YOU") ||
+            preProcessedBody.Trim().ToUpper().Contains("I SAW YOUR PROFILE TODAY") ||
             preProcessedBody.Trim().ToUpper().Contains("I SEE YOU AS SOMEONE I CAN WORK WITH") ||
             preProcessedBody.Trim().ToUpper().Contains("I WANT TO MAKE A NEW AND SPECIAL FRIEND") ||
             preProcessedBody.Trim().ToUpper().Contains("I WANT US TO BE FRIENDS") ||
@@ -2679,6 +2885,7 @@ public class MailServerFunctions
             preProcessedBody.Trim().ToUpper().Contains("SPAM ACTIVITIES") ||
             preProcessedBody.Trim().ToUpper().Contains("TEMPORARILY LOCKED") ||
             preProcessedBody.Trim().ToUpper().Contains("UNAUTHORIZED BY THE ACCOUNT OWNER") ||
+            preProcessedBody.Trim().ToUpper().Contains("UNITED PARCEL SERVICE") ||
             preProcessedBody.Trim().ToUpper().Contains("UPDATE TO SECURE YOUR ACCOUNT") ||
             preProcessedBody.Trim().ToUpper().Contains("USERGATE MAIL SERVICE") ||
             preProcessedBody.Trim().ToUpper().Contains("VISITED FROM AN UNUSUAL PLACE") ||
@@ -2688,6 +2895,7 @@ public class MailServerFunctions
             preProcessedBody.Trim().ToUpper().Contains("WE SUGGEST YOU SIGNIN WITH YOUR E-MAIL") ||
             preProcessedBody.Trim().ToUpper().Contains("WE SUGGEST YOU SIGNIN WITH YOUR EMAIL") ||
             preProcessedBody.Trim().ToUpper().Contains("YOU CAN SIGN IN ALIBABA") ||
+            preProcessedBody.Trim().ToUpper().Contains("YOU HAVE A NOTIFICATION FROM") ||
             preProcessedBody.Trim().ToUpper().Contains("YOUR ACCOUNT HAS BEEN LIMITED") ||
             (preProcessedBody.Trim().ToUpper().Contains("YOU HAVE (") && preProcessedBody.Trim().ToUpper().Contains(") NEW SECURITY MESSAGE")) ||
             (preProcessedBody.Trim().ToUpper().Contains("YOUR EMAIL ACCOUNT WILL BE PERM") && preProcessedBody.Trim().ToUpper().Contains("DISABLE")) ||
@@ -2697,6 +2905,8 @@ public class MailServerFunctions
         }
         else if (preProcessedBody.Trim().ToUpper().Contains("ASK HIM TO SEND YOU THE TOTAL") ||
             preProcessedBody.Trim().ToUpper().Contains("ASSIST IN RECEIVING") ||
+            preProcessedBody.Trim().ToUpper().Contains("ASSISTANCE TO SET UP MY CHARITY FOUNDATION") ||
+            preProcessedBody.Trim().ToUpper().Contains("AWARDED THE SUM OF") ||
             preProcessedBody.Trim().ToUpper().Contains("BANK CHECK DRAFT") ||
             preProcessedBody.Trim().ToUpper().Contains("CASH GRANT DONATION") ||
             preProcessedBody.Trim().ToUpper().Contains("CHOOSEN TO RECEIVE $") ||
@@ -2707,6 +2917,7 @@ public class MailServerFunctions
             preProcessedBody.Trim().ToUpper().Contains("CLAIM YOUR BANK DRAFT") ||
             preProcessedBody.Trim().ToUpper().Contains("COMPENSATION AMOUNT") ||
             preProcessedBody.Trim().ToUpper().Contains("COMPENSATION FUNDS") ||
+            preProcessedBody.Trim().ToUpper().Contains("COMPENSATION FOR YOUR EFFORTS") ||
             preProcessedBody.Trim().ToUpper().Contains("CONTAINS THE SUM OF") ||
             preProcessedBody.Trim().ToUpper().Contains("CREDIT YOUR MONEY") ||
             preProcessedBody.Trim().ToUpper().Contains("CRYPTOCURRENCY FREE") ||
@@ -2726,6 +2937,7 @@ public class MailServerFunctions
             preProcessedBody.Trim().ToUpper().Contains("EFFECT THE SUM") ||
             preProcessedBody.Trim().ToUpper().Contains("EXPECTING TO RECEIVE IS A CASH") ||
             preProcessedBody.Trim().ToUpper().Contains("FREE CRYPTOCURRENCY") ||
+            preProcessedBody.Trim().ToUpper().Contains("FREE GRANT") ||
             preProcessedBody.Trim().ToUpper().Contains("FUND BELONGING TO MY DECEASED CLIENT") ||
             preProcessedBody.Trim().ToUpper().Contains("FUND IN A CASHIER CHECK") ||
             preProcessedBody.Trim().ToUpper().Contains("FUND IN A CASHIER CHEQUE") ||
@@ -2735,7 +2947,12 @@ public class MailServerFunctions
             preProcessedBody.Trim().ToUpper().Contains("FUNDS IN A CASHIER CHEQUE") ||
             preProcessedBody.Trim().ToUpper().Contains("FUNDS TO YOU CONTACT") ||
             preProcessedBody.Trim().ToUpper().Contains("FUNDS TO YOUR CONTACT") ||
+            preProcessedBody.Trim().ToUpper().Contains("GREATLY IN NEED OF AN INDIVIDUAL WHO CAN HANDLE") ||
+            preProcessedBody.Trim().ToUpper().Contains("GREATLY IN NEED OF INDIVIDUAL WHO CAN HANDLE") ||
             preProcessedBody.Trim().ToUpper().Contains("HAVE A PACKAGE OF $") ||
+            preProcessedBody.Trim().ToUpper().Contains("I HAVE WILLED £") ||
+            preProcessedBody.Trim().ToUpper().Contains("I HAVE WILLED $") ||
+            preProcessedBody.Trim().ToUpper().Contains("I WANT TO DISTRIBUTE MY $") ||
             preProcessedBody.Trim().ToUpper().Contains("I WISH TO BEQUEATH YOU IN SPECIES THIS SU M") || //How can we possibly predict emails with wording/grammer like this?
             preProcessedBody.Trim().ToUpper().Contains("I WISH TO WILL $") ||
             preProcessedBody.Trim().ToUpper().Contains("I WISH TO WILL US$") ||
@@ -2743,6 +2960,7 @@ public class MailServerFunctions
             preProcessedBody.Trim().ToUpper().Contains("INCOMING TRANSFER NOTIFICATION") ||
             preProcessedBody.Trim().ToUpper().Contains("INSTANT RICH SUM") ||
             preProcessedBody.Trim().ToUpper().Contains("INTERIGENS FUND WHORTH") ||
+            preProcessedBody.Trim().ToUpper().Contains("INTERNATIONAL CASHIER'S BANK DRAFT, TO THE TUNE") ||
             preProcessedBody.Trim().ToUpper().Contains("INVEST THE SUM") ||
             preProcessedBody.Trim().ToUpper().Contains("INVOLVING THE SUM") ||
             preProcessedBody.Trim().ToUpper().Contains("KEPT THE CHECK WITH THEM") ||
@@ -2754,6 +2972,11 @@ public class MailServerFunctions
             preProcessedBody.Trim().ToUpper().Contains("PROMISE TO PAY THE SOM") ||
             preProcessedBody.Trim().ToUpper().Contains("PROMISE TO PAY THE SUM") ||
             preProcessedBody.Trim().ToUpper().Contains("RECEIVE THE SUM") ||
+            preProcessedBody.Trim().ToUpper().Contains("RECEIVE THIS FUND") ||
+            preProcessedBody.Trim().ToUpper().Contains("RECEIVE THIS MONEY") ||
+            preProcessedBody.Trim().ToUpper().Contains("RECEIVE THIS SUM") ||
+            preProcessedBody.Trim().ToUpper().Contains("RECEIVE THIS WEALTH") ||
+            preProcessedBody.Trim().ToUpper().Contains("RECEIVE YOUR PROFIT") ||
             preProcessedBody.Trim().ToUpper().Contains("RECEIVING THEIR MONEY") ||
             preProcessedBody.Trim().ToUpper().Contains("RECEIVING YOUR FUND") ||
             preProcessedBody.Trim().ToUpper().Contains("RECEIVING YOUR MONEY") ||
@@ -2767,7 +2990,9 @@ public class MailServerFunctions
             preProcessedBody.Trim().ToUpper().Contains("SECURED SUM OF") ||
             preProcessedBody.Trim().ToUpper().Contains("SEND YOU THE REST OF MONEY") ||
             preProcessedBody.Trim().ToUpper().Contains("SO HE CAN RELEASE YOUR DRAFT TO YOU") ||
+            preProcessedBody.Trim().ToUpper().Contains("SOLUTION TO A MONEY TRANSFER") ||
             preProcessedBody.Trim().ToUpper().Contains("STILL WANT YOUR FUND") ||
+            preProcessedBody.Trim().ToUpper().Contains("THAT WAS AWARDED TO YOU") ||
             preProcessedBody.Trim().ToUpper().Contains("THE TRANSMISSION OF THE FUNDS") ||
             preProcessedBody.Trim().ToUpper().Contains("THOSE FUNDS TRANSFERRED") ||
             preProcessedBody.Trim().ToUpper().Contains("TO BE COMPENSATED") ||
@@ -2775,10 +3000,19 @@ public class MailServerFunctions
             preProcessedBody.Trim().ToUpper().Contains("TOTAL SUM OF") ||
             preProcessedBody.Trim().ToUpper().Contains("TRANSACTION WE WERE PURSING TOGETHER") ||
             preProcessedBody.Trim().ToUpper().Contains("TRANSFER OF THE SUM") ||
+            preProcessedBody.Trim().ToUpper().Contains("TRANSFER OF YOUR FUND") ||
+            preProcessedBody.Trim().ToUpper().Contains("TRANSFER OF YOUR MONEY") ||
+            preProcessedBody.Trim().ToUpper().Contains("TRANSFER OF YOUR SUM") ||
+            preProcessedBody.Trim().ToUpper().Contains("TRANSFER OF YOUR WEALTH") ||
             preProcessedBody.Trim().ToUpper().Contains("TRANSFER OUR CASH") ||
+            preProcessedBody.Trim().ToUpper().Contains("TRANSFER SUM OF $") ||
             preProcessedBody.Trim().ToUpper().Contains("TRANSFER TO YOUR ACCOUNT") ||
             preProcessedBody.Trim().ToUpper().Contains("TRANSFERRED THE FUND") ||
             preProcessedBody.Trim().ToUpper().Contains("TRANSFERRED TO YOUR OWN PERSONAL ACCOUNT") ||
+            preProcessedBody.Trim().ToUpper().Contains("TRANSFERRING OF THIS FUND SUM") ||
+            preProcessedBody.Trim().ToUpper().Contains("TRANSFERRING YOUR FUNDS") ||
+            preProcessedBody.Trim().ToUpper().Contains("TRANSFERRING YOUR MONEY") ||
+            preProcessedBody.Trim().ToUpper().Contains("UNCLAIMED ACCOUNT") ||
             preProcessedBody.Trim().ToUpper().Contains("UNCLAIMED FUND") ||
             preProcessedBody.Trim().ToUpper().Contains("UNPAID FUND") ||
             preProcessedBody.Trim().ToUpper().Contains("USD WAS DANATED TO YOU") ||
@@ -2796,6 +3030,7 @@ public class MailServerFunctions
             preProcessedBody.Trim().ToUpper().Contains("YOUR FUNDS VALUED") ||
             preProcessedBody.Trim().ToUpper().Contains("YOUR FUNDS WILL BE PAID") ||
             preProcessedBody.Trim().ToUpper().Contains("YOUR PACKAGE WORTH") ||
+            preProcessedBody.Trim().ToUpper().Contains("YOU WILL RECEIVE YOUR FUND") ||
             (preProcessedBody.Trim().ToUpper().Contains("FUND") && preProcessedBody.Trim().ToUpper().Contains("URGENT DELIVERY")) ||
             (preProcessedBody.Trim().ToUpper().Contains("ASSIGNED TO BE DELIVERED") && preProcessedBody.Trim().ToUpper().Contains("$")) ||
             (preProcessedBody.Trim().ToUpper().Contains("FUND") && preProcessedBody.Trim().ToUpper().Contains("UNCLAIMED") && preProcessedBody.Trim().ToUpper().Contains("DEPOSITED")) ||
@@ -2821,6 +3056,8 @@ public class MailServerFunctions
             preProcessedBody.Trim().ToUpper().Contains("CONFIDENTIAL BRIEF") ||
             preProcessedBody.Trim().ToUpper().Contains("CONTACT ME") ||
             preProcessedBody.Trim().ToUpper().Contains("DEAR HOW ARE YOU") ||
+            preProcessedBody.Trim().ToUpper().Contains("DID YOU GET MY EMAIL") ||
+            preProcessedBody.Trim().ToUpper().Contains("DID YOU GET MY E-MAIL") ||
             preProcessedBody.Trim().ToUpper().Contains("DID YOU GET MY LAST EMAIL") ||
             preProcessedBody.Trim().ToUpper().Contains("DID YOU GET MY PREVIOUS EMAIL") ||
             preProcessedBody.Trim().ToUpper().Contains("DID YOU RECEIVE MY PREVIOUS EMAIL") ||
@@ -2847,10 +3084,12 @@ public class MailServerFunctions
             preProcessedBody.Trim().ToUpper().Contains("HOW ARE YOU DOING") ||
             preProcessedBody.Trim().ToUpper().Contains("HOW ARE YOU, I AM VERY GOOD") ||
             preProcessedBody.Trim().ToUpper().Contains("HOW OLD ARE YOU") ||
+            preProcessedBody.Trim().ToUpper().Contains("HUMANITARIAN CHARITY OFFER") ||
             preProcessedBody.Trim().ToUpper().Contains("HW ARE YOU") ||
             preProcessedBody.Trim().ToUpper().Contains("I HAVE A VERY LUCRATIVE DEAL") ||
             preProcessedBody.Trim().ToUpper().Contains("I HAVE SPECIAL PROPOSAL") ||
             preProcessedBody.Trim().ToUpper().Contains("I NEED YOU URGENTLY") ||
+            preProcessedBody.Trim().ToUpper().Contains("I REALLY NEED TO HEAR FROM YOU") ||
             preProcessedBody.Trim().ToUpper().Contains("I SHALL GIVE YOU DETAILS ON YOUR RESPONSE") ||
             preProcessedBody.Trim().ToUpper().Contains("I SHALL GIVE YOU DETAILS UPON YOUR RESPONSE") ||
             preProcessedBody.Trim().ToUpper().Contains("I SHALL PROVIDE YOU WITH DETAILS ON YOUR RESPONSE") ||
@@ -2865,6 +3104,7 @@ public class MailServerFunctions
             preProcessedBody.Trim().ToUpper().Contains("INFO ON WHY THIS EMAIL IS COMING TO YOU") ||
             preProcessedBody.Trim().ToUpper().Contains("INFO WHY THIS EMAIL IS COMING TO YOU") ||
             preProcessedBody.Trim().ToUpper().Contains("KNOW IF YOU RECEIVED MY PREVIOUS MAIL") ||
+            preProcessedBody.Trim().ToUpper().Contains("MEET PEOPLE FOR DIFFERENT REASONS RELATIONSHIP") ||
             preProcessedBody.Trim().ToUpper().Contains("MISS SHARON RIVAS") ||
             preProcessedBody.Trim().ToUpper().Contains("NEED TO TALK ITS VERY IMPORTANT") ||
             preProcessedBody.Trim().ToUpper().Contains("ORDERS FROM MR. PRESIDENT") ||
@@ -2876,15 +3116,18 @@ public class MailServerFunctions
             preProcessedBody.Trim().ToUpper().Contains("PLEASE I WANT YOU TO ASSIST") ||
             preProcessedBody.Trim().ToUpper().Contains("PLEASE I WANT YOUR ASSIST") ||
             preProcessedBody.Trim().ToUpper().Contains("RANDOMLY SELECTED INDIVID") ||
+            preProcessedBody.Trim().ToUpper().Contains("REALLY SURPRISE READING YOUR MESSAGE") ||
             preProcessedBody.Trim().ToUpper().Contains("SEND YOU MY PICTURE") ||
             preProcessedBody.Trim().ToUpper().Contains("SOME THING IMPORTANT FOR YOU") ||
             preProcessedBody.Trim().ToUpper().Contains("SOMETHING IMPORTANT FOR YOU") ||
             preProcessedBody.Trim().ToUpper().Contains("SOMETHING URGENT") ||
             preProcessedBody.Trim().ToUpper().Contains("TALK TO YOU") ||
             preProcessedBody.Trim().ToUpper().Contains("TALK WITH YOU") ||
+            preProcessedBody.Trim().ToUpper().Contains("THE EMAIL ADDRESS YOU USED TO CONTACT US IS NO LONGER VALID") ||
             preProcessedBody.Trim().ToUpper().Contains("THIS IS PURE BUSINESS") ||
             preProcessedBody.Trim().ToUpper().Contains("THIS IS TO INFORM YOU THAT YOU HAVE BEEN PICKED") ||
             preProcessedBody.Trim().ToUpper().Contains("VERY IMPORTANT THING TO TELL YOU") ||
+            preProcessedBody.Trim().ToUpper().Contains("WHAT ARE YOU REALLY SAYING") ||
             preProcessedBody.Trim().ToUpper().Contains("WHAT IS YOUR AGE") ||
             preProcessedBody.Trim().ToUpper().Contains("WHERE ARE YOU FROM") ||
             preProcessedBody.Trim().ToUpper().Contains("YOU HAVE A GOOD PROFILE") ||
@@ -2901,14 +3144,14 @@ public class MailServerFunctions
         }
         else if (preProcessedBody.Trim().ToUpper().Contains("À ÉTÉ") ||
             preProcessedBody.Trim().ToUpper().Contains("ÊTES") ||
-            preProcessedBody.Trim().ToUpper().Contains("ß") ||
+            preProcessedBody.Trim().Contains("ß") ||
             preProcessedBody.Trim().ToUpper().Contains("ı") ||
             preProcessedBody.Trim().ToUpper().Contains("Ő") ||
-            preProcessedBody.Trim().ToUpper().Contains("ő") ||
+            preProcessedBody.Trim().Contains("ő") ||
             preProcessedBody.Trim().ToUpper().Contains("Ű") ||
-            preProcessedBody.Trim().ToUpper().Contains("ű") ||
-            preProcessedBody.Trim().ToUpper().Contains("Ӳ") ||
-            preProcessedBody.Trim().ToUpper().Contains("ӳ") ||
+            preProcessedBody.Trim().Contains("ű") ||
+            preProcessedBody.Trim().Contains("Ӳ") ||
+            preProcessedBody.Trim().Contains("ӳ") ||
             preProcessedBody.Trim().ToUpper().Contains("AFIN QUE VOS") ||
             preProcessedBody.Trim().ToUpper().Contains("AHN-YOUNG-HA-SE-YO") ||
             preProcessedBody.Trim().ToUpper().Contains("ANNAK BARMELY") ||
@@ -2921,14 +3164,16 @@ public class MailServerFunctions
             preProcessedBody.Trim().ToUpper().Contains("CRÉDIT") ||
             preProcessedBody.Trim().ToUpper().Contains("DE LUTTER") ||
             preProcessedBody.Trim().ToUpper().Contains("DE VOS RÊVES") ||
-            preProcessedBody.Trim().ToUpper().Contains("dsch") ||
-            preProcessedBody.Trim().ToUpper().Contains("eeuw") ||
+            preProcessedBody.Trim().ToUpper().Contains("DES PAYS DE") ||
+            preProcessedBody.Trim().ToUpper().Contains("DSCH") ||
+            preProcessedBody.Trim().ToUpper().Contains("EEUW") ||
             preProcessedBody.Trim().ToUpper().Contains("EZ AZ ") ||
+            preProcessedBody.Trim().ToUpper().Contains("FÜR") ||
             preProcessedBody.Trim().ToUpper().Contains("GUTEN TAG") ||
             preProcessedBody.Trim().ToUpper().Contains("HABARI") ||
             preProcessedBody.Trim().ToUpper().Contains("HALLO") ||
             preProcessedBody.Trim().ToUpper().Contains("HOLA") ||
-            preProcessedBody.Trim().ToUpper().Contains("ieuw") ||
+            preProcessedBody.Trim().ToUpper().Contains("IEUW") ||
             preProcessedBody.Trim().ToUpper().Contains("JAMBO") ||
             preProcessedBody.Trim().ToUpper().Contains("KONBAN WA") ||
             preProcessedBody.Trim().ToUpper().Contains("KONNICHIWA") ||
@@ -2941,6 +3186,9 @@ public class MailServerFunctions
             preProcessedBody.Trim().ToUpper().Contains("OHAYO") ||
             preProcessedBody.Trim().ToUpper().Contains("OLÀ") ||
             preProcessedBody.Trim().ToUpper().Contains("ONS DAN EEN") ||
+            preProcessedBody.Trim().ToUpper().Contains("POR ESTE") ||
+            preProcessedBody.Trim().ToUpper().Contains("POR FAVOR") ||
+            preProcessedBody.Trim().ToUpper().Contains("PREGA DI") ||
             preProcessedBody.Trim().ToUpper().Contains("QUI NOUS") ||
             preProcessedBody.Trim().ToUpper().Contains("SAIN BAINUU") ||
             preProcessedBody.Trim().ToUpper().Contains("SALAAM") ||
@@ -2950,7 +3198,7 @@ public class MailServerFunctions
             preProcessedBody.Trim().ToUpper().Contains("SOCIÉTÉS") ||
             preProcessedBody.Trim().ToUpper().Contains("STUUR ONS") ||
             preProcessedBody.Trim().ToUpper().Contains("SZIA") ||
-            preProcessedBody.Trim().ToUpper().Contains("tsch") ||
+            preProcessedBody.Trim().ToUpper().Contains("TSCH") ||
             preProcessedBody.Trim().ToUpper().Contains("WENN JA") ||
             preProcessedBody.Trim().ToUpper().Contains("WIE IST DEINE") ||
             preProcessedBody.Trim().ToUpper().Contains("ZDRAS-TVUY-TE") ||
@@ -2965,6 +3213,8 @@ public class MailServerFunctions
         else if (((preProcessedBody.Length - currentMessage.SubjectLine.Length) < 40 && (preProcessedBody.Trim().ToUpper().Contains("INLINE IMAGE"))) ||
             preProcessedBody.Trim().ToUpper().Contains("ATTACHED LETTER FOR DETAIL") ||
             preProcessedBody.Trim().ToUpper().Contains("DETAILS IN THE ATTACHED") ||
+            preProcessedBody.Trim().ToUpper().Contains("MY MASSAGE ATTACHED") ||
+            preProcessedBody.Trim().ToUpper().Contains("MY MASSAGE INCLUDED") ||
             preProcessedBody.Trim().ToUpper().Contains("MY MESSAGE ATTACHED") ||
             preProcessedBody.Trim().ToUpper().Contains("MY MESSAGE INCLUDED") ||
             preProcessedBody.Trim().ToUpper().Contains("MY LETTER ATTACHED") ||
@@ -2997,8 +3247,20 @@ public class MailServerFunctions
         {
             type = EmailType.BlankWithAttachment;
         }
+        else
+        {
+            for (int i = pastMessages.Count() - 1; i > 0; i--)
+            {
+                if (pastMessages[i].MessageType != 0)
+                {
+                    type = (EmailType)pastMessages[i].MessageType;
+                    break;
+                }
+            }
+        }
 
-        currentMessage.MessageType = (int)type;
+        if((EmailType)currentMessage.MessageType == EmailType.Unknown || type != EmailType.Unknown)
+            currentMessage.MessageType = (int)type;
 
         //Determine attachment type
         if (currentMessage.AtachmentTypes.ToUpper().Contains("PDF"))
@@ -3059,7 +3321,7 @@ public class MailServerFunctions
         }
 
         //Some of the scammers like to use an invalid email to send the message then instruct you to email them with the email in the message (Maybe to avoid getting the mailbox shutdown) so try to find the email address they want you to send to
-        string newEmailAddress = AttemptToFindReplyToEmailAddress(currentMessage.SubjectLine + " " + currentMessage.EmailBodyPlain).Trim();
+        string newEmailAddress = AttemptToFindReplyToEmailAddress(preProcessedBody).Trim();
         if (!String.IsNullOrEmpty(newEmailAddress))
         {
             //Remove trailing "." from email address if it was displayed at the end of a sentence
@@ -3104,7 +3366,7 @@ public class MailServerFunctions
         greeting = GetRandomGreeting(rand);
         signOff = GetRandomSignOff(rand);
 
-        switch (type)
+        switch ((EmailType)currentMessage.MessageType)
         {
             case EmailType.Test:
                 if (pastMessages.Count() > 0)
@@ -3262,6 +3524,12 @@ public class MailServerFunctions
                 else
                     rtnResponse = GetRandomOpeningResponseForGenericAdvertisement(rand, greeting, name, currentMessage);
                 break;
+        }
+
+        //If we cannot determine a type but we can answer a direct question then reply with that and see if they reveal what they are really after
+        if (String.IsNullOrEmpty(rtnResponse))
+        {
+            rtnResponse += HandleDirectQuestions(preProcessedBody, ref currentMessage, rand).Trim('\r').Trim('\n').Trim();
         }
 
         if (!String.IsNullOrEmpty(rtnResponse))

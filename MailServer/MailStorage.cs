@@ -5,7 +5,7 @@ using System.Linq;
 [Serializable]
 public class MailStorage
 {
-    private string msgId, emailBodyPlain, emailBodyRich, emailBodyHtml, subjectLine, determinedReply, toAddress, atachmentTypes, personName, attachmentNames;
+    private string msgId, emailBodyPlain, emailBodyRich, emailBodyHtml, subjectLine, determinedReply, toAddress, atachmentTypes, personName, attachmentNames, myReplyMsgId, inReplyToMsgId;
     private int numberOfAttachments, messageType;
     private DateTime dateReceived, dateProcessed;
     private bool replied, includeID, includedIDinPast, isDuplicateMessage, ignored;
@@ -117,10 +117,20 @@ public class MailStorage
         get { return isDuplicateMessage; }
         set { isDuplicateMessage = value; }
     }
+    public string MyReplyMsgId
+    {
+        get { return myReplyMsgId; }
+        set { myReplyMsgId = value; }
+    }
+    public string InReplyToMsgId
+    {
+        get { return inReplyToMsgId; }
+        set { inReplyToMsgId = value; }
+    }
 
     public MailStorage()
     {
-        msgId = emailBodyPlain = emailBodyRich = emailBodyHtml = subjectLine = determinedReply = toAddress = atachmentTypes = personName = attachmentNames = String.Empty;
+        msgId = emailBodyPlain = emailBodyRich = emailBodyHtml = subjectLine = determinedReply = toAddress = atachmentTypes = personName = attachmentNames = myReplyMsgId = inReplyToMsgId = String.Empty;
         numberOfAttachments = messageType = 0;
         dateReceived = dateProcessed = new DateTime(1900,01,01);
         replied = includeID = includedIDinPast = isDuplicateMessage = ignored = false;
