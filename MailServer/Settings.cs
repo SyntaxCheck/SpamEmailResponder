@@ -4,12 +4,12 @@ public class Settings
 {
     private string emailAddress, password, myName, myFakeAddress, myFakeBirthdate, pathToMyFakeID, myFakePhoneNumber, myFakeOccupation, myFakeGender, myFakeMaritalStatus, myFakeCountry;
     private List<string> names, greeting, signoff, introduction, introductionOpening, introductionClosing, personDescriptionMale, personDescriptionFemale, memory, followupLine, acquaintance, 
-        locations, products, paymentMethods, randomThoughts;
+        locations, products, paymentMethods, randomThoughts, consignmentBoxImageIncluded, consignmentBoxImageNotIncluded;
     private List<string> questionsNotListening, questionsJokingAround, questionsNotAnswering, questionsHowAreYou, 
         questionsNotUnderstanding, questionsPermission, questionsSpokenLanguage, questionsTrust, questionsWhyNoAnswer,
         questionsPhoneNumber, questionsAddress, questionsID, questionsAlreadyIncludedID, questionsCannotOpenAttachment, questionsWeAreCaught,
         questionsBirthdate, questionsBetterPhoto, questionsOccupation, questionsGender, questionsMaritalStatus, questionsCountry, questionsName, questionsProvideDetails,
-        questionsAreYouReady;
+        questionsAreYouReady, questionsChangeContactMethod, questionsContactMeLater, questionsAreYouOnboard, questionsPayTheFee;
     private List<string> responseOpeningBlankEmailWithAttachment, responseOpeningLottery, responseOpeningOilAndGas, responseOpeningOilAndGasQuestionList, responseOpeningIlluminati, 
         responseOpeningConsignmentBox, responseOpeningDeathOrDying, responseOpeningLoanOffer, responseOpeningMoneyStorage, responseOpeningAtmCard, responseOpeningPolice, 
         responseOpeningGenericPayment, responseOpeningInvestor, responseOpeningMoneyHack, responseOpeningJobOffer, responseOpeningSellingProducts, responseOpeningFreeMoney, 
@@ -496,11 +496,41 @@ public class Settings
         get { return questionsAreYouReady; }
         set { questionsAreYouReady = value; }
     }
+    public List<string> QuestionsChangeContactMethod
+    {
+        get { return questionsChangeContactMethod; }
+        set { questionsChangeContactMethod = value; }
+    }
+    public List<string> QuestionsContactMeLater
+    {
+        get { return questionsContactMeLater; }
+        set { questionsContactMeLater = value; }
+    }
+    public List<string> QuestionsAreYouOnboard
+    {
+        get { return questionsAreYouOnboard; }
+        set { questionsAreYouOnboard = value; }
+    }
+    public List<string> QuestionsPayTheFee
+    {
+        get { return questionsPayTheFee; }
+        set { questionsPayTheFee = value; }
+    }
 
     public List<string> RandomThoughts
     {
         get { return randomThoughts; }
         set { randomThoughts = value; }
+    }
+    public List<string> ConsignmentBoxImageIncluded
+    {
+        get { return consignmentBoxImageIncluded; }
+        set { consignmentBoxImageIncluded = value; }
+    }
+    public List<string> ConsignmentBoxImageNotIncluded
+    {
+        get { return consignmentBoxImageNotIncluded; }
+        set { consignmentBoxImageNotIncluded = value; }
     }
     #endregion
 
