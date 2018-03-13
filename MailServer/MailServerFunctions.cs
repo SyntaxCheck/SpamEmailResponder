@@ -1086,13 +1086,17 @@ public class MailServerFunctions
             return lstFemale[rand.Next(0, lstFemale.Count())];
         }
     }
-    private string GetRandomMemory(Random rand, bool isMale)
+    private string GetRandomMemory(Random rand)
+    {
+        return GetRandomMemory(rand, null);
+    }
+    private string GetRandomMemory(Random rand, bool? isMale)
     {
         string rtnValue = String.Empty;
         List<string> lst = settings.Memory;
 
         rtnValue = lst[rand.Next(0, lst.Count())];
-        if (!isMale)
+        if (isMale != null && isMale == false)
         {
             rtnValue = rtnValue.Replace(" him ", " her ").Replace(" he ", " she ").Replace(" his ", " her ").Replace(" Him ", " Her ").Replace(" He ", " She ").Replace(" His ", " Her ").Replace(" him.", " her.").Replace(" he.", " she.").Replace(" his.", " her.");
         }
@@ -1427,6 +1431,8 @@ public class MailServerFunctions
         replacement.Add(settings.MyName);
         placeholder.Add("|GetPaymentTypeFromMessage|");
         replacement.Add(paymentType);
+        placeholder.Add("|GetRandomMemory|");
+        replacement.Add(GetRandomMemory(rand));
 
         for (int i = 0; i < placeholder.Count(); i++)
         {
@@ -1722,6 +1728,10 @@ public class MailServerFunctions
         if (preProcessedBody.Trim().ToUpper().Contains("GO AND SEND THE FEE") ||
             preProcessedBody.Trim().ToUpper().Contains("YOU ARE TO SEND THE FEE NOW") ||
             preProcessedBody.Trim().ToUpper().Contains("ONLY THING DELAYING NOW IS THE FEE") ||
+            preProcessedBody.Trim().ToUpper().Contains("YOU WILL SEND THE FEE THROUGH") ||
+            preProcessedBody.Trim().ToUpper().Contains("SEND THE FEE SO WE CAN PROCEED") ||
+            preProcessedBody.Trim().ToUpper().Contains("WE ONLY NEED THE FEE FROM YOU NOW") ||
+            preProcessedBody.Trim().ToUpper().Contains("FAST ABOUT GETTING THE FEE") ||
             preProcessedBody.Trim().ToUpper().Contains("YOU NEED TO SEND THE FEE"))
         {
             response += GetRandomQuestionsPayTheFee(rand) + " ";
@@ -1937,6 +1947,7 @@ public class MailServerFunctions
             preProcessedBody.Trim().ToUpper().Contains("YOUR COUNTRY :") ||
             preProcessedBody.Trim().ToUpper().Contains(", COUNTRY,") ||
             preProcessedBody.Trim().ToUpper().Contains(", COUNTRY NAME,") ||
+            preProcessedBody.Trim().ToUpper().Contains("COUNTRY DO YOU COME FROM") ||
             preProcessedBody.Trim().ToUpper().Contains("WHAT COUNTRY DO YOU LIVE"))
         {
             askedForDetails = true;
@@ -2269,6 +2280,7 @@ public class MailServerFunctions
         }
         if (!askedForDetails && 
             (preProcessedBody.Trim().ToUpper().Contains("PROVIDE THE REQUIRED DETAILS") ||
+            preProcessedBody.Trim().ToUpper().Contains("PROVIDE ALL THIS DETAILS") ||
             preProcessedBody.Trim().ToUpper().Contains("SEND US YOUR FULL INFORMATION") ||
             preProcessedBody.Trim().ToUpper().Contains("SEND US YOUR INFORMATION") ||
             preProcessedBody.Trim().ToUpper().Contains("SEND YOUR FULL INFORMATION") ||
