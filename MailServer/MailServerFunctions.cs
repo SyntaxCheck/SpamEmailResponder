@@ -1693,6 +1693,7 @@ public class MailServerFunctions
             preProcessedBody.Trim().ToUpper().Contains("HOW ARE YOU OVER THERE") ||
             preProcessedBody.Trim().ToUpper().Contains("HOPE ALL IS WELL WITH YOU") ||
             preProcessedBody.Trim().ToUpper().Contains("HOPE YOU ARE VERY FINE TODAY") ||
+            preProcessedBody.Trim().ToUpper().Contains("HOW ARE YOU AND YOUR FAMILY TODAY") ||
             preProcessedBody.Trim().ToUpper().Contains("HOW ARE YOU TODAY"))
         {
             response += GetRandomQuestionsHowAreYou(rand) + " ";
@@ -1871,6 +1872,7 @@ public class MailServerFunctions
             preProcessedBody.Trim().ToUpper().Contains("WHO ARE YOU") ||
             preProcessedBody.Trim().ToUpper().Contains("RECONFIRM YOUR FULL NAME") ||
             preProcessedBody.Trim().ToUpper().Contains("WHO DO YOU REALLY ARE") ||
+            preProcessedBody.Trim().ToUpper().Contains("YOUR NAME AND FIRST NAME") ||
             preProcessedBody.Trim().ToUpper().Contains("YOUR FULL NAME."))
         {
             askedForDetails = true;
@@ -1884,6 +1886,7 @@ public class MailServerFunctions
             preProcessedBody.Trim().ToUpper().Contains("MAILING ADDRESS") ||
             preProcessedBody.Trim().ToUpper().Contains("POSTAL ADDRESS") ||
             preProcessedBody.Trim().ToUpper().Contains("YOUR ADDRESS") ||
+            preProcessedBody.Trim().ToUpper().Contains("YOUR EXACT ADDRESS") ||
             preProcessedBody.Trim().ToUpper().Contains("INCLUDE YOUR ADDRESS") ||
             preProcessedBody.Trim().ToUpper().Contains("BILLING ADDRESS") ||
             preProcessedBody.Trim().ToUpper().Contains("RESIDENTIAL ADDRESS") ||
@@ -2104,11 +2107,13 @@ public class MailServerFunctions
             preProcessedBody.Trim().ToUpper().Contains("YOUR TELEPHONE NUMBER.") ||
             preProcessedBody.Trim().ToUpper().Contains("YOUR TELEPHONE NO.") ||
             preProcessedBody.Trim().ToUpper().Contains("YOUR TELEPHONE.") ||
+            preProcessedBody.Trim().ToUpper().Contains("YOUR PERMANENT TELEPHONE") ||
             preProcessedBody.Trim().ToUpper().Contains("YOUR CELL NUMBER.") ||
             preProcessedBody.Trim().ToUpper().Contains("YOU MOBILE TELEPHONE NUMBER") ||
             preProcessedBody.Trim().ToUpper().Contains("NEED YOUR CELL PHONE NUMBER") ||
             preProcessedBody.Trim().ToUpper().Contains("NEED YOUR PHONE NUMBER") ||
             preProcessedBody.Trim().ToUpper().Contains("NEED YOUR DIRECT PHONE NUMBER") ||
+            preProcessedBody.Trim().ToUpper().Contains("YOUR MOBILE NUMBER") ||
             preProcessedBody.Trim().ToUpper().Contains(", TELEPHONE,") ||
             preProcessedBody.Trim().ToUpper().Contains(", TELEPHONE NUMBER,") ||
             preProcessedBody.Trim().ToUpper().Contains(", PHONE,") ||
