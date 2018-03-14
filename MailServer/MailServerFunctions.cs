@@ -86,7 +86,7 @@ public class MailServerFunctions
             settings.MyFakeGender = "Male";
             settings.MyFakeMaritalStatus = "Single";
             settings.MyFakeOccupation = "Plumber";
-            settings.PathToMyFakeID = @"c:\FakeID\PathHere.png";
+            settings.PathToMyFakeID = @"c:\FakeID\PathHereCanBeAnyTypeOfFileAndDoesNotNeedToBeAnIdCanEvenBeACorruptImageFile.png";
             settings.Acquaintance = new List<string>() { "Bob", "Steve", "Bill", "Chad", "Mary", "Margret", "Joe", "Frank", "Cathy" };
             settings.Products = new List<string>() { "Cars", "Boats", "Lava Lamps", "Blinker Fluid" };
             settings.PaymentMethods = new List<string>() { "Cash", "Wire Transfer", "Bank Transfer", "Personal Check", "Bitcoin", "USD", "Euros", "Rupels" };
@@ -133,6 +133,7 @@ public class MailServerFunctions
             settings.QuestionsContactMeLater = new List<string>() { "I look forward to hearing back from you." };
             settings.QuestionsAreYouOnboard = new List<string>() { "Yes I am." };
             settings.QuestionsPayTheFee = new List<string>() { "How do you want me to pay the fee?", "I don't know how to do |GetPaymentTypeFromMessage| payment." };
+            settings.QuestionsTheyConfused = new List<string>() { "Why are you confused?", "Which part are you confused about?" };
 
             //Opening responses
             settings.ResponseOpeningAtmCard = new List<string>() { "I am glad to see progress with my ATM card, please send card numbers over email." };
@@ -1378,6 +1379,12 @@ public class MailServerFunctions
 
         return lst[rand.Next(0, lst.Count())];
     }
+    private string GetRandomQuestionsTheyConfused(Random rand)
+    {
+        List<string> lst = settings.QuestionsTheyConfused;
+
+        return lst[rand.Next(0, lst.Count())];
+    }
     #endregion
 
     //Helper functions
@@ -1750,6 +1757,15 @@ public class MailServerFunctions
             preProcessedBody.Trim().ToUpper().Contains("DO YOU THINK YOU ARE FUNNY"))
         {
             response += GetRandomQuestionsJokingAround(rand) + " ";
+        }
+        if (preProcessedBody.Trim().ToUpper().Contains("I AM CONFUSED") ||
+            preProcessedBody.Trim().ToUpper().Contains("WHAT ARE YOU SAYING") ||
+            preProcessedBody.Trim().ToUpper().Contains("I DONT UNDERSTAND YOUR") ||
+            preProcessedBody.Trim().ToUpper().Contains("I DON'T UNDERSTAND YOUR") ||
+            preProcessedBody.Trim().ToUpper().Contains("I DONT UNDERSTAND WHAT YOU ARE SAYING") ||
+            preProcessedBody.Trim().ToUpper().Contains("I DON'T UNDERSTAND WHAT YOU ARE SAYING"))
+        {
+            response += GetRandomQuestionsTheyConfused(rand) + " ";
         }
         if (preProcessedBody.Trim().ToUpper().Contains("NO PICK UP WHEN") ||
             preProcessedBody.Trim().ToUpper().Contains("DID YOU NOT PICK UP") ||
