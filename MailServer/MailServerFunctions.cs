@@ -2050,6 +2050,7 @@ public class MailServerFunctions
             preProcessedBody.Trim().ToUpper().Contains("HOPE ALL IS WELL WITH YOU") ||
             preProcessedBody.Trim().ToUpper().Contains("HOPE YOU ARE VERY FINE TODAY") ||
             preProcessedBody.Trim().ToUpper().Contains("HOW ARE YOU AND YOUR FAMILY TODAY") ||
+            preProcessedBody.Trim().ToUpper().Contains("WHAT YOU ARE UP TO") ||
             preProcessedBody.Trim().ToUpper().Contains("HOW ARE YOU TODAY"))
         {
             response += GetRandomQuestionsHowAreYou(rand) + " ";
@@ -2658,6 +2659,7 @@ public class MailServerFunctions
             preProcessedBody.Trim().ToUpper().Contains("INTERNATIONAL PASSPORT OR DRIVERS LICENSE") ||
             preProcessedBody.Trim().ToUpper().Contains("INTERNATIONAL PASSPORT OR DRIVER' LICENSE") ||
             preProcessedBody.Trim().ToUpper().Contains("NO IDENTIFICATION SENT") ||
+            preProcessedBody.Trim().ToUpper().Contains("WITH OUT INDETIFICATION") ||
             preProcessedBody.Trim().ToUpper().Contains("EMAIL ME YOUR ID"))
         {
             askedForDetails = true;
