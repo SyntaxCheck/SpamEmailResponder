@@ -9,7 +9,8 @@ public class Settings
         questionsNotUnderstanding, questionsPermission, questionsSpokenLanguage, questionsTrust, questionsWhyNoAnswer,
         questionsPhoneNumber, questionsAddress, questionsID, questionsAlreadyIncludedID, questionsCannotOpenAttachment, questionsWeAreCaught,
         questionsBirthdate, questionsBetterPhoto, questionsOccupation, questionsGender, questionsMaritalStatus, questionsCountry, questionsName, questionsProvideDetails,
-        questionsAreYouReady, questionsChangeContactMethod, questionsContactMeLater, questionsAreYouOnboard, questionsPayTheFee, questionsTheyConfused;
+        questionsAreYouReady, questionsChangeContactMethod, questionsContactMeLater, questionsAreYouOnboard, questionsPayTheFee, questionsTheyConfused,
+        questionsHowBigOfLoan, questionsMustPayBefore, questionsMeetUs, questionsFillOutForm;
     private List<string> responseOpeningBlankEmailWithAttachment, responseOpeningLottery, responseOpeningOilAndGas, responseOpeningOilAndGasQuestionList, responseOpeningIlluminati, 
         responseOpeningConsignmentBox, responseOpeningDeathOrDying, responseOpeningLoanOffer, responseOpeningMoneyStorage, responseOpeningAtmCard, responseOpeningPolice, 
         responseOpeningGenericPayment, responseOpeningInvestor, responseOpeningMoneyHack, responseOpeningJobOffer, responseOpeningSellingProducts, responseOpeningFreeMoney, 
@@ -520,6 +521,26 @@ public class Settings
     {
         get { return questionsTheyConfused; }
         set { questionsTheyConfused = value; }
+    }
+    public List<string> QuestionsHowBigOfLoan
+    {
+        get { return questionsHowBigOfLoan; }
+        set { questionsHowBigOfLoan = value; }
+    }
+    public List<string> QuestionsMustPayBefore
+    {
+        get { return questionsMustPayBefore; }
+        set { questionsMustPayBefore = value; }
+    }
+    public List<string> QuestionsMeetUs
+    {
+        get { return questionsMeetUs; }
+        set { questionsMeetUs = value; }
+    }
+    public List<string> QuestionsFillOutForm
+    {
+        get { return questionsFillOutForm; }
+        set { questionsFillOutForm = value; }
     }
 
     public List<string> RandomThoughts

@@ -1,0 +1,20 @@
+﻿    "QuestionsHowBigOfLoan": [
+		"",
+		"",
+		""
+    ],
+	"QuestionsMustPayBefore": [
+		"",
+		"",
+		""
+    ],
+	"QuestionsMeetUs": [
+		"",
+		"",
+		""
+    ],
+	"QuestionsFillOutForm": [
+		"",
+		"",
+		""
+    ],
