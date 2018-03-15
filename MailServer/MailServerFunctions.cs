@@ -1855,6 +1855,7 @@ public class MailServerFunctions
         replaceList += "willing,eager,prepared,ready|";
         replaceList += "admit,confess,acknowledge|";
         replaceList += "joy,delight,great pleasure,glee,jubilation,happiness,elation|";
+        replaceList += "red,blue,green,pink,brown,black,white,yellow,orange,purple|";
 
         string[] groupSplit = replaceList.Split(new char[] { '|' }, StringSplitOptions.RemoveEmptyEntries);
         List<string[]> synonymList = new List<string[]>();
@@ -2104,6 +2105,8 @@ public class MailServerFunctions
             preProcessedBody.Trim().ToUpper().Contains("SEND THE NEEDED FEE") ||
             preProcessedBody.Trim().ToUpper().Contains("I'M WAITING FOR YOUR PAYMENT") ||
             preProcessedBody.Trim().ToUpper().Contains("IM WAITING FOR YOUR PAYMENT") ||
+            preProcessedBody.Trim().ToUpper().Contains("SEND THE CHARGE TO US") ||
+            preProcessedBody.Trim().ToUpper().Contains("SENT THE CLEARANCE FEE") ||
             (preProcessedBody.Trim().ToUpper().Contains("JUST MAKE THE") && preProcessedBody.Trim().ToUpper().Contains("DELIVERY PAYMENT")) ||
             preProcessedBody.Trim().ToUpper().Contains("YOU NEED TO SEND THE FEE"))
         {
@@ -2774,6 +2777,7 @@ public class MailServerFunctions
             preProcessedBody.Trim().ToUpper().Contains("SEND US YOU FULL DETAILS") ||
             preProcessedBody.Trim().ToUpper().Contains("SEND US YOUR FULL DETAILS") ||
             preProcessedBody.Trim().ToUpper().Contains("SEND YOUR INFORMATION") ||
+            preProcessedBody.Trim().ToUpper().Contains("SEND YOUR FULL INFORMATION") ||
             preProcessedBody.Trim().ToUpper().Contains("SEND THE REQUIRED INFORMATION") ||
             preProcessedBody.Trim().ToUpper().Contains("SEND FULL INFORMATION")))
         {
