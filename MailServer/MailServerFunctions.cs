@@ -258,7 +258,7 @@ public class MailServerFunctions
                                     return response;
                                 }
 
-                                response = HandleMessage(messages[0], ref storage);
+                                response = HandleMessage(loggerInfo, messages[0], ref storage);
                                 if (response.Code < 0)
                                 {
                                     return response;
@@ -504,7 +504,7 @@ public class MailServerFunctions
 
         return response;
     }
-    public StandardResponse HandleMessage(EmailMessage msg, ref List<MailStorage> storage)
+    public StandardResponse HandleMessage(LoggerInfo loggerInfo, EmailMessage msg, ref List<MailStorage> storage)
     {
         StandardResponse response = new StandardResponse { Code = 0, Message = String.Empty, Data = String.Empty };
 
@@ -544,7 +544,14 @@ public class MailServerFunctions
                 if (String.IsNullOrEmpty(storageObj.EmailBodyPlain) && !String.IsNullOrEmpty(storageObj.EmailBodyHtml))
                 {
                     HtmlConvert convert = new HtmlConvert();
-                    storageObj.EmailBodyPlain = convert.ConvertHtml(storageObj.EmailBodyHtml);
+                    try
+                    {
+                        storageObj.EmailBodyPlain = convert.ConvertHtml(storageObj.EmailBodyHtml);
+                    }
+                    catch (Exception ex)
+                    {
+                        Logger.Write(loggerInfo, "Failed to convert HTML: " + ex.Message);
+                    }
                 }
 
                 foreach (var v in msg.FromAddress)
@@ -1701,6 +1708,7 @@ public class MailServerFunctions
             preProcessedBody.Trim().ToUpper().Contains("HOPE ALL IS WELL WITH YOU") ||
             preProcessedBody.Trim().ToUpper().Contains("HOPE YOU ARE VERY FINE TODAY") ||
             preProcessedBody.Trim().ToUpper().Contains("HOW ARE YOU AND YOUR FAMILY TODAY") ||
+            preProcessedBody.Trim().ToUpper().Contains("IS EVERYTHING ALRIGHT WITH YOU") ||
             preProcessedBody.Trim().ToUpper().Contains("HOW ARE YOU TODAY"))
         {
             response += GetRandomQuestionsHowAreYou(rand) + " ";
