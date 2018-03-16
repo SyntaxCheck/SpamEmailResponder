@@ -2,7 +2,8 @@
 
 public class Settings
 {
-    private string emailAddress, password, myName, myFakeAddress, myFakeBirthdate, pathToMyFakeID, myFakePhoneNumber, myFakeOccupation, myFakeGender, myFakeMaritalStatus, myFakeCountry;
+    private string emailAddress, password, myName, myFakeAddress, myFakeBirthdate, pathToMyFakeID, myFakePhoneNumber, myFakeOccupation, 
+        myFakeGender, myFakeMaritalStatus, myFakeCountry, outgoingMessageIdDomainName, minutesDelayBeforeAnsweringAnEmail;
     private List<string> names, greeting, signoff, introduction, introductionOpening, introductionClosing, personDescriptionMale, personDescriptionFemale, memory, followupLine, acquaintance, 
         locations, products, paymentMethods, randomThoughts, consignmentBoxImageIncluded, consignmentBoxImageNotIncluded;
     private List<string> questionsNotListening, questionsJokingAround, questionsNotAnswering, questionsHowAreYou, 
@@ -77,6 +78,16 @@ public class Settings
     {
         get { return pathToMyFakeID; }
         set { pathToMyFakeID = value; }
+    }
+    public string OutgoingMessageIdDomainName
+    {
+        get { return outgoingMessageIdDomainName; }
+        set { outgoingMessageIdDomainName = value; }
+    }
+    public string MinutesDelayBeforeAnsweringAnEmail
+    {
+        get { return minutesDelayBeforeAnsweringAnEmail; }
+        set { minutesDelayBeforeAnsweringAnEmail = value; }
     }
     public List<string> Acquaintance
     {

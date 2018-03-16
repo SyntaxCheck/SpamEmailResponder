@@ -25,6 +25,7 @@ public class MailServerFunctions
     public string UserName;
     public string Password;
     public string MyName;
+    private int messagesSendSinceRandomize;
 
     public Settings settings;
 
@@ -64,6 +65,7 @@ public class MailServerFunctions
     public MailServerFunctions()
     {
         LastInboxCount = 0;
+        messagesSendSinceRandomize = 0;
         InboxCountHistory = new List<int>();
         settings = new Settings();
 
@@ -88,6 +90,8 @@ public class MailServerFunctions
             settings.MyFakeMaritalStatus = "Single";
             settings.MyFakeOccupation = "Plumber";
             settings.PathToMyFakeID = @"c:\FakeID\PathHereCanBeAnyTypeOfFileAndDoesNotNeedToBeAnIdCanEvenBeACorruptImageFile.png";
+            settings.OutgoingMessageIdDomainName = "mail.gmail.com";
+            settings.MinutesDelayBeforeAnsweringAnEmail = "240";
             settings.Acquaintance = new List<string>() { "Bob", "Steve", "Bill", "Chad", "Mary", "Margret", "Joe", "Frank", "Cathy" };
             settings.Products = new List<string>() { "Cars", "Boats", "Lava Lamps", "Blinker Fluid" };
             settings.PaymentMethods = new List<string>() { "Cash", "Wire Transfer", "Bank Transfer", "Personal Check", "Bitcoin", "USD", "Euros", "Rupels" };
@@ -358,6 +362,15 @@ public class MailServerFunctions
         SmtpClient client = new SmtpClient();
         MimeMessage message = new MimeMessage();
 
+        if (messagesSendSinceRandomize > 25)
+        {
+            //After sending 25 messages randomize the value give or take 20% so that the program never sends at a consistant rate
+            Random rand = new Random();
+            int minutesOut = 0;
+            Int32.TryParse(settings.MinutesDelayBeforeAnsweringAnEmail, out minutesOut);
+            settings.MinutesDelayBeforeAnsweringAnEmail = rand.Next((int)(minutesOut * 0.8), (int)(minutesOut * 1.2)).ToString();
+        }
+
         try
         {
             if (String.IsNullOrEmpty(fromAddressReadable)) fromAddressReadable = fromAddress;
@@ -371,7 +384,7 @@ public class MailServerFunctions
             {
                 inReplyToPartial = inReplyTo.Substring(0, 5);
             }
-            message.MessageId = CalculateMD5Hash(DateTime.Now.ToString()) + inReplyToPartial + "@mail.gmail.com"; //Imitate the gmail message ID
+            message.MessageId = CalculateMD5Hash(DateTime.Now.ToString()) + inReplyToPartial + "@" + settings.OutgoingMessageIdDomainName; //Imitate the gmail message ID
             myMessageId = message.MessageId;
 
             message.From.Add(new MailboxAddress(fromAddress, fromAddress));
@@ -488,6 +501,8 @@ public class MailServerFunctions
                     Logger.WriteDbg(loggerInfo, "Sent Message");
                     client.Disconnect(true);
                     Logger.WriteDbg(loggerInfo, "Disconnect");
+
+                    messagesSendSinceRandomize++;
 
                     break; //If no exception was thrown break the loop
                 }
@@ -1743,6 +1758,13 @@ public class MailServerFunctions
 
         return paymentRtn;
     }
+    public double GetHoursBetweenSending()
+    {
+        int tmpOut = 0;
+        Int32.TryParse(settings.MinutesDelayBeforeAnsweringAnEmail, out tmpOut);
+
+        return tmpOut / 60.0;
+    }
     public bool IsValidEmail(string email)
     {
         try
@@ -2011,6 +2033,35 @@ public class MailServerFunctions
 
             rtn += "The birthdate in the settings file is the default value.";
         }
+        if (String.IsNullOrEmpty(settings.OutgoingMessageIdDomainName))
+        {
+            if (!String.IsNullOrEmpty(rtn))
+                rtn += Environment.NewLine;
+
+            rtn += "The Outgoing Message ID Domain Name cannot be blank. If you are unsure on what to put here then use googles domain name of: mail.gmail.com";
+        }
+        if (String.IsNullOrEmpty(settings.MinutesDelayBeforeAnsweringAnEmail))
+        {
+            if (!String.IsNullOrEmpty(rtn))
+                rtn += Environment.NewLine;
+
+            rtn += "You must choose how long to wait before the program replies to an email by filling in MinutesDelayBeforeAnsweringAnEmail. It might be unrealistic if the program instantly replied to every new email sent. That is why we have the delay.";
+        }
+        int outInt = 0;
+        if (Int32.TryParse(settings.MinutesDelayBeforeAnsweringAnEmail, out outInt) == false)
+        {
+            if (!String.IsNullOrEmpty(rtn))
+                rtn += Environment.NewLine;
+
+            rtn += "The MinutesDelayBeforeAnsweringAnEmail must be an integer value.";
+        }
+        else if (outInt <= 0)
+        {
+            if (!String.IsNullOrEmpty(rtn))
+                rtn += Environment.NewLine;
+
+            rtn += "The MinutesDelayBeforeAnsweringAnEmail must be greater than 0.";
+        }
         if (settings.PathToMyFakeID == @"c:\FakeID\PathHere.png")
         {
             if (!String.IsNullOrEmpty(rtn))
@@ -2117,6 +2168,7 @@ public class MailServerFunctions
         if (preProcessedBody.Trim().ToUpper().Contains("ARE YOU HELPING ME") ||
             preProcessedBody.Trim().ToUpper().Contains("ARE YOU WILLING TO HELP") ||
             preProcessedBody.Trim().ToUpper().Contains("ARE YOU NO LONGER INTERESTED") ||
+            preProcessedBody.Trim().ToUpper().Contains("CAN YOU HANDLE THE DEAL") ||
             preProcessedBody.Trim().ToUpper().Contains("DO YOU WANT TO PROCEED"))
         {
             response += GetRandomQuestionsAreYouOnboard(rand) + " ";
@@ -2143,6 +2195,10 @@ public class MailServerFunctions
             preProcessedBody.Trim().ToUpper().Contains("YOU NEED TO SEND HIM SOME MONEY") ||
             preProcessedBody.Trim().ToUpper().Contains("SEND THE SHIPPING FEE") ||
             preProcessedBody.Trim().ToUpper().Contains("SEND THE SHIPING FEE") ||
+            preProcessedBody.Trim().ToUpper().Contains("PAY THE DELIVERY FEE") ||
+            preProcessedBody.Trim().ToUpper().Contains("SEND THE DELIVERY FEE") ||
+            preProcessedBody.Trim().ToUpper().Contains("MAKE THE DELIVERY FEE") ||
+            preProcessedBody.Trim().ToUpper().Contains("HAS THE MONEY BEEN SENT") ||
             (preProcessedBody.Trim().ToUpper().Contains("JUST MAKE THE") && preProcessedBody.Trim().ToUpper().Contains("DELIVERY PAYMENT")) ||
             preProcessedBody.Trim().ToUpper().Contains("YOU NEED TO SEND THE FEE"))
         {
@@ -2184,6 +2240,7 @@ public class MailServerFunctions
             preProcessedBody.Trim().ToUpper().Contains("AMOUNT OF FUNDING YOU ARE LOOKING FOR") ||
             preProcessedBody.Trim().ToUpper().Contains("AMOUNT OF FUNDING YOU NEED") ||
             preProcessedBody.Trim().ToUpper().Contains("AMOUNT OF FUNDING YOU ARE SEEKING") ||
+            preProcessedBody.Trim().ToUpper().Contains("AMOUNT OF LOAN") ||
             preProcessedBody.Trim().ToUpper().Contains("AMOUNT REQUESTED:") ||
             preProcessedBody.Trim().ToUpper().Contains("AMOUNT REQUESTED :") ||
             preProcessedBody.Trim().ToUpper().Contains("AMOUNT REQUESTED.....") ||
@@ -2257,6 +2314,8 @@ public class MailServerFunctions
             preProcessedBody.Trim().ToUpper().Contains("WHAT CAN OF PROOF DID YOU WANT") ||
             preProcessedBody.Trim().ToUpper().Contains("WHAT TYPE OF PROOF DID YOU NEED") ||
             preProcessedBody.Trim().ToUpper().Contains("WHAT TYPE OF PROOF DID YOU WANT") ||
+            preProcessedBody.Trim().ToUpper().Contains("WHAT PROOF DO YOU ASK OF") ||
+            preProcessedBody.Trim().ToUpper().Contains("WHAT KIND OF PROOF DO YOU ASK") ||
             preProcessedBody.Trim().ToUpper().Contains("WHAT TYPE OF PROOF DO YOU WANT"))
         {
             response += GetRandomQuestionsWhatTypeOfProof(rand) + " ";
@@ -2451,6 +2510,7 @@ public class MailServerFunctions
             preProcessedBody.Trim().ToUpper().Contains("PROVIDE THE RESIDENTIAL") ||
             preProcessedBody.Trim().ToUpper().Contains("CONFIRM US YOUR FULL RESIDENTIAL") ||
             preProcessedBody.Trim().ToUpper().Contains("YOUR NAME AND ADDRESS") ||
+            preProcessedBody.Trim().ToUpper().Contains("DIRECT CONTACT ADDRESS") ||
             preProcessedBody.Trim().ToUpper().Contains("GIVE ME YOUR ADDRESS"))
         {
             askedForDetails = true;
@@ -2511,6 +2571,7 @@ public class MailServerFunctions
             preProcessedBody.Trim().ToUpper().Contains("[OCCUPATION]") ||
             preProcessedBody.Trim().ToUpper().Contains("COUNTRY, OCCUPATION, AGE AND TELEPHONE NUMBER") ||
             preProcessedBody.Trim().ToUpper().Contains("PHONE NUMBER AND OCCUPATION") ||
+            preProcessedBody.Trim().ToUpper().Contains("YOUR PROFESSION") ||
             preProcessedBody.Trim().ToUpper().Contains("YOUR JOB"))
         {
             askedForDetails = true;
@@ -2648,6 +2709,12 @@ public class MailServerFunctions
             preProcessedBody.Trim().ToUpper().Contains("NUMBER----") ||
             preProcessedBody.Trim().ToUpper().Contains("NUMBER :") ||
             preProcessedBody.Trim().ToUpper().Contains("NUMBER:") ||
+            preProcessedBody.Trim().ToUpper().Contains("CALL NO.....") ||
+            preProcessedBody.Trim().ToUpper().Contains("CALL NO .....") ||
+            preProcessedBody.Trim().ToUpper().Contains("CALL NO___") ||
+            preProcessedBody.Trim().ToUpper().Contains("CALL NO----") ||
+            preProcessedBody.Trim().ToUpper().Contains("CALL NO :") ||
+            preProcessedBody.Trim().ToUpper().Contains("CALL NO:") ||
             preProcessedBody.Trim().ToUpper().Contains("YOUR DIRECT CELL PHONE NUMBER") ||
             preProcessedBody.Trim().ToUpper().Contains("YOUR PHONE NUMBER") ||
             preProcessedBody.Trim().ToUpper().Contains("YOUR NUMBER.") ||
@@ -2750,6 +2817,12 @@ public class MailServerFunctions
             preProcessedBody.Trim().ToUpper().Contains("NO IDENTIFICATION SENT") ||
             preProcessedBody.Trim().ToUpper().Contains("WITH OUT INDETIFICATION") ||
             preProcessedBody.Trim().ToUpper().Contains("PERSONAL ID CARD") ||
+            preProcessedBody.Trim().ToUpper().Contains("SCAN YOUR ID CARD") ||
+            preProcessedBody.Trim().ToUpper().Contains("SEND ME ANY OF YOUR ID") ||
+            preProcessedBody.Trim().ToUpper().Contains("SEND ME ANY OF YOUR I.D") ||
+            preProcessedBody.Trim().ToUpper().Contains("SEND ME ANY OF YOUR IDENTITY") ||
+            preProcessedBody.Trim().ToUpper().Contains("SEND ME ANY OF YOUR IDENTIFICATION") ||
+            preProcessedBody.Trim().ToUpper().Contains("SEND ME ANY OF YOUR DRIVER") ||
             preProcessedBody.Trim().ToUpper().Contains("EMAIL ME YOUR ID"))
         {
             askedForDetails = true;
@@ -2870,6 +2943,7 @@ public class MailServerFunctions
             preProcessedBody.Trim().ToUpper().Contains("RECONFIRM YOUR DATAS") ||
             preProcessedBody.Trim().ToUpper().Contains("I NEED THOSE INFORMATION") ||
             preProcessedBody.Trim().ToUpper().Contains("DETAILS NEEDED FROM YOU BEFORE WE CAN PROCEED") ||
+            preProcessedBody.Trim().ToUpper().Contains("WAITING FOR YOUR INFO") ||
             preProcessedBody.Trim().ToUpper().Contains("SEND FULL INFORMATION")))
         {
             response += GetRandomQuestionsProvideDetails(rand) + " ";

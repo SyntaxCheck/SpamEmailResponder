@@ -1,20 +1,2 @@
-﻿	"QuestionsGetBackToUs": [
-		"",
-		"",
-		""
-    ],
-	"QuestionsNeedBankDetails": [
-		"",
-		"",
-		""
-    ],
-	"QuestionsWhatTypeOfProof": [
-		"",
-		"",
-		""
-    ],
-	"QuestionsHowDoYouWantFundsReleased": [
-		"",
-		"",
-		""
-    ],
+﻿"OutgoingMessageIdDomainName" : "mail.gmail.com",
+"MinutesDelayBeforeAnsweringAnEmail" : "240",

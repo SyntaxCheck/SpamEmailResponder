@@ -430,6 +430,7 @@ namespace MailServer
         {
             StandardResponse response = new StandardResponse() { Code = 0, Message = String.Empty, Data = String.Empty };
             bool found = false;
+            double hoursBetweenReceivingAndSending = mailServer.GetHoursBetweenSending();
 
             ClearScreen();
 
@@ -439,7 +440,7 @@ namespace MailServer
                 {
                     //Make sure it has been atleast 5 hours
                     double hours = (DateTime.Now - storage[i].DateReceived).TotalHours;
-                    if (hours > 5)
+                    if (hours > hoursBetweenReceivingAndSending)
                     {
                         List<MailStorage> previousMessagesInThread = new List<MailStorage>();
                         foreach (MailStorage ms in storage)
