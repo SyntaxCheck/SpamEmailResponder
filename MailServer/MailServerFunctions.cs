@@ -2874,6 +2874,7 @@ public class MailServerFunctions
         {
             response += GetRandomQuestionsProvideDetails(rand) + " ";
         }
+        response = response.Trim();
         if (!String.IsNullOrEmpty(response))
         {
             response = Environment.NewLine + Environment.NewLine + SettingPostProcessing(response, rand).Trim() + Environment.NewLine + Environment.NewLine;
