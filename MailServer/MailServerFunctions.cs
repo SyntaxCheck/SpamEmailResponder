@@ -2649,7 +2649,7 @@ public class MailServerFunctions
             preProcessedBody.Trim().ToUpper().Contains("NUMBER :") ||
             preProcessedBody.Trim().ToUpper().Contains("NUMBER:") ||
             preProcessedBody.Trim().ToUpper().Contains("YOUR DIRECT CELL PHONE NUMBER") ||
-            preProcessedBody.Trim().ToUpper().Contains("YOUR PHONE NUMBER.") ||
+            preProcessedBody.Trim().ToUpper().Contains("YOUR PHONE NUMBER") ||
             preProcessedBody.Trim().ToUpper().Contains("YOUR NUMBER.") ||
             preProcessedBody.Trim().ToUpper().Contains("YOUR TELEPHONE NUMBER.") ||
             preProcessedBody.Trim().ToUpper().Contains("YOUR TELEPHONE NO.") ||
