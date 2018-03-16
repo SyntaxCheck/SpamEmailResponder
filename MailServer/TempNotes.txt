@@ -1,1 +1,20 @@
-﻿
+﻿	"QuestionsGetBackToUs": [
+		"",
+		"",
+		""
+    ],
+	"QuestionsNeedBankDetails": [
+		"",
+		"",
+		""
+    ],
+	"QuestionsWhatTypeOfProof": [
+		"",
+		"",
+		""
+    ],
+	"QuestionsHowDoYouWantFundsReleased": [
+		"",
+		"",
+		""
+    ],

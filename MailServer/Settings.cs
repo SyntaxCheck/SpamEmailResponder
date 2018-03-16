@@ -10,7 +10,8 @@ public class Settings
         questionsPhoneNumber, questionsAddress, questionsID, questionsAlreadyIncludedID, questionsCannotOpenAttachment, questionsWeAreCaught,
         questionsBirthdate, questionsBetterPhoto, questionsOccupation, questionsGender, questionsMaritalStatus, questionsCountry, questionsName, questionsProvideDetails,
         questionsAreYouReady, questionsChangeContactMethod, questionsContactMeLater, questionsAreYouOnboard, questionsPayTheFee, questionsTheyConfused,
-        questionsHowBigOfLoan, questionsMustPayBefore, questionsMeetUs, questionsFillOutForm;
+        questionsHowBigOfLoan, questionsMustPayBefore, questionsMeetUs, questionsFillOutForm, questionsGetBackToUs, questionsNeedBankDetails,
+        questionsWhatTypeOfProof, questionsHowDoYouWantFundsReleased;
     private List<string> responseOpeningBlankEmailWithAttachment, responseOpeningLottery, responseOpeningOilAndGas, responseOpeningOilAndGasQuestionList, responseOpeningIlluminati, 
         responseOpeningConsignmentBox, responseOpeningDeathOrDying, responseOpeningLoanOffer, responseOpeningMoneyStorage, responseOpeningAtmCard, responseOpeningPolice, 
         responseOpeningGenericPayment, responseOpeningInvestor, responseOpeningMoneyHack, responseOpeningJobOffer, responseOpeningSellingProducts, responseOpeningFreeMoney, 
@@ -541,6 +542,26 @@ public class Settings
     {
         get { return questionsFillOutForm; }
         set { questionsFillOutForm = value; }
+    }
+    public List<string> QuestionsGetBackToUs
+    {
+        get { return questionsGetBackToUs; }
+        set { questionsGetBackToUs = value; }
+    }
+    public List<string> QuestionsNeedBankDetails
+    {
+        get { return questionsNeedBankDetails; }
+        set { questionsNeedBankDetails = value; }
+    }
+    public List<string> QuestionsWhatTypeOfProof
+    {
+        get { return questionsWhatTypeOfProof; }
+        set { questionsWhatTypeOfProof = value; }
+    }
+    public List<string> QuestionsHowDoYouWantFundsReleased
+    {
+        get { return questionsHowDoYouWantFundsReleased; }
+        set { questionsHowDoYouWantFundsReleased = value; }
     }
 
     public List<string> RandomThoughts
