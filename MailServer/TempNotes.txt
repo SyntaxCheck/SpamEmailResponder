@@ -1,2 +1,22 @@
 ﻿"OutgoingMessageIdDomainName" : "mail.gmail.com",
 "MinutesDelayBeforeAnsweringAnEmail" : "240",
+	"QuestionsWeCantDoThat": [
+		"",
+		"",
+		""
+    ],
+	"QuestionsContactTheBank": [
+		"",
+		"",
+		""
+    ],
+	"QuestionsAreYouMember": [
+		"",
+		"",
+		""
+    ],
+	"QuestionsDidYouSeeOurMessage": [
+		"",
+		"",
+		""
+    ],

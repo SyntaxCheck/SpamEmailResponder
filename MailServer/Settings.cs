@@ -12,7 +12,8 @@ public class Settings
         questionsBirthdate, questionsBetterPhoto, questionsOccupation, questionsGender, questionsMaritalStatus, questionsCountry, questionsName, questionsProvideDetails,
         questionsAreYouReady, questionsChangeContactMethod, questionsContactMeLater, questionsAreYouOnboard, questionsPayTheFee, questionsTheyConfused,
         questionsHowBigOfLoan, questionsMustPayBefore, questionsMeetUs, questionsFillOutForm, questionsGetBackToUs, questionsNeedBankDetails,
-        questionsWhatTypeOfProof, questionsHowDoYouWantFundsReleased;
+        questionsWhatTypeOfProof, questionsHowDoYouWantFundsReleased, questionsWeCantDoThat, questionsContactTheBank, questionsAreYouMember,
+        questionsDidYouSeeOurMessage;
     private List<string> responseOpeningBlankEmailWithAttachment, responseOpeningLottery, responseOpeningOilAndGas, responseOpeningOilAndGasQuestionList, responseOpeningIlluminati, 
         responseOpeningConsignmentBox, responseOpeningDeathOrDying, responseOpeningLoanOffer, responseOpeningMoneyStorage, responseOpeningAtmCard, responseOpeningPolice, 
         responseOpeningGenericPayment, responseOpeningInvestor, responseOpeningMoneyHack, responseOpeningJobOffer, responseOpeningSellingProducts, responseOpeningFreeMoney, 
@@ -573,6 +574,26 @@ public class Settings
     {
         get { return questionsHowDoYouWantFundsReleased; }
         set { questionsHowDoYouWantFundsReleased = value; }
+    }
+    public List<string> QuestionsWeCantDoThat
+    {
+        get { return questionsWeCantDoThat; }
+        set { questionsWeCantDoThat = value; }
+    }
+    public List<string> QuestionsContactTheBank
+    {
+        get { return questionsContactTheBank; }
+        set { questionsContactTheBank = value; }
+    }
+    public List<string> QuestionsAreYouMember
+    {
+        get { return questionsAreYouMember; }
+        set { questionsAreYouMember = value; }
+    }
+    public List<string> QuestionsDidYouSeeOurMessage
+    {
+        get { return questionsDidYouSeeOurMessage; }
+        set { questionsDidYouSeeOurMessage = value; }
     }
 
     public List<string> RandomThoughts
