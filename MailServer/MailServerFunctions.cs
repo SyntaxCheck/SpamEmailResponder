@@ -1506,6 +1506,8 @@ public class MailServerFunctions
         if (String.IsNullOrEmpty(paymentType))
             paymentType = "transfer";
 
+        placeholder.Add("|GetRandomMemory|");
+        replacement.Add(GetRandomMemory(rand));
         placeholder.Add("|introduction|");
         replacement.Add(GetRandomInroduction(rand));
         placeholder.Add("|Environment.NewLine|");
@@ -1540,12 +1542,15 @@ public class MailServerFunctions
         replacement.Add(settings.MyName);
         placeholder.Add("|GetPaymentTypeFromMessage|");
         replacement.Add(paymentType);
-        placeholder.Add("|GetRandomMemory|");
-        replacement.Add(GetRandomMemory(rand));
 
-        for (int i = 0; i < placeholder.Count(); i++)
+        int ctr = 0;
+        while (text.Contains("|") && ctr < 25) //Sometimes replace values contain other replace values, keep looping until we have replaces them all
         {
-            text = text.Replace(placeholder[i], replacement[i]);
+            for (int i = 0; i < placeholder.Count(); i++)
+            {
+                text = text.Replace(placeholder[i], replacement[i]);
+            }
+            ctr++;
         }
 
         return text;
