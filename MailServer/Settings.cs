@@ -13,7 +13,7 @@ public class Settings
         questionsAreYouReady, questionsChangeContactMethod, questionsContactMeLater, questionsAreYouOnboard, questionsPayTheFee, questionsTheyConfused,
         questionsHowBigOfLoan, questionsMustPayBefore, questionsMeetUs, questionsFillOutForm, questionsGetBackToUs, questionsNeedBankDetails,
         questionsWhatTypeOfProof, questionsHowDoYouWantFundsReleased, questionsWeCantDoThat, questionsContactTheBank, questionsAreYouMember,
-        questionsDidYouSeeOurMessage;
+        questionsDidYouSeeOurMessage, questionsInvalidAddress, questionsTellUsWhatTheyAskedYouToDo, questionsTellUsAboutYourself;
     private List<string> responseOpeningBlankEmailWithAttachment, responseOpeningLottery, responseOpeningOilAndGas, responseOpeningOilAndGasQuestionList, responseOpeningIlluminati, 
         responseOpeningConsignmentBox, responseOpeningDeathOrDying, responseOpeningLoanOffer, responseOpeningMoneyStorage, responseOpeningAtmCard, responseOpeningPolice, 
         responseOpeningGenericPayment, responseOpeningInvestor, responseOpeningMoneyHack, responseOpeningJobOffer, responseOpeningSellingProducts, responseOpeningFreeMoney, 
@@ -594,6 +594,21 @@ public class Settings
     {
         get { return questionsDidYouSeeOurMessage; }
         set { questionsDidYouSeeOurMessage = value; }
+    }
+    public List<string> QuestionsInvalidAddress
+    {
+        get { return questionsInvalidAddress; }
+        set { questionsInvalidAddress = value; }
+    }
+    public List<string> QuestionsTellUsWhatTheyAskedYouToDo
+    {
+        get { return questionsTellUsWhatTheyAskedYouToDo; }
+        set { questionsTellUsWhatTheyAskedYouToDo = value; }
+    }
+    public List<string> QuestionsTellUsAboutYourself
+    {
+        get { return questionsTellUsAboutYourself; }
+        set { questionsTellUsAboutYourself = value; }
     }
 
     public List<string> RandomThoughts
