@@ -1,15 +1,1 @@
-﻿	"QuestionsInvalidAddress": [
-		"",
-		"",
-		""
-    ],
-	"QuestionsTellUsWhatTheyAskedYouToDo": [
-		"",
-		"",
-		""
-    ],
-	"QuestionsTellUsAboutYourself": [
-		"",
-		"",
-		""
-    ],
+﻿
