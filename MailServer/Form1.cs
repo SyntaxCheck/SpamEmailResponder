@@ -442,27 +442,7 @@ namespace MailServer
                     double hours = (DateTime.Now - storage[i].DateReceived).TotalHours;
                     if (hours > hoursBetweenReceivingAndSending)
                     {
-                        List<MailStorage> previousMessagesInThread = new List<MailStorage>();
-                        foreach (MailStorage ms in storage)
-                        {
-                            if ((ms.SubjectLine == storage[i].SubjectLine || ms.MyReplyMsgId == storage[i].InReplyToMsgId) && ms.MsgId != storage[i].MsgId)
-                            {
-                                int foundCount = 0;
-                                foreach (var v in storage[i].ToAddressList)
-                                {
-                                    if (ms.ToAddress.Contains(v.ToString()))
-                                    {
-                                        foundCount++;
-                                        break;
-                                    }
-                                }
-
-                                if (foundCount > 0)
-                                {
-                                    previousMessagesInThread.Add(ms);
-                                }
-                            }
-                        }
+                        List<MailStorage> previousMessagesInThread = mailServer.GetPreviousMessagesInThread(storage, storage[i]);
 
                         found = true;
                         LoadScreen(storage[i], previousMessagesInThread);
@@ -548,31 +528,7 @@ namespace MailServer
             {
                 if (storage[i].MsgId == workingOnMsg)
                 {
-                    List<MailStorage> previousMessagesInThread = new List<MailStorage>();
-                    foreach (MailStorage ms in storage)
-                    {
-                        if ((ms.SubjectLine.ToUpper().Replace("RE:","").Replace("FW:", "").Trim() == storage[i].SubjectLine.ToUpper().Replace("RE:", "").Replace("FW:", "").Trim() || ms.MyReplyMsgId == storage[i].InReplyToMsgId) && ms.MsgId != storage[i].MsgId)
-                        {
-                            int foundCount = 0;
-                            foreach (var v in storage[i].ToAddressList)
-                            {
-                                if (ms.ToAddress.Contains(v.ToString()))
-                                {
-                                    foundCount++;
-                                    break;
-                                }
-                            }
-
-                            if (foundCount > 0)
-                            {
-                                previousMessagesInThread.Add(ms);
-                                if (ms.MessageType != (int)EmailType.Unknown)
-                                {
-                                    storage[i].MessageType = ms.MessageType;
-                                }
-                            }
-                        }
-                    }
+                    List<MailStorage> previousMessagesInThread = mailServer.GetPreviousMessagesInThread(storage, storage[i]);
                     MailStorage temp = storage[i];
                     string newReply = mailServer.GetResponseForType(ref temp, previousMessagesInThread);
 
@@ -640,7 +596,9 @@ namespace MailServer
                     totalTimeNeeded = (int)Math.Round((mailServer.LastInboxCount * secondsBetweenSends) / diffAvg, 0);
                     ts = TimeSpan.FromSeconds(totalTimeNeeded);
                 }
-                else
+
+                //When the calculated time is negative or we do not have enough data yet
+                if (ts == null || ts == TimeSpan.Zero || totalTimeNeeded == 0)
                 {
                     totalTimeNeeded = mailServer.LastInboxCount * secondsBetweenSends;
                     ts = TimeSpan.FromSeconds(totalTimeNeeded);

@@ -13,7 +13,8 @@ public class Settings
         questionsAreYouReady, questionsChangeContactMethod, questionsContactMeLater, questionsAreYouOnboard, questionsPayTheFee, questionsTheyConfused,
         questionsHowBigOfLoan, questionsMustPayBefore, questionsMeetUs, questionsFillOutForm, questionsGetBackToUs, questionsNeedBankDetails,
         questionsWhatTypeOfProof, questionsHowDoYouWantFundsReleased, questionsWeCantDoThat, questionsContactTheBank, questionsAreYouMember,
-        questionsDidYouSeeOurMessage, questionsInvalidAddress, questionsTellUsWhatTheyAskedYouToDo, questionsTellUsAboutYourself;
+        questionsDidYouSeeOurMessage, questionsInvalidAddress, questionsTellUsWhatTheyAskedYouToDo, questionsTellUsAboutYourself,
+        questionsAutomatedProgram;
     private List<string> responseOpeningBlankEmailWithAttachment, responseOpeningLottery, responseOpeningOilAndGas, responseOpeningOilAndGasQuestionList, responseOpeningIlluminati, 
         responseOpeningConsignmentBox, responseOpeningDeathOrDying, responseOpeningLoanOffer, responseOpeningMoneyStorage, responseOpeningAtmCard, responseOpeningPolice, 
         responseOpeningGenericPayment, responseOpeningInvestor, responseOpeningMoneyHack, responseOpeningJobOffer, responseOpeningSellingProducts, responseOpeningFreeMoney, 
@@ -609,6 +610,11 @@ public class Settings
     {
         get { return questionsTellUsAboutYourself; }
         set { questionsTellUsAboutYourself = value; }
+    }
+    public List<string> QuestionsAutomatedProgram
+    {
+        get { return questionsAutomatedProgram; }
+        set { questionsAutomatedProgram = value; }
     }
 
     public List<string> RandomThoughts

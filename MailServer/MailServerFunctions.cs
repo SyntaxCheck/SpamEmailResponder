@@ -154,6 +154,7 @@ public class MailServerFunctions
             settings.QuestionsInvalidAddress = new List<string>() { "My house is new and it does not show up on some places.", "I recently built my house so the address might not showup." };
             settings.QuestionsTellUsWhatTheyAskedYouToDo = new List<string>() { "They asked me to leave when I read them the emails. Maybe I said something wrong?", "They told me to stop wasting their time with all these emails I bring to them. Maybe you need to tell me exactly what to say?", "They told me they would not read the emails from my phone.", "They told me to stop coming in there." };
             settings.QuestionsTellUsAboutYourself = new List<string>() { "|introduction|",  };
+            settings.QuestionsAutomatedProgram = new List<string>() { "I am a real person just trying to respond to your emails.", "I am not sure why you think I am not a real person. Don't I reply to your messages?" };
 
             //Opening responses
             settings.ResponseOpeningAtmCard = new List<string>() { "I am glad to see progress with my ATM card, please send card numbers over email." };
@@ -596,40 +597,8 @@ public class MailServerFunctions
                 }
 
                 //Get list of previous messages in the thread
-                List<MailStorage> previousMessagesInThread = new List<MailStorage>();
-                foreach (MailStorage ms in storage)
-                {
-                    if (ms.SubjectLine == storageObj.SubjectLine)
-                    {
-                        int foundCount = 0;
-                        foreach (var v in msg.FromAddress)
-                        {
-                            if (ms.ToAddress.Contains(v.ToString()))
-                            {
-                                foundCount++;
-                                break;
-                            }
-                        }
-                        foreach (var v in msg.ReplyTo)
-                        {
-                            if (ms.ToAddress.Contains(v.ToString()))
-                            {
-                                foundCount++;
-                                break;
-                            }
-                        }
-
-                        if (foundCount > 0)
-                        {
-                            previousMessagesInThread.Add(ms);
-                        }
-                    }
-                    else if (ms.MyReplyMsgId == storageObj.InReplyToMsgId)
-                    {
-                        previousMessagesInThread.Add(ms);
-                    }
-                }
-
+                List<MailStorage> previousMessagesInThread = GetPreviousMessagesInThread(storage, storageObj);
+                
                 //Determine response
                 storageObj.DeterminedReply = GetResponseForType(ref storageObj, previousMessagesInThread.OrderBy(t => t.DateReceived).ToList());
 
@@ -925,18 +894,18 @@ public class MailServerFunctions
 
         return greetings + " " + name + ". " + directResponse + SettingPostProcessing(settings.ResponseContinuedIlluminati[rand.Next(0, settings.ResponseContinuedIlluminati.Count())], new List<string> { }, new List<string> { }, rand);
     }
-    private string GetRandomContinuedResponseForConsignmentBox(Random rand, string greetings, string name, string attachmentType, MailStorage currentMessage)
+    private string GetRandomContinuedResponseForConsignmentBox(Random rand, string greetings, string name, string attachmentType, MailStorage currentMessage, List<MailStorage> pastMessages)
     {
         string attachmentIncludedText = String.Empty;
         string directResponse = HandleDirectQuestions(MakeEmailEasierToRead(currentMessage.EmailBodyPlain), ref currentMessage, rand);
 
         if (attachmentType == "Image")
         {
-            attachmentIncludedText = " I have noticed that an image file was attached, I am unable to view the image file from my current device but I must trust that the file is a picture of my consignment box. I will review the phota later when I have image viewing capabilities. If you could also send a few other angles of the box that would be appreciated. I have received fake pictures in the past so hopefully you understand my request.";
+            attachmentIncludedText = " " + settings.ConsignmentBoxImageIncluded;
         }
         else
         {
-            attachmentIncludedText = " I have noticed that no image file was included. Could you send me a picture of my consignment package so that I can trust you do in fact have it? I do not know what my package is supposed to look like but just to verify you have it.";
+            attachmentIncludedText = " " + settings.ConsignmentBoxImageNotIncluded;
         }
 
         return greetings + " " + name + ". " + directResponse + SettingPostProcessing(settings.ResponseContinuedConsignmentBox[rand.Next(0, settings.ResponseContinuedConsignmentBox.Count())], new List<string> { "|attachmentIncludedText|" }, new List<string> { attachmentIncludedText }, rand);
@@ -1505,6 +1474,12 @@ public class MailServerFunctions
     private string GetRandomQuestionsTellUsAboutYourself(Random rand)
     {
         List<string> lst = settings.QuestionsTellUsAboutYourself;
+
+        return lst[rand.Next(0, lst.Count())];
+    }
+    private string GetRandomQuestionsAutomatedProgram(Random rand)
+    {
+        List<string> lst = settings.QuestionsAutomatedProgram;
 
         return lst[rand.Next(0, lst.Count())];
     }
@@ -2176,6 +2151,56 @@ public class MailServerFunctions
 
         return sb.ToString();
     }
+    public List<MailStorage> GetPreviousMessagesInThread(List<MailStorage> storage, MailStorage mail)
+    {
+        List<MailStorage> previousMessagesInThread = new List<MailStorage>();
+
+        foreach (MailStorage ms in storage)
+        {
+            if (ms.MsgId != mail.MsgId) //Skip including the message we are working on
+            {
+                if (ms.SubjectLine.Replace("RE:", "").Replace("FW:", "") == mail.SubjectLine.Replace("RE:", "").Replace("FW:", ""))
+                {
+                    int foundCount = 0;
+                    //foreach (var v in msg.FromAddress)
+                    //{
+                    //    if (ms.ToAddress.Contains(v.ToString()))
+                    //    {
+                    //        foundCount++;
+                    //        break;
+                    //    }
+                    //}
+                    //foreach (var v in msg.ReplyTo)
+                    //{
+                    //    if (ms.ToAddress.Contains(v.ToString()))
+                    //    {
+                    //        foundCount++;
+                    //        break;
+                    //    }
+                    //}
+                    foreach (var v in mail.ToAddressList)
+                    {
+                        if (ms.ToAddress.Contains(v.ToString()))
+                        {
+                            foundCount++;
+                            break;
+                        }
+                    }
+
+                    if (foundCount > 0)
+                    {
+                        previousMessagesInThread.Add(ms);
+                    }
+                }
+                else if (ms.MyReplyMsgId == mail.InReplyToMsgId)
+                {
+                    previousMessagesInThread.Add(ms);
+                }
+            }
+        }
+
+        return previousMessagesInThread;
+    }
     private string HandleDirectQuestions(string body, ref MailStorage currentMessage, Random rand)
     {
         string response = String.Empty;
@@ -2183,14 +2208,6 @@ public class MailServerFunctions
         bool alreadyRepliedNotAnswering = false;
         bool askedForDetails = false;
 
-        if (preProcessedBody.Trim().ToUpper().Contains("YOUR 419 FORMAT IS TOO MUCH") ||
-            preProcessedBody.Trim().ToUpper().Contains("YOUR A SCAM BAITER") ||
-            preProcessedBody.Trim().ToUpper().Contains("STOP SENDING USELESS MAIL") ||
-            preProcessedBody.Trim().ToUpper().Contains("YOU ARE VERY STUPID") ||
-            preProcessedBody.Trim().ToUpper().Contains("YOUR A SCAM BETER"))
-        {
-            response += GetRandomQuestionsWeAreCaught(rand) + " ";
-        }
         if (preProcessedBody.Trim().ToUpper().Contains("HOW ARE YOU DOING") ||
             preProcessedBody.Trim().ToUpper().Contains("HOW YOU DOING") ||
             preProcessedBody.Trim().ToUpper().Contains("HOW ARE YOU OVER THERE") ||
@@ -2203,6 +2220,25 @@ public class MailServerFunctions
         {
             response += GetRandomQuestionsHowAreYou(rand) + " ";
         }
+        if (preProcessedBody.Trim().ToUpper().Contains("YOUR 419 FORMAT IS TOO MUCH") ||
+            preProcessedBody.Trim().ToUpper().Contains("YOUR A SCAM BAITER") ||
+            preProcessedBody.Trim().ToUpper().Contains("STOP SENDING USELESS MAIL") ||
+            preProcessedBody.Trim().ToUpper().Contains("YOU ARE VERY STUPID") ||
+            preProcessedBody.Trim().ToUpper().Contains("YOUR A SCAM BETER"))
+        {
+            response += GetRandomQuestionsWeAreCaught(rand) + " ";
+        }
+        if (preProcessedBody.Trim().ToUpper().Contains("INDEED YOU ARE A HUMAN") ||
+            preProcessedBody.Trim().ToUpper().Contains("NEED TO KNOW YOU ARE HUMAN") ||
+            preProcessedBody.Trim().ToUpper().Contains("QUIT ACTING BOT") ||
+            preProcessedBody.Trim().ToUpper().Contains("YOU ARE A BOT") ||
+            preProcessedBody.Trim().ToUpper().Contains("QUIT ACTING ROBOT") ||
+            preProcessedBody.Trim().ToUpper().Contains("YOU ARE A ROBOT") ||
+            preProcessedBody.Trim().ToUpper().Contains("AUTOMATED PROGRAM SENDING") ||
+            preProcessedBody.Trim().ToUpper().Contains("AUTOMATED REPLY PROGRAM"))
+        {
+            response += GetRandomQuestionsAutomatedProgram(rand) + " ";
+        }
         if (preProcessedBody.Trim().ToUpper().Contains("IS THIS A JOKE") ||
             preProcessedBody.Trim().ToUpper().Contains("ARE YOU MAKING FUN") ||
             preProcessedBody.Trim().ToUpper().Contains("ARE YOU HERE FOR JOKE") ||
@@ -2211,8 +2247,12 @@ public class MailServerFunctions
             preProcessedBody.Trim().ToUpper().Contains("IF YOU KNOW YOU ARE NOT SERIOUS") ||
             preProcessedBody.Trim().ToUpper().Contains("DO YOU TAKE US FOR A FOOL") ||
             preProcessedBody.Trim().ToUpper().Contains("YOU SOUND LIKE A JOKER") ||
+            preProcessedBody.Trim().ToUpper().Contains("I DONT KNOW IF YOU ARE A JOKER") ||
+            preProcessedBody.Trim().ToUpper().Contains("I DON'T KNOW IF YOU ARE A JOKER") ||
+            preProcessedBody.Trim().ToUpper().Contains("I DO NOT KNOW IF YOU ARE A JOKER") ||
             preProcessedBody.Trim().ToUpper().Contains("I AM NOT HERE TO DO FAKE BUSINES") ||
             preProcessedBody.Trim().ToUpper().Contains("THIS IS A SERIOUS TRANSACTION AND NOT A CHILD'S PLAY") ||
+            preProcessedBody.Trim().ToUpper().Contains("THIS IS A SERIOUS TRANSACTION AND NOT A CHILDS PLAY") ||
             preProcessedBody.Trim().ToUpper().Contains("YOU HAVE TIME FOR RUBBISH I DON'T HAVE YOUR TIME MY TIME IS MONEY") ||
             preProcessedBody.Trim().ToUpper().Contains("YOUR ARE NOT A SERIOUS PERSON") ||
             preProcessedBody.Trim().ToUpper().Contains("HAVE GOTTEN SOMEONE THAT KNOWS THE VALUE OF MY MONEY") ||
@@ -2225,6 +2265,9 @@ public class MailServerFunctions
             preProcessedBody.Trim().ToUpper().Contains("FUCK YOU") ||
             preProcessedBody.Trim().ToUpper().Contains("YOU ARE FUNNY") ||
             preProcessedBody.Trim().ToUpper().Contains("YOU MUST BE A CRAZY") ||
+            preProcessedBody.Trim().ToUpper().Contains("WHAT IS WRONG WITH YOU") ||
+            preProcessedBody.Trim().ToUpper().Contains("THIS IS NOT CHILD PLAY") ||
+            preProcessedBody.Trim().ToUpper().Contains("WE ARE NOT HERE TO PLAY") ||
             preProcessedBody.Trim().ToUpper().Contains("DO YOU THINK YOU ARE FUNNY"))
         {
             response += GetRandomQuestionsJokingAround(rand) + " ";
@@ -2329,6 +2372,7 @@ public class MailServerFunctions
             preProcessedBody.Trim().ToUpper().Contains("WHAT ARE YOU JUST SAYING") ||
             preProcessedBody.Trim().ToUpper().Contains("WHAT IS GOING ON") ||
             preProcessedBody.Trim().ToUpper().Contains("HOW DO YOU MEAN?") ||
+            preProcessedBody.Trim().ToUpper().Contains("?????") ||
             preProcessedBody.Trim().ToUpper().Contains("I DON'T UNDERSTAND WHAT YOU ARE SAYING"))
         {
             response += GetRandomQuestionsTheyConfused(rand) + " ";
@@ -2366,6 +2410,7 @@ public class MailServerFunctions
             preProcessedBody.Trim().ToUpper().Contains("WITHOUT SEND THE FEE YOU CANNOT") ||
             preProcessedBody.Trim().ToUpper().Contains("NOT ALLOWED NOW TO SHOW YOU THE IMAGE AT THIS MOMENT") ||
             preProcessedBody.Trim().ToUpper().Contains("NOT ALLOWED TO SHOW YOU THE IMAGE AT THIS MOMENT") ||
+            preProcessedBody.Trim().ToUpper().Contains("SEND ME YOUR PERSONAL INFORMATION FIRST BEFORE") ||
             (preProcessedBody.Trim().ToUpper().Contains("IF YOU DON'T WANT TO SEND THE") && preProcessedBody.Trim().ToUpper().Contains("USD")) ||
             (preProcessedBody.Trim().ToUpper().Contains("IF YOU DON'T WANT TO SEND THE") && preProcessedBody.Trim().ToUpper().Contains("FEE")) ||
             (preProcessedBody.Trim().ToUpper().Contains("IF YOU DON'T WANT TO SEND THE") && preProcessedBody.Trim().ToUpper().Contains("PAYMENT")) ||
@@ -2521,11 +2566,12 @@ public class MailServerFunctions
         if (preProcessedBody.Trim().ToUpper().Contains("NO PICK UP WHEN") ||
             preProcessedBody.Trim().ToUpper().Contains("DID YOU NOT PICK UP") ||
             preProcessedBody.Trim().ToUpper().Contains("YOU WAS NOT PICK UP YOU CALL WHY") ||
-            preProcessedBody.Trim().ToUpper().Contains("TRIED CALLING YOU BUT UNSUCCESS") ||
             preProcessedBody.Trim().ToUpper().Contains("YOU ARE NOT REACHABLE BY PHONE") ||
             preProcessedBody.Trim().ToUpper().Contains("COULD NOT GET YOU ON PHONE") ||
             preProcessedBody.Trim().ToUpper().Contains("COULD NOT GET YOU ON THE PHONE") ||
             preProcessedBody.Trim().ToUpper().Contains("TRIED TO CALL YOU NO RESPONSE") ||
+            preProcessedBody.Trim().ToUpper().Contains("TRIED CALLING YOU BUT UNSUCCESS") ||
+            preProcessedBody.Trim().ToUpper().Contains("TRIED CALLING YOU ON THE PHONE") ||
             preProcessedBody.Trim().ToUpper().Contains("NOT PICKING UP") ||
             (
                 (preProcessedBody.Trim().ToUpper().Contains("CALL") ||
@@ -2674,6 +2720,7 @@ public class MailServerFunctions
             preProcessedBody.Trim().ToUpper().Contains("POSTAL ADDRESS") ||
             preProcessedBody.Trim().ToUpper().Contains("YOUR ADDRESS") ||
             preProcessedBody.Trim().ToUpper().Contains("YOUR EXACT ADDRESS") ||
+            preProcessedBody.Trim().ToUpper().Contains("YOUR HOME AND OFFICE ADDRESS") ||
             preProcessedBody.Trim().ToUpper().Contains("INCLUDE YOUR ADDRESS") ||
             preProcessedBody.Trim().ToUpper().Contains("BILLING ADDRESS") ||
             preProcessedBody.Trim().ToUpper().Contains("RESIDENTIAL ADDRESS") ||
@@ -3187,6 +3234,7 @@ public class MailServerFunctions
         if (!askedForDetails &&
             (preProcessedBody.Trim().ToUpper().Contains("PROVIDE THE REQUIRED DETAILS") ||
             preProcessedBody.Trim().ToUpper().Contains("PROVIDE ALL THIS DETAILS") ||
+            preProcessedBody.Trim().ToUpper().Contains("PROVIDE THE INFORMATION NEEDED") ||
             preProcessedBody.Trim().ToUpper().Contains("FORWARD ME YOUR FULL DATA") ||
             preProcessedBody.Trim().ToUpper().Contains("WITHOUT YOUR DETAILS") ||
             preProcessedBody.Trim().ToUpper().Contains("SEND US YOUR FULL INFORMATION") ||
@@ -3198,6 +3246,11 @@ public class MailServerFunctions
             preProcessedBody.Trim().ToUpper().Contains("SEND YOUR INFORMATION") ||
             preProcessedBody.Trim().ToUpper().Contains("SEND YOUR FULL INFORMATION") ||
             preProcessedBody.Trim().ToUpper().Contains("SEND THE REQUIRED INFORMATION") ||
+            preProcessedBody.Trim().ToUpper().Contains("SEND ME YOUR PERSONAL INFORMATION") ||
+            preProcessedBody.Trim().ToUpper().Contains("SEND ME YOUR FULL DETAIL") ||
+            preProcessedBody.Trim().ToUpper().Contains("SEND ME YOUR FULL INFORMATION") ||
+            preProcessedBody.Trim().ToUpper().Contains("SEND ME YOUR DETAIL") ||
+            preProcessedBody.Trim().ToUpper().Contains("SEND ME YOUR INFORMATION") ||
             preProcessedBody.Trim().ToUpper().Contains("RECONFIRM YOUR DATAS") ||
             preProcessedBody.Trim().ToUpper().Contains("I NEED THOSE INFORMATION") ||
             preProcessedBody.Trim().ToUpper().Contains("DETAILS NEEDED FROM YOU BEFORE WE CAN PROCEED") ||
@@ -4233,7 +4286,7 @@ public class MailServerFunctions
                 break;
             case EmailType.ConsignmentBox:
                 if (pastMessages.Count() > 0)
-                    rtnResponse = GetRandomContinuedResponseForConsignmentBox(rand, greeting, name, attachmentType, currentMessage);
+                    rtnResponse = GetRandomContinuedResponseForConsignmentBox(rand, greeting, name, attachmentType, currentMessage, pastMessages);
                 else
                     rtnResponse = GetRandomOpeningResponseForConsignmentBox(rand, greeting, name, attachmentType, currentMessage);
                 break;
