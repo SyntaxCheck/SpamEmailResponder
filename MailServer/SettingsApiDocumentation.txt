@@ -1,0 +1,42 @@
+﻿Below will be a list of the Placehoders that can be inserted into your responses. 
+The Placeholders will be text in your response that the program will replace when the response is being determined.
+Any Placeholder can be used multiple times or in any place. You could use the |Address| Placeholder within your Memories setting for example.
+
+|Environment.NewLine| - This is what you will need to use in place of a line return. The settings file cannot handle spaces so use this instead. Note that inserting one of these will simple return to the next line and if you want a blank line you will need to simply use this back to back like this: |Environment.NewLine||Environment.NewLine|
+|introduction| - This one is built on 3 different settings from the config file. IntroductionOpening, Introduction and IntroductionClosing. You can utilize any of the 3 settings however you want. It is split into 3 different settings so that you can have your introduction start and stop with different lines to make the replies more random.
+|PhoneNumber| - This will get your PhoneNumber from the settings.
+|Address| - This will get your Address from the settings.
+|Birthdate| - This will get your Birthdate from the settings.
+|Occupation| - This will get your Occupation from the settings.
+|Gender| - This will get your Gender from the settings.
+|MaritalStatus| - This will get your MaritalStatus from the settings.
+|Country| - This will get your Country from the settings.
+|Name| - This will get your Name from the settings.
+|GetRandomNumber10| - This gets a random number between 0 and 10.
+|GetRandomNumber100| - This gets a random number between 0 and 100.
+|GetRandomNumber1000| - This gets a random number between 0 and 1000.
+|GetRandomNumber10000| - This gets a random number between 0 and 10000.
+|GetRandomNumber100000| - This gets a random number between 0 and 100000.
+|GetRandomNumber1000000| - This gets a random number between 0 and 1000000.
+|GetRandomCharacters1| - This gets 1 random character a-z, A-Z or 0-9
+|GetRandomCharacters2| - This gets 2 random characters a-z, A-Z or 0-9 allowing repeats.
+|GetRandomCharacters3| - This gets 3 random characters a-z, A-Z or 0-9 allowing repeats.
+|GetRandomCharacters4| - This gets 4 random characters a-z, A-Z or 0-9 allowing repeats.
+|GetRandomCharacters5| - This gets 5 random characters a-z, A-Z or 0-9 allowing repeats.
+|GetRandomCharacters10| - This gets 10 random characters a-z, A-Z or 0-9 allowing repeats.
+|GetRandomCharacters25| - This gets 25 random characters a-z, A-Z or 0-9 allowing repeats.
+|GetRandomCharacters50| - This gets 50 random characters a-z, A-Z or 0-9 allowing repeats.
+|GetRandomCharacters100| - This gets 100 random characters a-z, A-Z or 0-9 allowing repeats.
+|GetRandomCharacters1000| - This gets 1000 random characters a-z, A-Z or 0-9 allowing repeats.
+|GetRandomColor| - This gets a random basic color like red/blue/yellow/pink/brown etc
+|GetRandomMemory| - This will get a random memory from the Memory setting.
+|GetRandomAcquaintance| - This will get a single random name from the Acquaintance setting.
+|GetListOfAcquaintance| - This will get two random names from the Acquaintance setting with the exception of OilAndGas where it will pull 5 names from the Acquaintance setting. It might be easier to use the |GetRandomAcquaintance| multiple times.
+|GetRandomFollowupLine| - This will get a random follow up line from the FollowupLine setting.
+|GetRandomLocation| - This will get a random location from the Location setting.
+|GetRandomProduct| - This will get a random product from the Product setting.
+|GetRandomPaymentMethod| - This will get a random payment method from the PaymentMethods setting.
+|GetRandomThought| - This will get a random thought from the RandomThoughts setting.
+|GetPaymentTypeFromMessage| - This will attempt to find the payment type they are asking you to pay with and replace it here. If it cannot determine the payment method they are asking it will simply replace the text with "transfer".
+|attachmentType| - This is exclusivly used for the BlankEmailWithAttachment type. It looks up the first attachment they included and returns the type of file. PDF/PNG/DOCX etc
+|attachmentIncludedText| - This is exclusivly used for the ConsignmentBox type. This will check if they included an attachment and if they did grab a random value from the setting ConsignmentBoxImageIncluded otherwise it will grab a random value from the setting ConsignmentBoxImageNotIncluded if they did not include an attachment.

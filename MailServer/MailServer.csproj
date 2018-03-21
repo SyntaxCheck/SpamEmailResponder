@@ -141,6 +141,7 @@
     <None Include="Resources\if_arrow_refresh_35687.png" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="SettingsApiDocumentation.txt" />
     <Content Include="TempNotes.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
