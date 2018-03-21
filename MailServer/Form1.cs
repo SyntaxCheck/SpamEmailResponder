@@ -438,7 +438,7 @@ namespace MailServer
             {
                 if (!storage[i].Replied && !storage[i].Ignored && !skippedMessages.Contains(";;;" + storage[i].MsgId + ";;;"))
                 {
-                    //Make sure it has been atleast 5 hours
+                    //Make sure the age of the message has surpassed the setting
                     double hours = (DateTime.Now - storage[i].DateReceived).TotalHours;
                     if (hours > hoursBetweenReceivingAndSending)
                     {
@@ -532,7 +532,7 @@ namespace MailServer
                 {
                     List<MailStorage> previousMessagesInThread = mailServer.GetPreviousMessagesInThread(storage, storage[i]);
                     MailStorage temp = storage[i];
-                    string newReply = mailServer.GetResponseForType(ref temp, previousMessagesInThread);
+                    string newReply = mailServer.GetResponseForType(loggerInfo, ref temp, previousMessagesInThread);
 
                     tbxDeterminedReply.Text = newReply;
                     temp.DeterminedReply = newReply;
