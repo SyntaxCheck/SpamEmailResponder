@@ -493,7 +493,7 @@ namespace MailServer
             {
                 if (storage[i].MsgId == workingOnMsg)
                 {
-                    if (!storage[i].DeterminedReply.Contains("|Get"))
+                    if (!storage[i].DeterminedReply.Contains("|Get") || !storage[i].DeterminedReply.Contains("System.Collections") || !storage[i].DeterminedReply.Contains("[System.String]"))
                     {
                         string newMsgId = String.Empty;
                         response = mailServer.SendSMTP(loggerInfo, storage[i].ToAddress, storage[i].SubjectLine, storage[i].DeterminedReply, storage[i].IncludeID, storage[i].MsgId, ref newMsgId);
@@ -515,6 +515,8 @@ namespace MailServer
                     {
                         Logger.Write(loggerInfo, "Bad reply replace: " + storage[i].DeterminedReply);
                         MessageBox.Show("Bad reply replace: " + storage[i].DeterminedReply);
+                        processTimer.Stop();
+                        cbxAutoSend.Checked = false;
                     }
                     break;
                 }
