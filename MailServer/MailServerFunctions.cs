@@ -2300,6 +2300,9 @@ public class MailServerFunctions
             preProcessedBody.Trim().ToUpper().Contains("YOU ARE A BOT") ||
             preProcessedBody.Trim().ToUpper().Contains("QUIT ACTING ROBOT") ||
             preProcessedBody.Trim().ToUpper().Contains("YOU ARE A ROBOT") ||
+            preProcessedBody.Trim().ToUpper().Contains("YOU A ROBOT") ||
+            preProcessedBody.Trim().ToUpper().Contains("ARE YOU A ROBOT") ||
+            preProcessedBody.Trim().ToUpper().Contains("ARE YOU ROBOT") ||
             preProcessedBody.Trim().ToUpper().Contains("AUTOMATED PROGRAM SENDING") ||
             preProcessedBody.Trim().ToUpper().Contains("AUTOMATED REPLY PROGRAM"))
         {
