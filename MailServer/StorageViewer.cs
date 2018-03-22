@@ -29,6 +29,7 @@ namespace MailServer
                 serializeHelper = new SerializeHelper();
                 mailServer = new MailServerFunctions();
 
+
                 LoadScreen();
             }
             catch (Exception ex)
@@ -79,6 +80,24 @@ namespace MailServer
         {
             LoadScreen();
         }
+        private void dgvEmails_ColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
+        {
+
+        }
+        private void MakeColumnsSortable_DataBindingComplete(object sender, DataGridViewBindingCompleteEventArgs e)
+        {
+            //Add this as an event on DataBindingComplete
+            DataGridView dataGridView = sender as DataGridView;
+            if (dataGridView == null)
+            {
+                var ex = new InvalidOperationException("This event is for a DataGridView type senders only.");
+                ex.Data.Add("Sender type", sender.GetType().Name);
+                throw ex;
+            }
+
+            foreach (DataGridViewColumn column in dataGridView.Columns)
+                column.SortMode = DataGridViewColumnSortMode.Automatic;
+        }
 
         //Private functions
         private void LoadScreen()
@@ -100,6 +119,7 @@ namespace MailServer
                     if (cbxShowAll.Checked || !ms.Replied)
                         dgvEmails.Rows.Add(ms.ToAddress, ms.SubjectLine, ms.DateReceived.ToString("yyyy-MM-dd hh:mm"), ms.DateProcessed.ToString("yyyy-MM-dd hh:mm"), ms.PersonName, ((EmailType)ms.MessageType).ToString(), ms.Replied.ToString(), ms.Ignored.ToString(), mailServer.MakeEmailEasierToRead(ms.EmailBodyPlain), mailServer.MakeEmailEasierToRead(ms.DeterminedReply), ms.NumberOfAttachments.ToString(), ms.MsgId, ms.InReplyToMsgId, ms.MyReplyMsgId);
                 }
+                dgvEmails.DataBindingComplete += MakeColumnsSortable_DataBindingComplete;
             }
             catch (Exception ex)
             {

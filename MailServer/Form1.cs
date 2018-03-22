@@ -458,15 +458,15 @@ namespace MailServer
                     }
                     else
                     {
-                        Logger.WriteDbg(loggerInfo, "Skipping new message. Received: " + storage[i].DateReceived.ToString() + ". Message is only " + hours.ToString() + " old.");
+                        Logger.WriteDbg(loggerInfo, "Skipping new message. Received: " + storage[i].DateReceived.ToString() + ". Message is only " + hours.ToString() + " hours old. Wait setting: " + hoursBetweenReceivingAndSending.ToString() + " hours.");
                     }
                 }
             }
 
             if (!found)
             {
-                tbxOutput.Text = "No new messages found.";
-                Logger.Write(loggerInfo, "No new messages found");
+                tbxOutput.Text = "No messages ready to send.";
+                Logger.Write(loggerInfo, "No messages ready to send");
 
                 return 0;
             }

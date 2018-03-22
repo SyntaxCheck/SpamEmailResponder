@@ -14,7 +14,7 @@ public class Settings
         questionsHowBigOfLoan, questionsMustPayBefore, questionsMeetUs, questionsFillOutForm, questionsGetBackToUs, questionsNeedBankDetails,
         questionsWhatTypeOfProof, questionsHowDoYouWantFundsReleased, questionsWeCantDoThat, questionsContactTheBank, questionsAreYouMember,
         questionsDidYouSeeOurMessage, questionsInvalidAddress, questionsTellUsWhatTheyAskedYouToDo, questionsTellUsAboutYourself,
-        questionsAutomatedProgram;
+        questionsAutomatedProgram, questionsUseWalmartToPay;
     private List<string> responseOpeningBlankEmailWithAttachment, responseOpeningLottery, responseOpeningOilAndGas, responseOpeningOilAndGasQuestionList, responseOpeningIlluminati, 
         responseOpeningConsignmentBox, responseOpeningDeathOrDying, responseOpeningLoanOffer, responseOpeningMoneyStorage, responseOpeningAtmCard, responseOpeningPolice, 
         responseOpeningGenericPayment, responseOpeningInvestor, responseOpeningMoneyHack, responseOpeningJobOffer, responseOpeningSellingProducts, responseOpeningFreeMoney, 
@@ -615,6 +615,11 @@ public class Settings
     {
         get { return questionsAutomatedProgram; }
         set { questionsAutomatedProgram = value; }
+    }
+    public List<string> QuestionsUseWalmartToPay
+    {
+        get { return questionsUseWalmartToPay; }
+        set { questionsUseWalmartToPay = value; }
     }
 
     public List<string> RandomThoughts
