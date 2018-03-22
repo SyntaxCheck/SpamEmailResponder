@@ -33,18 +33,6 @@
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.dgvEmails = new System.Windows.Forms.DataGridView();
-            this.FromAddress = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Subject = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.DateReceived = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.DateProcessed = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.PersonName = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.MessageType = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.RepliedBool = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Ignored = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.EmailBody = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.DeterminedReply = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.NumberOfAttachments = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.MsgID = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.tbxDateReceived = new System.Windows.Forms.TextBox();
             this.tbxDeterminedName = new System.Windows.Forms.TextBox();
             this.tbxDeterminedType = new System.Windows.Forms.TextBox();
@@ -65,6 +53,20 @@
             this.label9 = new System.Windows.Forms.Label();
             this.cbxShowAll = new System.Windows.Forms.CheckBox();
             this.btnRefresh = new System.Windows.Forms.Button();
+            this.FromAddress = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Subject = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.DateReceived = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.DateProcessed = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.PersonName = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.MessageType = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.RepliedBool = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Ignored = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.EmailBody = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.DeterminedReply = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.NumberOfAttachments = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.MsgID = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.InReplyTo = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.MyReplyMsgID = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.menuStrip1.SuspendLayout();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvEmails)).BeginInit();
@@ -125,7 +127,9 @@
             this.EmailBody,
             this.DeterminedReply,
             this.NumberOfAttachments,
-            this.MsgID});
+            this.MsgID,
+            this.InReplyTo,
+            this.MyReplyMsgID});
             this.dgvEmails.Location = new System.Drawing.Point(4, 17);
             this.dgvEmails.Margin = new System.Windows.Forms.Padding(2);
             this.dgvEmails.Name = "dgvEmails";
@@ -135,90 +139,6 @@
             this.dgvEmails.Size = new System.Drawing.Size(963, 270);
             this.dgvEmails.TabIndex = 0;
             this.dgvEmails.RowEnter += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvEmails_RowEnter);
-            // 
-            // FromAddress
-            // 
-            this.FromAddress.FillWeight = 150F;
-            this.FromAddress.HeaderText = "From";
-            this.FromAddress.Name = "FromAddress";
-            this.FromAddress.ReadOnly = true;
-            this.FromAddress.Width = 150;
-            // 
-            // Subject
-            // 
-            this.Subject.FillWeight = 170F;
-            this.Subject.HeaderText = "Subject";
-            this.Subject.Name = "Subject";
-            this.Subject.ReadOnly = true;
-            this.Subject.Width = 170;
-            // 
-            // DateReceived
-            // 
-            this.DateReceived.HeaderText = "Date Received";
-            this.DateReceived.Name = "DateReceived";
-            this.DateReceived.ReadOnly = true;
-            // 
-            // DateProcessed
-            // 
-            this.DateProcessed.HeaderText = "Date Processed";
-            this.DateProcessed.Name = "DateProcessed";
-            this.DateProcessed.ReadOnly = true;
-            // 
-            // PersonName
-            // 
-            this.PersonName.HeaderText = "Person Name";
-            this.PersonName.Name = "PersonName";
-            this.PersonName.ReadOnly = true;
-            // 
-            // MessageType
-            // 
-            this.MessageType.HeaderText = "Type";
-            this.MessageType.Name = "MessageType";
-            this.MessageType.ReadOnly = true;
-            // 
-            // RepliedBool
-            // 
-            this.RepliedBool.FillWeight = 70F;
-            this.RepliedBool.HeaderText = "Have Replied";
-            this.RepliedBool.Name = "RepliedBool";
-            this.RepliedBool.ReadOnly = true;
-            this.RepliedBool.Width = 70;
-            // 
-            // Ignored
-            // 
-            this.Ignored.HeaderText = "Ignored";
-            this.Ignored.Name = "Ignored";
-            this.Ignored.ReadOnly = true;
-            // 
-            // EmailBody
-            // 
-            this.EmailBody.FillWeight = 300F;
-            this.EmailBody.HeaderText = "Body";
-            this.EmailBody.Name = "EmailBody";
-            this.EmailBody.ReadOnly = true;
-            this.EmailBody.Width = 300;
-            // 
-            // DeterminedReply
-            // 
-            this.DeterminedReply.FillWeight = 300F;
-            this.DeterminedReply.HeaderText = "Determined Reply";
-            this.DeterminedReply.Name = "DeterminedReply";
-            this.DeterminedReply.ReadOnly = true;
-            this.DeterminedReply.Width = 300;
-            // 
-            // NumberOfAttachments
-            // 
-            this.NumberOfAttachments.FillWeight = 90F;
-            this.NumberOfAttachments.HeaderText = "Attachments";
-            this.NumberOfAttachments.Name = "NumberOfAttachments";
-            this.NumberOfAttachments.ReadOnly = true;
-            this.NumberOfAttachments.Width = 90;
-            // 
-            // MsgID
-            // 
-            this.MsgID.HeaderText = "MSG ID";
-            this.MsgID.Name = "MsgID";
-            this.MsgID.ReadOnly = true;
             // 
             // tbxDateReceived
             // 
@@ -394,6 +314,102 @@
             this.btnRefresh.UseVisualStyleBackColor = true;
             this.btnRefresh.Click += new System.EventHandler(this.btnRefresh_Click);
             // 
+            // FromAddress
+            // 
+            this.FromAddress.FillWeight = 150F;
+            this.FromAddress.HeaderText = "From";
+            this.FromAddress.Name = "FromAddress";
+            this.FromAddress.ReadOnly = true;
+            this.FromAddress.Width = 150;
+            // 
+            // Subject
+            // 
+            this.Subject.FillWeight = 170F;
+            this.Subject.HeaderText = "Subject";
+            this.Subject.Name = "Subject";
+            this.Subject.ReadOnly = true;
+            this.Subject.Width = 170;
+            // 
+            // DateReceived
+            // 
+            this.DateReceived.HeaderText = "Date Received";
+            this.DateReceived.Name = "DateReceived";
+            this.DateReceived.ReadOnly = true;
+            // 
+            // DateProcessed
+            // 
+            this.DateProcessed.HeaderText = "Date Processed";
+            this.DateProcessed.Name = "DateProcessed";
+            this.DateProcessed.ReadOnly = true;
+            // 
+            // PersonName
+            // 
+            this.PersonName.HeaderText = "Person Name";
+            this.PersonName.Name = "PersonName";
+            this.PersonName.ReadOnly = true;
+            // 
+            // MessageType
+            // 
+            this.MessageType.HeaderText = "Type";
+            this.MessageType.Name = "MessageType";
+            this.MessageType.ReadOnly = true;
+            // 
+            // RepliedBool
+            // 
+            this.RepliedBool.FillWeight = 70F;
+            this.RepliedBool.HeaderText = "Have Replied";
+            this.RepliedBool.Name = "RepliedBool";
+            this.RepliedBool.ReadOnly = true;
+            this.RepliedBool.Width = 70;
+            // 
+            // Ignored
+            // 
+            this.Ignored.HeaderText = "Ignored";
+            this.Ignored.Name = "Ignored";
+            this.Ignored.ReadOnly = true;
+            // 
+            // EmailBody
+            // 
+            this.EmailBody.FillWeight = 300F;
+            this.EmailBody.HeaderText = "Body";
+            this.EmailBody.Name = "EmailBody";
+            this.EmailBody.ReadOnly = true;
+            this.EmailBody.Width = 300;
+            // 
+            // DeterminedReply
+            // 
+            this.DeterminedReply.FillWeight = 300F;
+            this.DeterminedReply.HeaderText = "Determined Reply";
+            this.DeterminedReply.Name = "DeterminedReply";
+            this.DeterminedReply.ReadOnly = true;
+            this.DeterminedReply.Width = 300;
+            // 
+            // NumberOfAttachments
+            // 
+            this.NumberOfAttachments.FillWeight = 90F;
+            this.NumberOfAttachments.HeaderText = "Attachments";
+            this.NumberOfAttachments.Name = "NumberOfAttachments";
+            this.NumberOfAttachments.ReadOnly = true;
+            this.NumberOfAttachments.Width = 90;
+            // 
+            // MsgID
+            // 
+            this.MsgID.HeaderText = "MSG ID";
+            this.MsgID.Name = "MsgID";
+            this.MsgID.ReadOnly = true;
+            // 
+            // InReplyTo
+            // 
+            this.InReplyTo.HeaderText = "In Reply To";
+            this.InReplyTo.Name = "InReplyTo";
+            this.InReplyTo.ReadOnly = true;
+            // 
+            // MyReplyMsgID
+            // 
+            this.MyReplyMsgID.HeaderText = "My Reply MSG ID";
+            this.MyReplyMsgID.Name = "MyReplyMsgID";
+            this.MyReplyMsgID.ReadOnly = true;
+            // 
             // StorageViewer
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -475,5 +491,7 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn DeterminedReply;
         private System.Windows.Forms.DataGridViewTextBoxColumn NumberOfAttachments;
         private System.Windows.Forms.DataGridViewTextBoxColumn MsgID;
+        private System.Windows.Forms.DataGridViewTextBoxColumn InReplyTo;
+        private System.Windows.Forms.DataGridViewTextBoxColumn MyReplyMsgID;
     }
 }

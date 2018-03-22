@@ -52,6 +52,10 @@ namespace MailServer
                     MessageBox.Show("There was an error with your settings", validate);
                     this.Close();
                 }
+                else
+                {
+                    this.Text = "Mail Server - " + mailServer.MyName;
+                }
 
                 //Load in the storage serialized class
                 string fullPath = Path.Combine(currentDirectory, STORAGE_OBJECT_FILENAME);

@@ -2222,28 +2222,18 @@ public class MailServerFunctions
         {
             if (ms.MsgId != mail.MsgId) //Skip including the message we are working on
             {
-                if (ms.SubjectLine.Replace("RE:", "").Replace("FW:", "") == mail.SubjectLine.Replace("RE:", "").Replace("FW:", ""))
+                if (ms.SubjectLine.Replace("RE:", "").Replace("FW:", "").Trim() == mail.SubjectLine.Replace("RE:", "").Replace("FW:", "").Trim())
                 {
                     int foundCount = 0;
-                    //foreach (var v in msg.FromAddress)
-                    //{
-                    //    if (ms.ToAddress.Contains(v.ToString()))
-                    //    {
-                    //        foundCount++;
-                    //        break;
-                    //    }
-                    //}
-                    //foreach (var v in msg.ReplyTo)
-                    //{
-                    //    if (ms.ToAddress.Contains(v.ToString()))
-                    //    {
-                    //        foundCount++;
-                    //        break;
-                    //    }
-                    //}
-                    foreach (var v in mail.ToAddressList)
+
+                    foreach (string v in mail.ToAddressList)
                     {
-                        if (ms.ToAddress.Contains(v.ToString()))
+                        string emailAddres  =String.Empty;
+
+                        System.Net.Mail.MailAddress address = new System.Net.Mail.MailAddress(v.Replace("\"", ""));
+                        emailAddres = address.Address;
+
+                        if (ms.ToAddress.Contains(emailAddres))
                         {
                             foundCount++;
                             break;
@@ -3408,49 +3398,52 @@ public class MailServerFunctions
         preProcessedBody = RemoveUselessText(MakeEmailEasierToRead(preProcessedBody));
 
         bool foundSame = false;
-        foreach (MailStorage ms in pastMessages)
+        if (preProcessedBody.Length > 200) //Only check for duplacte long emails since some of the shorter emails could be the same between different email threads. Like "What do you mean?" as a reply to many different situations
         {
-            string tmpPastMsg = RemoveUselessText(ms.SubjectLine + " " + ms.EmailBodyPlain.Replace("\r\n", " "));
-            if (tmpPastMsg != preProcessedBody)
+            foreach (MailStorage ms in pastMessages)
             {
-                if (preProcessedBody.Length > 0 && tmpPastMsg.Length > 0)
+                string tmpPastMsg = RemoveUselessText(ms.SubjectLine + " " + ms.EmailBodyPlain.Replace("\r\n", " "));
+                if (tmpPastMsg != preProcessedBody)
                 {
-                    int sizeDifference = Math.Abs(tmpPastMsg.Length - preProcessedBody.Length);
-                    double percentChange = (double)sizeDifference / preProcessedBody.Length;
-                    if ((percentChange * 100) < 20) //If we have less than a 20% change in size move to the next check
+                    if (preProcessedBody.Length > 0 && tmpPastMsg.Length > 0)
                     {
-                        //I am going to take 3 word chunks and search for each set of 3 word pairs to attempt to see if the email is mostly the same
-                        string[] words = preProcessedBody.Split(new char[] { ' ' });
-
-                        int foundSuccessCount = 0;
-                        int foundFailCount = 0;
-                        for (int i = 0; i < words.Length - 2; i++)
+                        int sizeDifference = Math.Abs(tmpPastMsg.Length - preProcessedBody.Length);
+                        double percentChange = (double)sizeDifference / preProcessedBody.Length;
+                        if ((percentChange * 100) < 20) //If we have less than a 20% change in size move to the next check
                         {
-                            string tmpTri = words[i] + ' ' + words[i + 1] + ' ' + words[i + 2];
-                            if (tmpPastMsg.Contains(tmpTri))
-                            {
-                                foundSuccessCount++;
-                            }
-                            else
-                            {
-                                foundFailCount++;
-                            }
-                        }
+                            //I am going to take 3 word chunks and search for each set of 3 word pairs to attempt to see if the email is mostly the same
+                            string[] words = preProcessedBody.Split(new char[] { ' ' });
 
-                        //If the amount of 3 word pairs successfully found is less than 90% return a fail
-                        double triFoundPercent = (double)foundSuccessCount / (foundSuccessCount + foundFailCount);
-                        if ((triFoundPercent * 100) > 90)
-                        {
-                            foundSame = true;
-                            break;
+                            int foundSuccessCount = 0;
+                            int foundFailCount = 0;
+                            for (int i = 0; i < words.Length - 2; i++)
+                            {
+                                string tmpTri = words[i] + ' ' + words[i + 1] + ' ' + words[i + 2];
+                                if (tmpPastMsg.Contains(tmpTri))
+                                {
+                                    foundSuccessCount++;
+                                }
+                                else
+                                {
+                                    foundFailCount++;
+                                }
+                            }
+
+                            //If the amount of 3 word pairs successfully found is less than 90% return a fail
+                            double triFoundPercent = (double)foundSuccessCount / (foundSuccessCount + foundFailCount);
+                            if ((triFoundPercent * 100) > 90)
+                            {
+                                foundSame = true;
+                                break;
+                            }
                         }
                     }
                 }
-            }
-            else
-            {
-                foundSame = true;
-                break;
+                else
+                {
+                    foundSame = true;
+                    break;
+                }
             }
         }
 
@@ -4258,7 +4251,7 @@ public class MailServerFunctions
         }
         else
         {
-            for (int i = pastMessages.Count() - 1; i > 0; i--)
+            for (int i = pastMessages.Count() - 1; i >= 0; i--)
             {
                 if (pastMessages[i].MessageType != 0)
                 {
