@@ -82,6 +82,7 @@ namespace MailServer
             StandardResponse response = new StandardResponse() { Code = 0, Message = String.Empty, Data = String.Empty };
             processTimer.Interval = SEND_INTERVAL;
 
+            Logger.WriteDbg(loggerInfo, "Debug Timestamp Pre Get Messages: " + DateTime.Now.ToString("hh:mm:ss.fff"));
             int preCount = storage.Count();
             if ((storage.Count(t => !t.Replied) - skippedCount) <= 10)
             {
@@ -96,6 +97,7 @@ namespace MailServer
                 response = new StandardResponse() { Code = 0 };
                 Logger.Write(loggerInfo, "Skipping the check for messages. Unreplied count: " + storage.Count(t => !t.Replied).ToString() + ", Skip count: " + skippedCount.ToString());
             }
+            Logger.WriteDbg(loggerInfo, "Debug Timestamp Post Get Messages: " + DateTime.Now.ToString("hh:mm:ss.fff"));
             //response = mailServer.GetMessages(loggerInfo, ref storage);
             //if (response.Code < 0)
             //{
@@ -112,8 +114,10 @@ namespace MailServer
             //Write Storage object to disk
             if (storage.Count() > 0)
             {
+                Logger.WriteDbg(loggerInfo, "Debug Timestamp Pre Write storage file: " + DateTime.Now.ToString("hh:mm:ss.fff"));
                 string fullPath = Path.Combine(currentDirectory, STORAGE_OBJECT_FILENAME);
                 serializeHelper.WriteToBinaryFile(fullPath, storage, false);
+                Logger.WriteDbg(loggerInfo, "Debug Timestamp Post Write storage file: " + DateTime.Now.ToString("hh:mm:ss.fff"));
             }
 
             if (cbxAutoSend.Checked)
@@ -128,7 +132,9 @@ namespace MailServer
                 {
                     bool foundMessageToSend = false;
                     //Load the message onto the screen
+                    Logger.WriteDbg(loggerInfo, "Debug Timestamp Pre LoadMessage(): " + DateTime.Now.ToString("hh:mm:ss.fff"));
                     int rtn = LoadMessage();
+                    Logger.WriteDbg(loggerInfo, "Debug Timestamp Post LoadMessage(): " + DateTime.Now.ToString("hh:mm:ss.fff"));
 
                     if (rtn > 0)
                     {
@@ -145,7 +151,9 @@ namespace MailServer
                                 skippedMessages += ";;;" + workingOnMsg + ";;;";
                                 skippedCount++;
 
+                                Logger.WriteDbg(loggerInfo, "Debug Timestamp Pre CheckForMessages(): " + DateTime.Now.ToString("hh:mm:ss.fff"));
                                 rtn = CheckForMessages();
+                                Logger.WriteDbg(loggerInfo, "Debug Timestamp Post CheckForMessages(): " + DateTime.Now.ToString("hh:mm:ss.fff"));
                                 if (rtn <= 0) //End the loop if there are no more messages or we encountered an error
                                     break;
                             }
@@ -157,7 +165,9 @@ namespace MailServer
 
                         if (foundMessageToSend)
                         {
+                            Logger.WriteDbg(loggerInfo, "Debug Timestamp Pre SendEmail(): " + DateTime.Now.ToString("hh:mm:ss.fff"));
                             rtn = SendEmail();
+                            Logger.WriteDbg(loggerInfo, "Debug Timestamp Post SendEmail(): " + DateTime.Now.ToString("hh:mm:ss.fff"));
                             if (rtn < 0) //If the email fails to send add to the temp skip list for someone to deal with later
                             {
                                 skippedMessages += ";;;" + workingOnMsg + ";;;";
@@ -434,6 +444,9 @@ namespace MailServer
         {
             StandardResponse response = new StandardResponse() { Code = 0, Message = String.Empty, Data = String.Empty };
             bool found = false;
+            int skippedCountBasedOnTime = 0;
+            int firstSkippedIndexBasedOnTime = -1;
+            double hoursBeforeWeSendTheSkipped = 0;
             double hoursBetweenReceivingAndSending = mailServer.GetHoursBetweenSending();
 
             ClearScreen();
@@ -458,15 +471,51 @@ namespace MailServer
                     }
                     else
                     {
+                        if (firstSkippedIndexBasedOnTime == -1)
+                        {
+                            firstSkippedIndexBasedOnTime = i;
+                            hoursBeforeWeSendTheSkipped = hoursBetweenReceivingAndSending - hours;
+                        }
+                        skippedCountBasedOnTime++;
                         Logger.WriteDbg(loggerInfo, "Skipping new message. Received: " + storage[i].DateReceived.ToString() + ". Message is only " + hours.ToString() + " hours old. Wait setting: " + hoursBetweenReceivingAndSending.ToString() + " hours.");
                     }
                 }
             }
 
-            if (!found)
+            if (skippedCountBasedOnTime > 0 && !found)
             {
                 tbxOutput.Text = "No messages ready to send.";
                 Logger.Write(loggerInfo, "No messages ready to send");
+
+                List<MailStorage> previousMessagesInThread = mailServer.GetPreviousMessagesInThread(storage, storage[i]);
+
+                //Load the Message waiting to be sent on screen
+                LoadScreen(storage[firstSkippedIndexBasedOnTime], previousMessagesInThread);
+                if (String.IsNullOrEmpty(tbxDeterminedReply.Text))
+                {
+                    Regen();
+                }
+
+                lblExtendedWait.Visible = true;
+                if (cbxAutoSend.Checked)
+                {
+                    //Modify the timer interval to reflect how long we have to wait before the pending message is going to be sent
+                    double interval = hoursBeforeWeSendTheSkipped * 3600000;
+                    processTimer.Stop();
+                    processTimer.Interval = (int)Math.Round(interval, 0);
+                    processTimer.Start();
+
+                    countdownTimer.Stop();
+                    countdownRemaining = processTimer.Interval / 1000;
+                    countdownTimer.Start();
+                }
+
+                return 0;
+            }
+            else if (!found)
+            {
+                tbxOutput.Text = "No new messages found.";
+                Logger.Write(loggerInfo, "No new messages found");
 
                 return 0;
             }
@@ -485,10 +534,12 @@ namespace MailServer
                 return -1;
             }
 
+            lblExtendedWait.Visible = false;
             btnSendEmail.Enabled = false;
             btnNext.Enabled = false;
             btnIgnore.Enabled = false;
             btnRegenerate.Enabled = false;
+            processTimer.Interval = trckBar.Value * 1000; //Reset this if we had to change the interval when waiting for a message to mature before we send the response
 
             //Save data from screen to object
             SaveData();

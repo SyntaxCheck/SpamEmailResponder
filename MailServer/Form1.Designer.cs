@@ -87,6 +87,7 @@
             this.optionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.responseConfigToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.storageViewerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.lblExtendedWait = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trckBar)).BeginInit();
@@ -109,6 +110,7 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.lblExtendedWait);
             this.groupBox1.Controls.Add(this.panel1);
             this.groupBox1.Controls.Add(this.lblNext);
             this.groupBox1.Controls.Add(this.lblTimeTillNextSend);
@@ -174,7 +176,7 @@
             this.trckBar.Maximum = 500;
             this.trckBar.Minimum = 200;
             this.trckBar.Name = "trckBar";
-            this.trckBar.Size = new System.Drawing.Size(394, 45);
+            this.trckBar.Size = new System.Drawing.Size(394, 56);
             this.trckBar.TabIndex = 30;
             this.trckBar.TickFrequency = 10;
             this.trckBar.TickStyle = System.Windows.Forms.TickStyle.Both;
@@ -187,7 +189,7 @@
             this.lblNext.AutoSize = true;
             this.lblNext.Location = new System.Drawing.Point(705, 803);
             this.lblNext.Name = "lblNext";
-            this.lblNext.Size = new System.Drawing.Size(34, 13);
+            this.lblNext.Size = new System.Drawing.Size(42, 17);
             this.lblNext.TabIndex = 34;
             this.lblNext.Text = "Next:";
             this.lblNext.Visible = false;
@@ -198,7 +200,7 @@
             this.lblTimeTillNextSend.ForeColor = System.Drawing.Color.DarkRed;
             this.lblTimeTillNextSend.Location = new System.Drawing.Point(745, 803);
             this.lblTimeTillNextSend.Name = "lblTimeTillNextSend";
-            this.lblTimeTillNextSend.Size = new System.Drawing.Size(13, 13);
+            this.lblTimeTillNextSend.Size = new System.Drawing.Size(16, 17);
             this.lblTimeTillNextSend.TabIndex = 33;
             this.lblTimeTillNextSend.Text = "0";
             this.lblTimeTillNextSend.Visible = false;
@@ -208,7 +210,7 @@
             this.lblTrackBarValue.AutoSize = true;
             this.lblTrackBarValue.Location = new System.Drawing.Point(897, 803);
             this.lblTrackBarValue.Name = "lblTrackBarValue";
-            this.lblTrackBarValue.Size = new System.Drawing.Size(75, 13);
+            this.lblTrackBarValue.Size = new System.Drawing.Size(96, 17);
             this.lblTrackBarValue.TabIndex = 32;
             this.lblTrackBarValue.Text = "(240 seconds)";
             this.lblTrackBarValue.Visible = false;
@@ -218,7 +220,7 @@
             this.lblSendFreq.AutoSize = true;
             this.lblSendFreq.Location = new System.Drawing.Point(883, 783);
             this.lblSendFreq.Name = "lblSendFreq";
-            this.lblSendFreq.Size = new System.Drawing.Size(89, 13);
+            this.lblSendFreq.Size = new System.Drawing.Size(113, 17);
             this.lblSendFreq.TabIndex = 31;
             this.lblSendFreq.Text = "Send Frequency:";
             this.lblSendFreq.Visible = false;
@@ -228,7 +230,7 @@
             this.lblCountdown.AutoSize = true;
             this.lblCountdown.Location = new System.Drawing.Point(1455, 49);
             this.lblCountdown.Name = "lblCountdown";
-            this.lblCountdown.Size = new System.Drawing.Size(23, 13);
+            this.lblCountdown.Size = new System.Drawing.Size(24, 17);
             this.lblCountdown.TabIndex = 29;
             this.lblCountdown.Text = "....";
             // 
@@ -238,7 +240,7 @@
             this.cbxDebug.Location = new System.Drawing.Point(1737, 782);
             this.cbxDebug.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.cbxDebug.Name = "cbxDebug";
-            this.cbxDebug.Size = new System.Drawing.Size(92, 17);
+            this.cbxDebug.Size = new System.Drawing.Size(115, 21);
             this.cbxDebug.TabIndex = 28;
             this.cbxDebug.Text = "Enable Debug";
             this.cbxDebug.UseVisualStyleBackColor = true;
@@ -249,7 +251,7 @@
             this.lblMessageInfo.AutoSize = true;
             this.lblMessageInfo.Location = new System.Drawing.Point(1439, 21);
             this.lblMessageInfo.Name = "lblMessageInfo";
-            this.lblMessageInfo.Size = new System.Drawing.Size(378, 13);
+            this.lblMessageInfo.Size = new System.Drawing.Size(486, 17);
             this.lblMessageInfo.TabIndex = 27;
             this.lblMessageInfo.Text = "Sent: 0,000   Skipped: 0,000   Ignored: 0,000   Pending: 000   Unread: 0,000";
             this.lblMessageInfo.TextAlign = System.Drawing.ContentAlignment.TopRight;
@@ -260,7 +262,7 @@
             this.cbxAutoSend.Location = new System.Drawing.Point(699, 782);
             this.cbxAutoSend.Margin = new System.Windows.Forms.Padding(4);
             this.cbxAutoSend.Name = "cbxAutoSend";
-            this.cbxAutoSend.Size = new System.Drawing.Size(76, 17);
+            this.cbxAutoSend.Size = new System.Drawing.Size(94, 21);
             this.cbxAutoSend.TabIndex = 26;
             this.cbxAutoSend.Text = "Auto Send";
             this.cbxAutoSend.UseVisualStyleBackColor = true;
@@ -282,7 +284,7 @@
             this.tbxAttachmentNames.Location = new System.Drawing.Point(142, 102);
             this.tbxAttachmentNames.Margin = new System.Windows.Forms.Padding(4);
             this.tbxAttachmentNames.Name = "tbxAttachmentNames";
-            this.tbxAttachmentNames.Size = new System.Drawing.Size(545, 20);
+            this.tbxAttachmentNames.Size = new System.Drawing.Size(545, 23);
             this.tbxAttachmentNames.TabIndex = 24;
             // 
             // btnRegenerate
@@ -354,7 +356,7 @@
             this.label10.Location = new System.Drawing.Point(695, 53);
             this.label10.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(110, 13);
+            this.label10.Size = new System.Drawing.Size(137, 17);
             this.label10.TabIndex = 18;
             this.label10.Text = "Past emails in thread:";
             // 
@@ -444,7 +446,7 @@
             this.label9.Location = new System.Drawing.Point(13, 471);
             this.label9.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(116, 13);
+            this.label9.Size = new System.Drawing.Size(147, 17);
             this.label9.TabIndex = 15;
             this.label9.Text = "Determined Response:";
             // 
@@ -454,7 +456,7 @@
             this.label8.Location = new System.Drawing.Point(9, 168);
             this.label8.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(83, 13);
+            this.label8.Size = new System.Drawing.Size(105, 17);
             this.label8.TabIndex = 14;
             this.label8.Text = "Body plain text:";
             // 
@@ -473,7 +475,7 @@
             this.tbxDateReceived.Location = new System.Drawing.Point(114, 74);
             this.tbxDateReceived.Margin = new System.Windows.Forms.Padding(4);
             this.tbxDateReceived.Name = "tbxDateReceived";
-            this.tbxDateReceived.Size = new System.Drawing.Size(116, 20);
+            this.tbxDateReceived.Size = new System.Drawing.Size(116, 23);
             this.tbxDateReceived.TabIndex = 13;
             // 
             // tbxDeterminedName
@@ -481,7 +483,7 @@
             this.tbxDeterminedName.Location = new System.Drawing.Point(342, 130);
             this.tbxDeterminedName.Margin = new System.Windows.Forms.Padding(4);
             this.tbxDeterminedName.Name = "tbxDeterminedName";
-            this.tbxDeterminedName.Size = new System.Drawing.Size(223, 20);
+            this.tbxDeterminedName.Size = new System.Drawing.Size(223, 23);
             this.tbxDeterminedName.TabIndex = 12;
             // 
             // tbxDeterminedType
@@ -490,7 +492,7 @@
             this.tbxDeterminedType.Location = new System.Drawing.Point(113, 130);
             this.tbxDeterminedType.Margin = new System.Windows.Forms.Padding(4);
             this.tbxDeterminedType.Name = "tbxDeterminedType";
-            this.tbxDeterminedType.Size = new System.Drawing.Size(117, 20);
+            this.tbxDeterminedType.Size = new System.Drawing.Size(117, 23);
             this.tbxDeterminedType.TabIndex = 11;
             // 
             // cbxHasAttachments
@@ -499,7 +501,7 @@
             this.cbxHasAttachments.Location = new System.Drawing.Point(119, 105);
             this.cbxHasAttachments.Margin = new System.Windows.Forms.Padding(4);
             this.cbxHasAttachments.Name = "cbxHasAttachments";
-            this.cbxHasAttachments.Size = new System.Drawing.Size(15, 14);
+            this.cbxHasAttachments.Size = new System.Drawing.Size(18, 17);
             this.cbxHasAttachments.TabIndex = 10;
             this.cbxHasAttachments.UseVisualStyleBackColor = true;
             // 
@@ -509,7 +511,7 @@
             this.tbxMessageId.Location = new System.Drawing.Point(314, 74);
             this.tbxMessageId.Margin = new System.Windows.Forms.Padding(4);
             this.tbxMessageId.Name = "tbxMessageId";
-            this.tbxMessageId.Size = new System.Drawing.Size(373, 20);
+            this.tbxMessageId.Size = new System.Drawing.Size(373, 23);
             this.tbxMessageId.TabIndex = 9;
             // 
             // tbxFromAddress
@@ -517,7 +519,7 @@
             this.tbxFromAddress.Location = new System.Drawing.Point(114, 46);
             this.tbxFromAddress.Margin = new System.Windows.Forms.Padding(4);
             this.tbxFromAddress.Name = "tbxFromAddress";
-            this.tbxFromAddress.Size = new System.Drawing.Size(573, 20);
+            this.tbxFromAddress.Size = new System.Drawing.Size(573, 23);
             this.tbxFromAddress.TabIndex = 8;
             // 
             // tbxSubject
@@ -525,7 +527,7 @@
             this.tbxSubject.Location = new System.Drawing.Point(113, 18);
             this.tbxSubject.Margin = new System.Windows.Forms.Padding(4);
             this.tbxSubject.Name = "tbxSubject";
-            this.tbxSubject.Size = new System.Drawing.Size(574, 20);
+            this.tbxSubject.Size = new System.Drawing.Size(574, 23);
             this.tbxSubject.TabIndex = 7;
             // 
             // label7
@@ -534,7 +536,7 @@
             this.label7.Location = new System.Drawing.Point(12, 133);
             this.label7.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(93, 13);
+            this.label7.Size = new System.Drawing.Size(119, 17);
             this.label7.TabIndex = 6;
             this.label7.Text = "Determined Type:";
             // 
@@ -544,7 +546,7 @@
             this.label6.Location = new System.Drawing.Point(238, 133);
             this.label6.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(96, 13);
+            this.label6.Size = new System.Drawing.Size(123, 17);
             this.label6.TabIndex = 5;
             this.label6.Text = "Determined Name:";
             // 
@@ -554,7 +556,7 @@
             this.label5.Location = new System.Drawing.Point(239, 77);
             this.label5.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(67, 13);
+            this.label5.Size = new System.Drawing.Size(82, 17);
             this.label5.TabIndex = 4;
             this.label5.Text = "Message ID:";
             // 
@@ -564,7 +566,7 @@
             this.label4.Location = new System.Drawing.Point(18, 105);
             this.label4.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(88, 13);
+            this.label4.Size = new System.Drawing.Size(111, 17);
             this.label4.TabIndex = 3;
             this.label4.Text = "Has Attachment:";
             // 
@@ -574,7 +576,7 @@
             this.label3.Location = new System.Drawing.Point(25, 77);
             this.label3.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(81, 13);
+            this.label3.Size = new System.Drawing.Size(101, 17);
             this.label3.TabIndex = 2;
             this.label3.Text = "Date Received:";
             // 
@@ -584,7 +586,7 @@
             this.label2.Location = new System.Drawing.Point(29, 49);
             this.label2.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(77, 13);
+            this.label2.Size = new System.Drawing.Size(97, 17);
             this.label2.TabIndex = 1;
             this.label2.Text = "From Address:";
             // 
@@ -594,7 +596,7 @@
             this.label1.Location = new System.Drawing.Point(36, 21);
             this.label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(69, 13);
+            this.label1.Size = new System.Drawing.Size(88, 17);
             this.label1.TabIndex = 0;
             this.label1.Text = "Subject Line:";
             // 
@@ -612,7 +614,7 @@
             this.optionsToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(1858, 24);
+            this.menuStrip1.Size = new System.Drawing.Size(1858, 28);
             this.menuStrip1.TabIndex = 2;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -621,13 +623,13 @@
             this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.exitToolStripMenuItem});
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
-            this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
+            this.fileToolStripMenuItem.Size = new System.Drawing.Size(44, 24);
             this.fileToolStripMenuItem.Text = "File";
             // 
             // exitToolStripMenuItem
             // 
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(92, 22);
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(108, 26);
             this.exitToolStripMenuItem.Text = "Exit";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
             // 
@@ -637,25 +639,39 @@
             this.responseConfigToolStripMenuItem,
             this.storageViewerToolStripMenuItem});
             this.optionsToolStripMenuItem.Name = "optionsToolStripMenuItem";
-            this.optionsToolStripMenuItem.Size = new System.Drawing.Size(61, 20);
+            this.optionsToolStripMenuItem.Size = new System.Drawing.Size(73, 24);
             this.optionsToolStripMenuItem.Text = "Options";
             // 
             // responseConfigToolStripMenuItem
             // 
             this.responseConfigToolStripMenuItem.Name = "responseConfigToolStripMenuItem";
-            this.responseConfigToolStripMenuItem.Size = new System.Drawing.Size(163, 22);
+            this.responseConfigToolStripMenuItem.Size = new System.Drawing.Size(195, 26);
             this.responseConfigToolStripMenuItem.Text = "Response Config";
             // 
             // storageViewerToolStripMenuItem
             // 
             this.storageViewerToolStripMenuItem.Name = "storageViewerToolStripMenuItem";
-            this.storageViewerToolStripMenuItem.Size = new System.Drawing.Size(163, 22);
+            this.storageViewerToolStripMenuItem.Size = new System.Drawing.Size(195, 26);
             this.storageViewerToolStripMenuItem.Text = "Storage Viewer";
             this.storageViewerToolStripMenuItem.Click += new System.EventHandler(this.storageViewerToolStripMenuItem_Click);
             // 
+            // lblExtendedWait
+            // 
+            this.lblExtendedWait.AutoSize = true;
+            this.lblExtendedWait.BackColor = System.Drawing.Color.White;
+            this.lblExtendedWait.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.lblExtendedWait.Font = new System.Drawing.Font("Tahoma", 19.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblExtendedWait.ForeColor = System.Drawing.Color.Red;
+            this.lblExtendedWait.Location = new System.Drawing.Point(287, 451);
+            this.lblExtendedWait.Name = "lblExtendedWait";
+            this.lblExtendedWait.Size = new System.Drawing.Size(1246, 43);
+            this.lblExtendedWait.TabIndex = 36;
+            this.lblExtendedWait.Text = "Messages are waiting to be sent but we have not reached the wait time.";
+            this.lblExtendedWait.Visible = false;
+            // 
             // Form1
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 17F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.LightSteelBlue;
             this.ClientSize = new System.Drawing.Size(1858, 962);
@@ -736,6 +752,7 @@
         private System.Windows.Forms.ToolStripMenuItem responseConfigToolStripMenuItem;
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.ToolStripMenuItem storageViewerToolStripMenuItem;
+        private System.Windows.Forms.Label lblExtendedWait;
     }
 }
 
