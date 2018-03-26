@@ -674,7 +674,7 @@ namespace MailServer
                 }
 
                 //When the calculated time is negative or we do not have enough data yet
-                if (ts == null || ts == TimeSpan.Zero || totalTimeNeeded == 0)
+                if (ts == null || ts == TimeSpan.Zero || totalTimeNeeded == 0 || ts.TotalSeconds == 0)
                 {
                     totalTimeNeeded = mailServer.LastInboxCount * secondsBetweenSends;
                     ts = TimeSpan.FromSeconds(totalTimeNeeded);

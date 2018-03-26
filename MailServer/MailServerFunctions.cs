@@ -2261,6 +2261,9 @@ public class MailServerFunctions
 
         foreach (MailStorage ms in storage)
         {
+            if (ms.Ignored) //Dont add ignored messages to stats since it most likely is duplicates
+                continue;
+
             if (ms.MsgId != mail.MsgId) //Skip including the message we are working on
             {
                 if (ms.SubjectLine.Replace("RE:", "").Replace("FW:", "").Trim() == mail.SubjectLine.Replace("RE:", "").Replace("FW:", "").Trim())
@@ -2328,6 +2331,7 @@ public class MailServerFunctions
             preProcessedBody.Trim().ToUpper().Contains("YOU ARE A MAD MAN") ||
             preProcessedBody.Trim().ToUpper().Contains("SEEMS YOU JUST CAME BACK FROM A PSYCHIATRIC") ||
             preProcessedBody.Trim().ToUpper().Contains("STOP CONTACTING ME PLEASE") ||
+            preProcessedBody.Trim().ToUpper().Contains("I WILL GET YOU ARREST") ||
             preProcessedBody.Trim().ToUpper().Contains("YOUR A SCAM BETER"))
         {
             response += GetRandomQuestionsWeAreCaught(rand) + " ";
@@ -2347,6 +2351,7 @@ public class MailServerFunctions
             response += GetRandomQuestionsAutomatedProgram(rand) + " ";
         }
         if (preProcessedBody.Trim().ToUpper().Contains("ALL KIND OF STUPID QUESTION") ||
+            preProcessedBody.Trim().ToUpper().Contains("ANY KIND OF JOKE") ||
             preProcessedBody.Trim().ToUpper().Contains("ARE YOU A CLOWN") ||
             preProcessedBody.Trim().ToUpper().Contains("ARE YOU HERE FOR JOKE") ||
             preProcessedBody.Trim().ToUpper().Contains("ARE YOU MAKING A JOKE") ||
@@ -2354,6 +2359,7 @@ public class MailServerFunctions
             preProcessedBody.Trim().ToUpper().Contains("ARE YOU MAKING JOKE") ||
             preProcessedBody.Trim().ToUpper().Contains("ARE YOU PLAYING WITH US") ||
             preProcessedBody.Trim().ToUpper().Contains("ARE YOU SERIOUS") ||
+            preProcessedBody.Trim().ToUpper().Contains("ARE YOU SURE YOU ARE MENTALLY") ||
             preProcessedBody.Trim().ToUpper().Contains("BE SERIOUS IF YOU") ||
             preProcessedBody.Trim().ToUpper().Contains("CANNOT AFFORD TO JOKE") ||
             preProcessedBody.Trim().ToUpper().Contains("DO NOT CONTACT ME") ||
@@ -2362,6 +2368,8 @@ public class MailServerFunctions
             preProcessedBody.Trim().ToUpper().Contains("DO YOU THINK YOU ARE FUNNY") ||
             preProcessedBody.Trim().ToUpper().Contains("DONT EMAIL TO ME AGAIN") ||
             preProcessedBody.Trim().ToUpper().Contains("FUCK YOU") ||
+            preProcessedBody.Trim().ToUpper().Contains("FUCK YOUR FAMILY") ||
+            preProcessedBody.Trim().ToUpper().Contains("FUK YOUR FAMILY") ||
             preProcessedBody.Trim().ToUpper().Contains("GETTING ANGRY OR ANNOYED") ||
             preProcessedBody.Trim().ToUpper().Contains("HAVE GOTTEN SOMEONE THAT KNOWS THE VALUE OF MY MONEY") ||
             preProcessedBody.Trim().ToUpper().Contains("HOPE YOU ARE NOT A SERIOUS TYPE") ||
@@ -2370,6 +2378,7 @@ public class MailServerFunctions
             preProcessedBody.Trim().ToUpper().Contains("I DONT KNOW IF YOU ARE A JOKER") ||
             preProcessedBody.Trim().ToUpper().Contains("I HAVE NO TIME TO WASTE") ||
             preProcessedBody.Trim().ToUpper().Contains("I PERSONALLY DO NOT HAVE TIME FOR") ||
+            preProcessedBody.Trim().ToUpper().Contains("I WILL GET YOU ARREST") ||
             preProcessedBody.Trim().ToUpper().Contains("IF YOU KNOW YOU ARE NOT SERIOUS") ||
             preProcessedBody.Trim().ToUpper().Contains("IS THIS A JOKE") ||
             preProcessedBody.Trim().ToUpper().Contains("JOKER PLEASE DONT") ||
@@ -2388,6 +2397,7 @@ public class MailServerFunctions
             preProcessedBody.Trim().ToUpper().Contains("STOP SENDING ME AN EMAIL") ||
             preProcessedBody.Trim().ToUpper().Contains("STOP SENDING ME EMAIL") ||
             preProcessedBody.Trim().ToUpper().Contains("STOP THIS YOUR MADNESS SPEECH") ||
+            preProcessedBody.Trim().ToUpper().Contains("STOP WRITING NONSENCE") ||
             preProcessedBody.Trim().ToUpper().Contains("THIS IS A SERIOUS TRANSACTION AND NOT A CHILDS PLAY") ||
             preProcessedBody.Trim().ToUpper().Contains("THIS IS NOT A JOKE") ||
             preProcessedBody.Trim().ToUpper().Contains("THIS IS NOT CHILD PLAY") ||
@@ -2397,6 +2407,7 @@ public class MailServerFunctions
             preProcessedBody.Trim().ToUpper().Contains("WARN YOU TO STOP CONTACTING ME") ||
             preProcessedBody.Trim().ToUpper().Contains("WE ARE NOT HERE FOR PLAY") ||
             preProcessedBody.Trim().ToUpper().Contains("WE ARE NOT HERE TO PLAY") ||
+            preProcessedBody.Trim().ToUpper().Contains("WILL PUNISH YOU") ||
             preProcessedBody.Trim().ToUpper().Contains("WHAT IS WRONG WITH YOU") ||
             preProcessedBody.Trim().ToUpper().Contains("YOU ARE A FUCHING JOKER") ||
             preProcessedBody.Trim().ToUpper().Contains("YOU ARE FUNNY") ||
@@ -2412,6 +2423,8 @@ public class MailServerFunctions
             preProcessedBody.Trim().ToUpper().Contains("YOU HAVE TIME FOR RUBBISH I DONT HAVE YOUR TIME MY TIME IS MONEY") ||
             preProcessedBody.Trim().ToUpper().Contains("YOU MUST BE A CRAZY") ||
             preProcessedBody.Trim().ToUpper().Contains("YOU SOUND LIKE A JOKER") ||
+            preProcessedBody.Trim().ToUpper().Contains("YOU SHOULD STOP VISITING MY BOX") ||
+            preProcessedBody.Trim().ToUpper().Contains("YOURE NOT SERIOUS") ||
             preProcessedBody.Trim().ToUpper().Contains("YOUR ARE NOT A SERIOUS PERSON"))
         {
             response += GetRandomQuestionsJokingAround(rand) + " ";
@@ -2525,6 +2538,9 @@ public class MailServerFunctions
         }
         if (preProcessedBody.Trim().ToUpper().Contains("I AM CONFUSED") ||
             preProcessedBody.Trim().ToUpper().Contains("WHAT ARE YOU SAYING") ||
+            preProcessedBody.Trim().ToUpper().Contains("I DID NOT UNDERSTAND YOU") ||
+            preProcessedBody.Trim().ToUpper().Contains("I DID NOT UNDERSTAND WHAT YOU MEAN") ||
+            preProcessedBody.Trim().ToUpper().Contains("I DID NOT UNDERSTAND WHAT YOU ARE") ||
             preProcessedBody.Trim().ToUpper().Contains("I DONT UNDERSTAND YOUR") ||
             preProcessedBody.Trim().ToUpper().Contains("I DONT UNDERSTAND WHAT YOU MEAN") ||
             preProcessedBody.Trim().ToUpper().Contains("I DONT UNDERSTAND WHAT YOU ARE") ||
@@ -3332,6 +3348,7 @@ public class MailServerFunctions
             preProcessedBody.Trim().ToUpper().Contains("INTERNATIONAL PASSPORT OR DRIVER LICENSE") ||
             preProcessedBody.Trim().ToUpper().Contains("INTERNATIONAL PASSPORT OR DRIVERS LICENSE") ||
             preProcessedBody.Trim().ToUpper().Contains("INTERNATIONAL APSSPORT") ||
+            preProcessedBody.Trim().ToUpper().Contains("IDENTIFICATION DOCUMENT") ||
             preProcessedBody.Trim().ToUpper().Contains("NO IDENTIFICATION SENT") ||
             preProcessedBody.Trim().ToUpper().Contains("WITH OUT INDETIFICATION") ||
             preProcessedBody.Trim().ToUpper().Contains("WITHOUT INDETIFICATION") ||
@@ -3355,7 +3372,7 @@ public class MailServerFunctions
             preProcessedBody.Trim().ToUpper().Contains("NOT RECEIVE YOUR PASSPORT") ||
             preProcessedBody.Trim().ToUpper().Contains("NOT RECEIVE YOUR DRIVER") ||
             preProcessedBody.Trim().ToUpper().Contains("DRIVING ID CARD") ||
-            preProcessedBody.Trim().ToUpper().Contains("VALID IDENTIFICATION CARD") ||
+            preProcessedBody.Trim().ToUpper().Contains("VALID IDENTIFICATION") ||
             preProcessedBody.Trim().ToUpper().Contains("EMAIL ME YOUR ID"))
         {
             askedForDetails = true;

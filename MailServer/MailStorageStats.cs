@@ -3,7 +3,7 @@
 public class MailStorageStats
 {
     private EmailType type;
-    private int count;
+    private int count, threadLength;
 
     public MailStorageStats()
     {
@@ -15,6 +15,11 @@ public class MailStorageStats
     {
         get { return count; }
         set { count = value; }
+    }
+    public int ThreadLength
+    {
+        get { return threadLength; }
+        set { threadLength = value; }
     }
     public EmailType Type
     {

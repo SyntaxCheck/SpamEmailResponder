@@ -97,6 +97,11 @@ namespace MailServer
             foreach (DataGridViewColumn column in dataGridView.Columns)
                 column.SortMode = DataGridViewColumnSortMode.Automatic;
         }
+        private void graphsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Graphs graph = new Graphs();
+            graph.Show();
+        }
 
         //Private functions
         private void LoadScreen()
