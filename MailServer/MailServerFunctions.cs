@@ -1850,6 +1850,24 @@ public class MailServerFunctions
 
         return paymentRtn;
     }
+    private string AttemptManualParseOfEmailAddress(string email)
+    {
+        string rtn = email;
+        string[] split = email.Split(new char[] { ' ' });
+
+        foreach (string s in split)
+        {
+            if (s.Contains('@'))
+            {
+                rtn = s;
+                break;
+            }
+        }
+
+        rtn = rtn.Replace("<", "").Replace(">", "").Replace("(", "").Replace(")", "").Replace("\"", "").Replace("'", "").Replace("[", "").Replace("]", "").Replace("{", "").Replace("}", "").Replace("|", "");
+
+        return rtn;
+    }
     public double GetHoursBetweenSending()
     {
         int tmpOut = 0;
@@ -2253,8 +2271,15 @@ public class MailServerFunctions
                     {
                         string emailAddres  =String.Empty;
 
-                        System.Net.Mail.MailAddress address = new System.Net.Mail.MailAddress(v.Replace("\"", ""));
-                        emailAddres = address.Address;
+                        try
+                        {
+                            System.Net.Mail.MailAddress address = new System.Net.Mail.MailAddress(v.Replace("\"", ""));
+                            emailAddres = address.Address;
+                        }
+                        catch (Exception)
+                        {
+                            emailAddres = AttemptManualParseOfEmailAddress(v);
+                        }
 
                         if (ms.ToAddress.Contains(emailAddres))
                         {

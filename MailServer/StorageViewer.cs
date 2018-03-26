@@ -16,7 +16,6 @@ namespace MailServer
     {
         private List<MailStorage> storage;
         private SerializeHelper serializeHelper;
-        private const string STORAGE_OBJECT_FILENAME = "MailStorage.store";
         private MailServerFunctions mailServer;
 
         public StorageViewer()
@@ -106,7 +105,7 @@ namespace MailServer
             {
                 string currentDirectory = Directory.GetCurrentDirectory();
 
-                string fullPath = Path.Combine(currentDirectory, STORAGE_OBJECT_FILENAME);
+                string fullPath = Path.Combine(currentDirectory, StaticVariables.STORAGE_OBJECT_FILENAME);
                 if (File.Exists(fullPath))
                 {
                     storage = serializeHelper.ReadFromBinaryFile<List<MailStorage>>(fullPath);

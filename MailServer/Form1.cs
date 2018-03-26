@@ -10,7 +10,6 @@ namespace MailServer
     public partial class Form1 : Form
     {
         private const int SEND_INTERVAL = 240000; //Gmail has a limit of 500 emails per 24 hour period. Set the max output well above that. At 3 minutes we would have a max of 480 per day.
-        private const string STORAGE_OBJECT_FILENAME = "MailStorage.store";
         private string currentDirectory;
         private LoggerInfo loggerInfo;
         private List<MailStorage> storage;
@@ -58,7 +57,7 @@ namespace MailServer
                 }
 
                 //Load in the storage serialized class
-                string fullPath = Path.Combine(currentDirectory, STORAGE_OBJECT_FILENAME);
+                string fullPath = Path.Combine(currentDirectory, StaticVariables.STORAGE_OBJECT_FILENAME);
                 if (File.Exists(fullPath))
                 {
                     storage = serializeHelper.ReadFromBinaryFile<List<MailStorage>>(fullPath);
@@ -115,7 +114,7 @@ namespace MailServer
             if (storage.Count() > 0)
             {
                 Logger.WriteDbg(loggerInfo, "Debug Timestamp Pre Write storage file: " + DateTime.Now.ToString("hh:mm:ss.fff"));
-                string fullPath = Path.Combine(currentDirectory, STORAGE_OBJECT_FILENAME);
+                string fullPath = Path.Combine(currentDirectory, StaticVariables.STORAGE_OBJECT_FILENAME);
                 serializeHelper.WriteToBinaryFile(fullPath, storage, false);
                 Logger.WriteDbg(loggerInfo, "Debug Timestamp Post Write storage file: " + DateTime.Now.ToString("hh:mm:ss.fff"));
             }
@@ -173,6 +172,17 @@ namespace MailServer
                                 skippedMessages += ";;;" + workingOnMsg + ";;;";
                             }
                         }
+
+                        //Start the visual countdown on screen
+                        if (!lblExtendedWait.Visible)
+                        {
+                            Logger.WriteDbg(loggerInfo, "Setting countdown timer to trackbar value inside of Process Timer.");
+                            countdownRemaining = trckBar.Value;
+                            if (!countdownTimer.Enabled)
+                            {
+                                countdownTimer.Start();
+                            }
+                        }
                     }
                 }
             }
@@ -187,13 +197,6 @@ namespace MailServer
                     processTimer.Stop();
                     LoadMessage();
                 }
-            }
-
-            //Start the visual countdown on screen
-            countdownRemaining = trckBar.Value;
-            if (!countdownTimer.Enabled)
-            {
-                countdownTimer.Start();
             }
         }
         private void countdownTimer_Tick(object sender, EventArgs e)
@@ -281,6 +284,7 @@ namespace MailServer
                 lblTrackBarValue.Visible = true;
                 trckBar.Visible = true;
 
+                Logger.WriteDbg(loggerInfo, "Setting countdown timer to trackbar value inside of cbxAutoSend checked event.");
                 countdownRemaining = trckBar.Value;
                 if (!countdownTimer.Enabled)
                 {
@@ -318,6 +322,11 @@ namespace MailServer
             StorageViewer sv = new StorageViewer();
             sv.Show();
         }
+        private void graphsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Graphs graph = new Graphs();
+            graph.Show();
+        }
 
         //Private functions
         private int CheckForMessages()
@@ -351,7 +360,7 @@ namespace MailServer
                 if (response.Code >= 0)
                 {
                     //Always write the storage object here. When the program is auto sending we want to write after the send even if we didnt retrieve new messages
-                    string fullPath = Path.Combine(currentDirectory, STORAGE_OBJECT_FILENAME);
+                    string fullPath = Path.Combine(currentDirectory, StaticVariables.STORAGE_OBJECT_FILENAME);
                     serializeHelper.WriteToBinaryFile(fullPath, storage, false);
 
                     rtn = LoadMessage();
@@ -433,7 +442,7 @@ namespace MailServer
                     //Write Storage object to disk
                     if (storage.Count() > 0)
                     {
-                        string fullPath = Path.Combine(currentDirectory, STORAGE_OBJECT_FILENAME);
+                        string fullPath = Path.Combine(currentDirectory, StaticVariables.STORAGE_OBJECT_FILENAME);
                         serializeHelper.WriteToBinaryFile(fullPath, storage, false);
                     }
                     break;
@@ -487,7 +496,7 @@ namespace MailServer
                 tbxOutput.Text = "No messages ready to send.";
                 Logger.Write(loggerInfo, "No messages ready to send");
 
-                List<MailStorage> previousMessagesInThread = mailServer.GetPreviousMessagesInThread(storage, storage[i]);
+                List<MailStorage> previousMessagesInThread = mailServer.GetPreviousMessagesInThread(storage, storage[firstSkippedIndexBasedOnTime]);
 
                 //Load the Message waiting to be sent on screen
                 LoadScreen(storage[firstSkippedIndexBasedOnTime], previousMessagesInThread);
@@ -496,7 +505,6 @@ namespace MailServer
                     Regen();
                 }
 
-                lblExtendedWait.Visible = true;
                 if (cbxAutoSend.Checked)
                 {
                     //Modify the timer interval to reflect how long we have to wait before the pending message is going to be sent
@@ -506,7 +514,18 @@ namespace MailServer
                     processTimer.Start();
 
                     countdownTimer.Stop();
-                    countdownRemaining = processTimer.Interval / 1000;
+                    countdownRemaining = (int)Math.Round(interval, 0) / 1000;
+
+                    if (countdownRemaining < trckBar.Value)
+                    {
+                        countdownRemaining = trckBar.Value;
+                    }
+                    else
+                    {
+                        lblExtendedWait.Visible = true;
+                    }
+
+                    Logger.WriteDbg(loggerInfo, "Setting countdown timer to extended wait: " + countdownRemaining.ToString() + " seconds");
                     countdownTimer.Start();
                 }
 
@@ -599,7 +618,7 @@ namespace MailServer
                     //Write Storage object to disk
                     if (storage.Count() > 0)
                     {
-                        string fullPath = Path.Combine(currentDirectory, STORAGE_OBJECT_FILENAME);
+                        string fullPath = Path.Combine(currentDirectory, StaticVariables.STORAGE_OBJECT_FILENAME);
                         serializeHelper.WriteToBinaryFile(fullPath, storage, false);
                     }
 
