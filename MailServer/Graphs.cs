@@ -89,7 +89,7 @@ namespace MailServer
                     tmpSeries.MarkerBorderWidth = 100;
                     tmpSeries.Points.AddXY("Message Type",mss.Count);
                     tmpSeries.BorderWidth = 100;
-                    tmpSeries["PixelPointWidth"] = "500";
+                    tmpSeries["PixelPointWidth"] = "700";
                 }
             }
         }
