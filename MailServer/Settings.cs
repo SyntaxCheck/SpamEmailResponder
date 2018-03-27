@@ -2,6 +2,8 @@
 
 public class Settings
 {
+    //HowMuchMoneyDoIHave
+    //AttachPaymentSlip
     private string emailAddress, password, myName, myFakeAddress, myFakeBirthdate, pathToMyFakeID, myFakePhoneNumber, myFakeOccupation, 
         myFakeGender, myFakeMaritalStatus, myFakeCountry, outgoingMessageIdDomainName, minutesDelayBeforeAnsweringAnEmail;
     private List<string> names, greeting, signoff, introduction, introductionOpening, introductionClosing, personDescriptionMale, personDescriptionFemale, memory, followupLine, acquaintance, 

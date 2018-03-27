@@ -47,6 +47,15 @@ namespace MailServer
         {
 
         }
+        private void rbMessageType_CheckedChanged(object sender, EventArgs e)
+        {
+            LoadGraph();
+        }
+
+        private void rbThreadLength_CheckedChanged(object sender, EventArgs e)
+        {
+            LoadGraph();
+        }
 
         //Helper functions
         private void LoadGraph()
@@ -56,12 +65,12 @@ namespace MailServer
                 List<MailStorageStats> stats = new List<MailStorageStats>();
                 foreach (MailStorage ms in storage)
                 {
+                    if (ms.Ignored) //Dont add ignored messages to stats since it most likely is duplicates
+                        continue;
+
                     bool found = false;
                     for (int i = 0; i < stats.Count(); i++)
                     {
-                        if (ms.Ignored) //Dont add ignored messages to stats since it most likely is duplicates
-                            continue;
-
                         if (stats[i].Type == (EmailType)ms.MessageType)
                         {
                             found = true;
@@ -87,7 +96,7 @@ namespace MailServer
                 chartMain.ChartAreas[0].RecalculateAxesScale();
                 foreach (MailStorageStats mss in stats)
                 {
-                    Series tmpSeries = chartMain.Series.Add(mss.Type.ToString());
+                    Series tmpSeries = chartMain.Series.Add(mss.Type.ToString() + " (" + mss.Count.ToString() + ")");
                     tmpSeries.ChartType = SeriesChartType.Column;
                     tmpSeries.MarkerBorderWidth = 100;
                     tmpSeries.Points.AddXY("Message Type", mss.Count);
@@ -99,28 +108,25 @@ namespace MailServer
             {
                 List<MailStorageStats> stats = new List<MailStorageStats>();
                 List<MailStorage> tempStorage = CopyList(storage);
+                List<string> skipMsgIds = new List<string>();
+
                 foreach (MailStorage ms in tempStorage)
                 {
                     bool found = false;
 
                     if (ms.Ignored) //Dont add ignored messages to stats since it most likely is duplicates
                         continue;
+                    if (skipMsgIds.Contains(ms.MsgId))
+                        continue;
 
                     //Get Thread Length for current Message
                     List<MailStorage> thread = mailServer.GetPreviousMessagesInThread(tempStorage, ms);
                     int threadCount = thread.Count() + 1;
 
-                    //Remove all messages from the thread from the storage list so that we dont count them again
+                    //Add all the MsgIds from the thread list to the skip IDs list
                     foreach (MailStorage tms in thread)
                     {
-                        for (int i = 0; i < tempStorage.Count(); i++)
-                        {
-                            if (tempStorage[i].MsgId == tms.MsgId)
-                            {
-                                tempStorage.RemoveAt(i);
-                                break;
-                            }
-                        }
+                        skipMsgIds.Add(tms.MsgId);
                     }
 
                     for (int i = 0; i < stats.Count(); i++)
@@ -151,12 +157,12 @@ namespace MailServer
                 stats = stats.OrderBy(t => t.ThreadLength).ToList();
                 foreach (MailStorageStats mss in stats)
                 {
-                    Series tmpSeries = chartMain.Series.Add(mss.ThreadLength.ToString() + " msgs");
+                    Series tmpSeries = chartMain.Series.Add(mss.ThreadLength.ToString() + " msgs (" + mss.Count.ToString() + ")");
                     tmpSeries.ChartType = SeriesChartType.Column;
                     tmpSeries.MarkerBorderWidth = 100;
                     tmpSeries.Points.AddXY("Amount at thread length", mss.Count);
                     tmpSeries.BorderWidth = 100;
-                    tmpSeries["PixelPointWidth"] = "400";
+                    tmpSeries["PixelPointWidth"] = "600";
                 }
             }
         }

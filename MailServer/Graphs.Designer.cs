@@ -28,16 +28,16 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea2 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend2 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series2 = new System.Windows.Forms.DataVisualization.Charting.Series();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.chartMain = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.rbMessageType = new System.Windows.Forms.RadioButton();
             this.rbThreadLength = new System.Windows.Forms.RadioButton();
+            this.rbMessageType = new System.Windows.Forms.RadioButton();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.chartMain)).BeginInit();
             this.groupBox1.SuspendLayout();
@@ -51,7 +51,7 @@
             this.fileToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(1051, 28);
+            this.menuStrip1.Size = new System.Drawing.Size(1051, 24);
             this.menuStrip1.TabIndex = 0;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -60,28 +60,28 @@
             this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.exitToolStripMenuItem});
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
-            this.fileToolStripMenuItem.Size = new System.Drawing.Size(44, 24);
+            this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
             this.fileToolStripMenuItem.Text = "File";
             // 
             // exitToolStripMenuItem
             // 
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(108, 26);
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(92, 22);
             this.exitToolStripMenuItem.Text = "Exit";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
             // 
             // chartMain
             // 
-            chartArea1.Name = "ChartArea1";
-            this.chartMain.ChartAreas.Add(chartArea1);
-            legend1.Name = "Legend1";
-            this.chartMain.Legends.Add(legend1);
+            chartArea2.Name = "ChartArea1";
+            this.chartMain.ChartAreas.Add(chartArea2);
+            legend2.Name = "Legend1";
+            this.chartMain.Legends.Add(legend2);
             this.chartMain.Location = new System.Drawing.Point(12, 82);
             this.chartMain.Name = "chartMain";
-            series1.ChartArea = "ChartArea1";
-            series1.Legend = "Legend1";
-            series1.Name = "Series1";
-            this.chartMain.Series.Add(series1);
+            series2.ChartArea = "ChartArea1";
+            series2.Legend = "Legend1";
+            series2.Name = "Series1";
+            this.chartMain.Series.Add(series2);
             this.chartMain.Size = new System.Drawing.Size(1027, 455);
             this.chartMain.TabIndex = 1;
             this.chartMain.Text = "Main Chart";
@@ -97,32 +97,34 @@
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Graph Type";
             // 
+            // rbThreadLength
+            // 
+            this.rbThreadLength.AutoSize = true;
+            this.rbThreadLength.Location = new System.Drawing.Point(201, 20);
+            this.rbThreadLength.Name = "rbThreadLength";
+            this.rbThreadLength.Size = new System.Drawing.Size(95, 17);
+            this.rbThreadLength.TabIndex = 1;
+            this.rbThreadLength.TabStop = true;
+            this.rbThreadLength.Text = "Thread Length";
+            this.rbThreadLength.UseVisualStyleBackColor = true;
+            this.rbThreadLength.CheckedChanged += new System.EventHandler(this.rbThreadLength_CheckedChanged);
+            // 
             // rbMessageType
             // 
             this.rbMessageType.AutoSize = true;
             this.rbMessageType.Checked = true;
             this.rbMessageType.Location = new System.Drawing.Point(15, 20);
             this.rbMessageType.Name = "rbMessageType";
-            this.rbMessageType.Size = new System.Drawing.Size(180, 21);
+            this.rbMessageType.Size = new System.Drawing.Size(145, 17);
             this.rbMessageType.TabIndex = 0;
             this.rbMessageType.TabStop = true;
             this.rbMessageType.Text = "Message Type Bar Graph";
             this.rbMessageType.UseVisualStyleBackColor = true;
-            // 
-            // rbThreadLength
-            // 
-            this.rbThreadLength.AutoSize = true;
-            this.rbThreadLength.Location = new System.Drawing.Point(201, 20);
-            this.rbThreadLength.Name = "rbThreadLength";
-            this.rbThreadLength.Size = new System.Drawing.Size(119, 21);
-            this.rbThreadLength.TabIndex = 1;
-            this.rbThreadLength.TabStop = true;
-            this.rbThreadLength.Text = "Thread Length";
-            this.rbThreadLength.UseVisualStyleBackColor = true;
+            this.rbMessageType.CheckedChanged += new System.EventHandler(this.rbMessageType_CheckedChanged);
             // 
             // Graphs
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 17F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.LightSteelBlue;
             this.ClientSize = new System.Drawing.Size(1051, 549);
