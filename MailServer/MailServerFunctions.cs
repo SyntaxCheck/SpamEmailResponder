@@ -2390,6 +2390,7 @@ public class MailServerFunctions
             preProcessedBody.Trim().ToUpper().Contains("NOT HERE TO BE PLAYING GAMES") ||
             preProcessedBody.Trim().ToUpper().Contains("SERIOUS ONES SCALE THROUGH") ||
             preProcessedBody.Trim().ToUpper().Contains("SOUND LIKE A JOKE") ||
+            preProcessedBody.Trim().ToUpper().Contains("STOP ACTING FUNNY") ||
             preProcessedBody.Trim().ToUpper().Contains("STOP SCAMING YOURSELF") ||
             preProcessedBody.Trim().ToUpper().Contains("STOP SCAMMING YOURSELF") ||
             preProcessedBody.Trim().ToUpper().Contains("STOP SENDING MAILS THAT DO NOT HAVE ANY MEANING") ||
@@ -2415,6 +2416,7 @@ public class MailServerFunctions
             preProcessedBody.Trim().ToUpper().Contains("YOU ARE FRUSTRATING") ||
             preProcessedBody.Trim().ToUpper().Contains("YOU ARE NEVER READY OR SERIOUS") ||
             preProcessedBody.Trim().ToUpper().Contains("YOU ARE JUST A JOKE") ||
+            preProcessedBody.Trim().ToUpper().Contains("YOU ARE JOKE") ||
             preProcessedBody.Trim().ToUpper().Contains("YOU ARE MAD MAN") ||
             preProcessedBody.Trim().ToUpper().Contains("YOU ARE NOT SERIOUS") ||
             preProcessedBody.Trim().ToUpper().Contains("YOU ARE SO NOT SERIOUS") ||
@@ -2655,6 +2657,7 @@ public class MailServerFunctions
             preProcessedBody.Trim().ToUpper().Contains("WHAT KIND OF PROOF DO YOU SEEK") ||
             preProcessedBody.Trim().ToUpper().Contains("WHAT KIND OF PROOF?") ||
             preProcessedBody.Trim().ToUpper().Contains("WHAT CAN OF PROOF DID YOU WANT") ||
+            preProcessedBody.Trim().ToUpper().Contains("WHAT MORE CONVICTION DO YOU NEED") ||
             preProcessedBody.Trim().ToUpper().Contains("WHAT TYPE OF PROOF?"))
         {
             response += GetRandomQuestionsWhatTypeOfProof(rand) + " ";
@@ -2662,6 +2665,7 @@ public class MailServerFunctions
         if (preProcessedBody.Trim().ToUpper().Contains("HOW DO YOU WANT YOUR FUNDS TO BE RELEASED") ||
             preProcessedBody.Trim().ToUpper().Contains("HOW DO YOU WANT US TO RELEASE THE FUNDS") ||
             preProcessedBody.Trim().ToUpper().Contains("HOW YOU WANT YOUR FUNDS PRESENTED") ||
+            preProcessedBody.Trim().ToUpper().Contains("HOW YOU WISH TO HAVE YOUR FUND") ||
             preProcessedBody.Trim().ToUpper().Contains("OPTION YOU WISH TO RECEIVE THE FUND") ||
             preProcessedBody.Replace(" ","").Trim().ToUpper().Contains("ATMCARD,BANKTOBANKWIRETRANSFERORDIP") ||
             preProcessedBody.Trim().ToUpper().Contains("HOW DO YOU WANT THE FUNDS RELEASED"))
