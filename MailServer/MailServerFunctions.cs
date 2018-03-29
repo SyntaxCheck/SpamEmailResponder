@@ -57,7 +57,9 @@ public class MailServerFunctions
         Phishing = 24,
         ScamVictim = 25,
         ForeignLanguage = 26,
-        GenericAdvertisement = 27
+        GenericAdvertisement = 27,
+        MessageTooLong = 28,
+        MessageTooShort = 29
     };
 
     public MailServerFunctions()
@@ -90,6 +92,10 @@ public class MailServerFunctions
             settings.PathToMyFakeID = @"c:\FakeID\PathHereCanBeAnyTypeOfFileAndDoesNotNeedToBeAnIdCanEvenBeACorruptImageFile.png";
             settings.OutgoingMessageIdDomainName = "mail.gmail.com";
             settings.MinutesDelayBeforeAnsweringAnEmail = "240";
+            settings.EnableLongMessageTypeReplies = "FALSE";
+            settings.EnableShortMessageTypeReplies = "FALSE";
+            settings.LongMessageUpperLimit = 2000;
+            settings.ShortMessageLowerLimit = 75;
             settings.Acquaintance = new List<string>() { "Bob", "Steve", "Bill", "Chad", "Mary", "Margret", "Joe", "Frank", "Cathy" };
             settings.Products = new List<string>() { "Cars", "Boats", "Lava Lamps", "Blinker Fluid" };
             settings.PaymentMethods = new List<string>() { "Cash", "Wire Transfer", "Bank Transfer", "Personal Check", "Bitcoin", "USD", "Euros", "Rupels" };
@@ -107,6 +113,8 @@ public class MailServerFunctions
             settings.RandomThoughts = new List<string>() { "Life is much too short to get caught up in the details." };
             settings.ConsignmentBoxImageIncluded = new List<string>() { "I have noticed an image file was included. Please include more angles." };
             settings.ConsignmentBoxImageNotIncluded = new List<string>() { "I have noticed no image file was included. Please reply back with a picture." };
+            settings.ResponseLongMessageType = new List<string>() { "The message is too long for me to read." };
+            settings.ResponseShortMessageType = new List<string>() { "The message is lacking details." };
 
             //Question responses
             settings.QuestionsHowAreYou = new List<string>() { "I am doing well, thanks for asking." };
@@ -154,6 +162,7 @@ public class MailServerFunctions
             settings.QuestionsTellUsAboutYourself = new List<string>() { "|introduction|",  };
             settings.QuestionsAutomatedProgram = new List<string>() { "I am a real person just trying to respond to your emails.", "I am not sure why you think I am not a real person. Don't I reply to your messages?" };
             settings.QuestionsUseWalmartToPay = new List<string>() { "I do not live near a walmart that has those payment options.", "I called the local walmart and they do not offer those payment options." };
+            settings.QuestionsHowMuchMoneyDoIHave = new List<string>() { "I have $|GetRandomNumber10000|." };
 
             //Opening responses
             settings.ResponseOpeningAtmCard = new List<string>() { "I am glad to see progress with my ATM card, please send card numbers over email." };
@@ -638,6 +647,33 @@ public class MailServerFunctions
 
     //TODO This class is potentially too large, consider splitting into smaller classes and remove regions
     //Opening Responses
+
+    //Special Types
+    #region SpecialTypes
+    private string GetRandomOpeningResponseLongMessageType(Random rand, string greetings, string name, MailStorage currentMessage)
+    {
+        string directResponse = HandleDirectQuestions(MakeEmailEasierToRead(currentMessage.EmailBodyPlain), ref currentMessage, rand);
+
+        return greetings + " " + name + ". " + directResponse + SettingPostProcessing(settings.ResponseLongMessageType[rand.Next(0, settings.ResponseLongMessageType.Count())], rand);
+    }
+    private string GetRandomOpeningResponseShortMessageType(Random rand, string greetings, string name, MailStorage currentMessage)
+    {
+        string directResponse = HandleDirectQuestions(MakeEmailEasierToRead(currentMessage.EmailBodyPlain), ref currentMessage, rand);
+
+        return greetings + " " + name + ". " + directResponse + SettingPostProcessing(settings.ResponseShortMessageType[rand.Next(0, settings.ResponseShortMessageType.Count())], rand);
+    }
+    private string GetRandomResponseForSellingServices(Random rand, string greetings, string name, MailStorage currentMessage)
+    {
+        List<string> lst = new List<string>
+        {
+            "UNSUBSCRIBE",
+            "Please remove me from your mailing list"
+        };
+
+        return lst[rand.Next(0, lst.Count())];
+    }
+    #endregion
+
     #region Opening Responses
     private string GetRandomOpeningResponseTest(Random rand)
     {
@@ -849,20 +885,6 @@ public class MailServerFunctions
         string directResponse = HandleDirectQuestions(MakeEmailEasierToRead(currentMessage.EmailBodyPlain), ref currentMessage, rand);
 
         return greetings + " " + name + ". " + directResponse + SettingPostProcessing(settings.ResponseOpeningGenericAdvertisement[rand.Next(0, settings.ResponseOpeningGenericAdvertisement.Count())], rand);
-    }
-    #endregion
-
-    //Unsubscribe
-    #region Unsubscribe
-    private string GetRandomResponseForSellingServices(Random rand, string greetings, string name, MailStorage currentMessage)
-    {
-        List<string> lst = new List<string>
-        {
-            "UNSUBSCRIBE",
-            "Please remove me from your mailing list"
-        };
-
-        return lst[rand.Next(0, lst.Count())];
     }
     #endregion
 
@@ -1506,6 +1528,12 @@ public class MailServerFunctions
 
         return lst[rand.Next(0, lst.Count())];
     }
+    private string GetRandomQuestionsHowMuchMoneyDoIHave(Random rand)
+    {
+        List<string> lst = settings.QuestionsHowMuchMoneyDoIHave;
+
+        return lst[rand.Next(0, lst.Count())];
+    }
     #endregion
 
     //Helper functions
@@ -1688,7 +1716,7 @@ public class MailServerFunctions
         }
 
         //Sometimes they mistype ">" with "?", we don't need punctuation when parsing so just replace with space
-        body = body.Replace("?", " ").Replace("&", " ").Replace("'", " ");
+        body = body.Replace("?", " ").Replace("&", " ").Replace("'", " ").Replace("*", " ").Replace("_____", " ").Replace(".COM__", ".COM");
 
         string[] lineSplit = body.Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
         string[] lineKeywordSplit = lineKeywordList.ToUpper().Split(new string[] { ";" }, StringSplitOptions.RemoveEmptyEntries);
@@ -1887,10 +1915,12 @@ public class MailServerFunctions
                 return false;
 
             int atLocation = email.Trim().IndexOf('@');
+            int domainComPortion = email.Trim().LastIndexOf('.');
             string name = email.Trim().Substring(0, atLocation);
             string domain = email.Trim().Substring(atLocation + 1);
+            string domainCom = email.Trim().Substring(domainComPortion + 1);
 
-            if (name.Trim().Length == 0 || domain.Trim().Length == 0)
+            if (name.Trim().Length == 0 || domain.Trim().Length == 0 || domainCom.Trim().Length == 0)
                 return false;
 
             var addr = new System.Net.Mail.MailAddress(email.Trim());
@@ -2240,6 +2270,75 @@ public class MailServerFunctions
             return false;
         }
     }
+    public bool ParseBooleanSetting(string str)
+    {
+        bool rtn = false;
+
+        if (str.ToUpper().Trim() == "T" || str.ToUpper().Trim() == "TRUE" || str.ToUpper().Trim() == "Y" || str.ToUpper().Trim() == "YES")
+            rtn = true;
+
+        return rtn;
+    }
+    public string RemoveReplyTextFromMessage(string text) //Purpose of this function is to strip off the reply text sometimes included. This is the text of the email I sent that they are replying to
+    {
+        string compare = "FROM: " + settings.EmailAddress.ToUpper();
+        if (text.ToUpper().Contains(compare))
+        {
+            int pos = text.IndexOf(compare);
+            text = text.Substring(0, pos);
+        }
+
+        compare = "FROM:" + settings.EmailAddress.ToUpper();
+        if (text.ToUpper().Contains(compare))
+        {
+            int pos = text.IndexOf(compare);
+            text = text.Substring(0, pos);
+        }
+
+        compare = "AM, " + settings.EmailAddress.ToUpper();
+        if (text.ToUpper().Contains(compare))
+        {
+            int pos = text.IndexOf(compare);
+            text = text.Substring(0, pos);
+        }
+
+        compare = "AM," + settings.EmailAddress.ToUpper();
+        if (text.ToUpper().Contains(compare))
+        {
+            int pos = text.IndexOf(compare);
+            text = text.Substring(0, pos);
+        }
+
+        compare = "PM, " + settings.EmailAddress.ToUpper();
+        if (text.ToUpper().Contains(compare))
+        {
+            int pos = text.IndexOf(compare);
+            text = text.Substring(0, pos);
+        }
+
+        compare = "PM," + settings.EmailAddress.ToUpper();
+        if (text.ToUpper().Contains(compare))
+        {
+            int pos = text.IndexOf(compare);
+            text = text.Substring(0, pos);
+        }
+
+        compare = settings.EmailAddress.ToUpper() + " <" + settings.EmailAddress.ToUpper() + ">";
+        if (text.ToUpper().Contains(compare))
+        {
+            int pos = text.IndexOf(compare);
+            text = text.Substring(0, pos);
+        }
+
+        compare = settings.EmailAddress.ToUpper() + "<" + settings.EmailAddress.ToUpper() + ">";
+        if (text.ToUpper().Contains(compare))
+        {
+            int pos = text.IndexOf(compare);
+            text = text.Substring(0, pos);
+        }
+
+        return text;
+    }
     public string CalculateMD5Hash(string input)
     {
         MD5 md5 = System.Security.Cryptography.MD5.Create();
@@ -2445,6 +2544,9 @@ public class MailServerFunctions
             preProcessedBody.Trim().ToUpper().Contains("YOUR WHATSAPP NUMBER") ||
             preProcessedBody.Trim().ToUpper().Contains("I HAVE CALLED") ||
             preProcessedBody.Trim().ToUpper().Contains("TO CALL YOU") ||
+            preProcessedBody.Trim().ToUpper().Contains("LETS DEAL ON PHONE") ||
+            preProcessedBody.Trim().ToUpper().Contains("KINDLY TEXT OR CALL US") ||
+            preProcessedBody.Trim().ToUpper().Contains("YOU CAN TEXT ME ON MY PHONE") ||
             preProcessedBody.Trim().ToUpper().Contains("COME OVER IN FACE BOOK"))
         {
             response += GetRandomQuestionsChangeContactMethod(rand) + " ";
@@ -2506,6 +2608,7 @@ public class MailServerFunctions
             preProcessedBody.Trim().ToUpper().Contains("PURCHASE ITUNE") ||
             preProcessedBody.Trim().ToUpper().Contains("SEND IT THROUGH MONEY") ||
             preProcessedBody.Trim().ToUpper().Contains("SEND IT THROUGH WESTERN") ||
+            preProcessedBody.Trim().ToUpper().Contains("SEND ME THE MONEY") ||
             preProcessedBody.Trim().ToUpper().Contains("SEND REQUESTED FEE") ||
             preProcessedBody.Trim().ToUpper().Contains("SEND SHIPING FEE") ||
             preProcessedBody.Trim().ToUpper().Contains("SEND SHIPPING FEE") ||
@@ -2523,6 +2626,7 @@ public class MailServerFunctions
             preProcessedBody.Trim().ToUpper().Contains("SEND THIS FEE") ||
             preProcessedBody.Trim().ToUpper().Contains("SEND TO MAKE THE TOTAL OF THE AMOUNT") ||
             preProcessedBody.Trim().ToUpper().Contains("SEND TO US THE COURIER SERVICE CHARGE") ||
+            preProcessedBody.Trim().ToUpper().Contains("SENDING THE MONEY") ||
             preProcessedBody.Trim().ToUpper().Contains("SENT THE CLEARANCE FEE") ||
             preProcessedBody.Trim().ToUpper().Contains("TAKE CARE OF THE FEE") ||
             preProcessedBody.Trim().ToUpper().Contains("WE ONLY NEED THE FEE FROM YOU NOW") ||
@@ -2556,6 +2660,7 @@ public class MailServerFunctions
             preProcessedBody.Trim().ToUpper().Contains("I REALLY DO NOT UNDERSTAND YOUR") ||
             preProcessedBody.Trim().ToUpper().Contains("I REALLY DO NOT UNDERSTAND WHAT YOU MEAN") ||
             preProcessedBody.Trim().ToUpper().Contains("I REALLY DO NOT UNDERSTAND WHAT YOU ARE") ||
+            preProcessedBody.Trim().ToUpper().Contains("I CAN NOT UNDERSTAND YOU") ||
             preProcessedBody.Trim().ToUpper().Contains("WHAT ARE YOU SAYING") ||
             preProcessedBody.Trim().ToUpper().Contains("WHAT ARE YOU JUST SAYING") ||
             preProcessedBody.Trim().ToUpper().Contains("WHAT ARE YOU TALKING ABOUT") ||
@@ -2667,6 +2772,7 @@ public class MailServerFunctions
             preProcessedBody.Trim().ToUpper().Contains("HOW YOU WANT YOUR FUNDS PRESENTED") ||
             preProcessedBody.Trim().ToUpper().Contains("HOW YOU WISH TO HAVE YOUR FUND") ||
             preProcessedBody.Trim().ToUpper().Contains("OPTION YOU WISH TO RECEIVE THE FUND") ||
+            preProcessedBody.Trim().ToUpper().Contains("HOW DO WE SEND THE FUNDS TO YOU") ||
             preProcessedBody.Replace(" ","").Trim().ToUpper().Contains("ATMCARD,BANKTOBANKWIRETRANSFERORDIP") ||
             preProcessedBody.Trim().ToUpper().Contains("HOW DO YOU WANT THE FUNDS RELEASED"))
         {
@@ -2692,6 +2798,7 @@ public class MailServerFunctions
             preProcessedBody.Trim().ToUpper().Contains("THIS IS THE BANK EMAIL") ||
             preProcessedBody.Trim().ToUpper().Contains("ABLE TO REACH THE BANK") ||
             preProcessedBody.Trim().ToUpper().Contains("GO TO YOUR BANK") ||
+            preProcessedBody.Trim().ToUpper().Contains("TAKE IT TO YOUR BANK") ||
             preProcessedBody.Trim().ToUpper().Contains("TALK TO THE BANK"))
         {
             response += GetRandomQuestionsContactTheBank(rand) + " ";
@@ -2753,6 +2860,7 @@ public class MailServerFunctions
             preProcessedBody.Trim().ToUpper().Contains("WHAT THE BANK ASK YOU TO DO") ||
             preProcessedBody.Trim().ToUpper().Contains("WHAT THE BANK NEEDS YOU TO DO") ||
             preProcessedBody.Trim().ToUpper().Contains("WHAT THE BANK HAS YOU DO") ||
+            preProcessedBody.Trim().ToUpper().Contains("WHAT WAS THE RESPONSE FROM THE BANK") ||
             preProcessedBody.Trim().ToUpper().Contains("WHAT THE BANK ASKS YOU TO DO"))
         {
             response += GetRandomQuestionsTellUsWhatTheyAskedYouToDo(rand) + " ";
@@ -2770,6 +2878,13 @@ public class MailServerFunctions
             preProcessedBody.Trim().ToUpper().Contains("FEE AT WALMART"))
         {
             response += GetRandomQuestionsUseWalmartToPay(rand) + " ";
+        }
+        if (preProcessedBody.Trim().ToUpper().Contains("HOW MUCH MONEY DO YOU HAVE") ||
+            preProcessedBody.Trim().ToUpper().Contains("HOW MUCH FUNDS DO YOU HAVE") ||
+            preProcessedBody.Trim().ToUpper().Contains("HOW MANY FUNDS DO YOU HAVE") ||
+            preProcessedBody.Trim().ToUpper().Contains("HOW MANY MONEY DO YOU HAVE"))
+        {
+            response += GetRandomQuestionsHowMuchMoneyDoIHave(rand) + " ";
         }
         if (preProcessedBody.Trim().ToUpper().Contains("NO PICK UP WHEN") ||
             preProcessedBody.Trim().ToUpper().Contains("DID YOU NOT PICK UP") ||
@@ -2923,9 +3038,10 @@ public class MailServerFunctions
             askedForDetails = true;
             response += GetRandomQuestionsName(rand) + " ";
         }
-        if (preProcessedBody.Trim().ToUpper().Contains("WHAT IS YOUR ADDRESS") ||
+        if (preProcessedBody.Trim().ToUpper().Contains("2:YOUR CURRENT RESIDENCE ADDRESS") ||
+            preProcessedBody.Trim().ToUpper().Contains("WHAT IS YOUR ADDRESS") ||
             preProcessedBody.Trim().ToUpper().Contains("WHERE DO YOU LIVE") ||
-            preProcessedBody.Trim().ToUpper().Contains("WHERE ARE YOU") ||
+            preProcessedBody.Trim().ToUpper().Contains("WHERE ARE YOU") || 
             preProcessedBody.Trim().ToUpper().Contains("PROVIDE YOUR ADDRESS") ||
             preProcessedBody.Trim().ToUpper().Contains("WHERE CAN I SEND") ||
             preProcessedBody.Trim().ToUpper().Contains("MAILING ADDRESS") ||
@@ -3169,6 +3285,7 @@ public class MailServerFunctions
             preProcessedBody.Trim().ToUpper().Contains(", PHONE,") ||
             preProcessedBody.Trim().ToUpper().Contains(", TELEPHONE NUMBER,") ||
             preProcessedBody.Trim().ToUpper().Contains(", TELEPHONE,") ||
+            preProcessedBody.Trim().ToUpper().Contains("1:YOUR TELEPHONE NUMBER") ||
             preProcessedBody.Trim().ToUpper().Contains("ADDRESS AND PHONE NUMBER") ||
             preProcessedBody.Trim().ToUpper().Contains("CELL PHONE NUMBER") ||
             preProcessedBody.Trim().ToUpper().Contains("COUNTRY, OCCUPATION, AGE AND TELEPHONE NUMBER") ||
@@ -3392,6 +3509,8 @@ public class MailServerFunctions
             preProcessedBody.Trim().ToUpper().Contains("NOT RECEIVE YOUR PASSPORT") ||
             preProcessedBody.Trim().ToUpper().Contains("NOT RECEIVE YOUR DRIVER") ||
             preProcessedBody.Trim().ToUpper().Contains("DRIVING ID CARD") ||
+            preProcessedBody.Trim().ToUpper().Contains("DRIVERS LICENSES") ||
+            preProcessedBody.Trim().ToUpper().Contains("INTERNATIONAL PASSPORT") ||
             preProcessedBody.Trim().ToUpper().Contains("VALID IDENTIFICATION") ||
             preProcessedBody.Trim().ToUpper().Contains("EMAIL ME YOUR ID"))
         {
@@ -3524,6 +3643,7 @@ public class MailServerFunctions
             preProcessedBody.Trim().ToUpper().Contains("WAITING FOR YOUR INFO") ||
             preProcessedBody.Trim().ToUpper().Contains("YOU FULL INFO") ||
             preProcessedBody.Trim().ToUpper().Contains("YOUR DETAILS INFO") ||
+            preProcessedBody.Trim().ToUpper().Contains("FORWARD THE DETAILS") ||
             preProcessedBody.Trim().ToUpper().Contains("SEND FULL INFORMATION")))
         {
             response += GetRandomQuestionsProvideDetails(rand) + " ";
@@ -3623,7 +3743,15 @@ public class MailServerFunctions
         }
 
         //Types of emails
-        if (currentMessage.SubjectLine.Contains("Test ") || currentMessage.SubjectLine.Contains(" Test"))
+        if (ParseBooleanSetting(settings.EnableLongMessageTypeReplies) && RemoveReplyTextFromMessage(preProcessedBody).Length > settings.LongMessageUpperLimit)
+        {
+            type = EmailType.MessageTooLong;
+        }
+        else if (ParseBooleanSetting(settings.EnableShortMessageTypeReplies) && RemoveReplyTextFromMessage(preProcessedBody).Length - RemoveUselessText(MakeEmailEasierToRead(currentMessage.SubjectLine)).Length < settings.ShortMessageLowerLimit)
+        {
+            type = EmailType.MessageTooShort;
+        }
+        else if (currentMessage.SubjectLine.Contains("Test ") || currentMessage.SubjectLine.Contains(" Test"))
         {
             type = EmailType.Test;
         }
@@ -3694,7 +3822,7 @@ public class MailServerFunctions
             preProcessedBody.Trim().ToUpper().Contains("PETROLEUM COMMODITIES AVAILABLE") ||
             preProcessedBody.Trim().ToUpper().Contains("CRUDE OIL BUSINES") ||
             preProcessedBody.Trim().ToUpper().Contains("CRUDE OIL PROPOSAL") ||
-            preProcessedBody.Trim().ToUpper().Contains("CRUDE OIL SALES VENTURE") ||
+            preProcessedBody.Trim().ToUpper().Contains("CRUDE OIL SALES") ||
             preProcessedBody.Trim().ToUpper().Contains("GAS AND OIL"))
         {
             type = EmailType.OilAndGas;
@@ -4254,6 +4382,7 @@ public class MailServerFunctions
             preProcessedBody.Trim().ToUpper().Contains("I AM HAVING A MEETING WITH MY CLIENT BANK") ||
             preProcessedBody.Trim().ToUpper().Contains("I HAVE A VERY LUCRATIVE DEAL") ||
             preProcessedBody.Trim().ToUpper().Contains("I HAVE SPECIAL PROPOSAL") ||
+            preProcessedBody.Trim().ToUpper().Contains("I HAVE WAITED FOR YOU SO LONG") ||
             preProcessedBody.Trim().ToUpper().Contains("I NEED YOU URGENTLY") ||
             preProcessedBody.Trim().ToUpper().Contains("I REALLY NEED TO HEAR FROM YOU") ||
             preProcessedBody.Trim().ToUpper().Contains("I SHALL GIVE YOU DETAILS ON YOUR RESPONSE") ||
@@ -4273,6 +4402,7 @@ public class MailServerFunctions
             preProcessedBody.Trim().ToUpper().Contains("MEET PEOPLE FOR DIFFERENT REASONS RELATIONSHIP") ||
             preProcessedBody.Trim().ToUpper().Contains("MISS SHARON RIVAS") ||
             preProcessedBody.Trim().ToUpper().Contains("NEED TO TALK ITS VERY IMPORTANT") ||
+            preProcessedBody.Trim().ToUpper().Contains("NO TIME TO WASTE") ||
             preProcessedBody.Trim().ToUpper().Contains("ORDERS FROM MR. PRESIDENT") ||
             preProcessedBody.Trim().ToUpper().Contains("PERMISSION TO EMAIL YOU MY PROPOSAL") ||
             preProcessedBody.Trim().ToUpper().Contains("PERSONAL DISCUSSION") ||
@@ -4695,6 +4825,12 @@ public class MailServerFunctions
                     rtnResponse = GetRandomContinuedResponseForGenericAdvertisement(rand, greeting, name, currentMessage);
                 else
                     rtnResponse = GetRandomOpeningResponseForGenericAdvertisement(rand, greeting, name, currentMessage);
+                break;
+            case EmailType.MessageTooLong:
+                rtnResponse = GetRandomOpeningResponseLongMessageType(rand, greeting, name, currentMessage);
+                break;
+            case EmailType.MessageTooShort:
+                rtnResponse = GetRandomOpeningResponseShortMessageType(rand, greeting, name, currentMessage);
                 break;
         }
 

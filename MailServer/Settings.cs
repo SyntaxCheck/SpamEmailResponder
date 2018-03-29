@@ -2,15 +2,11 @@
 
 public class Settings
 {
-    //HowMuchMoneyDoIHave
-    //AttachPaymentSlip
-    //LongMessageType
-    //ShortMessageType
-    //Setting to enable LongMessageType or ShortMessageType
     private string emailAddress, password, myName, myFakeAddress, myFakeBirthdate, pathToMyFakeID, myFakePhoneNumber, myFakeOccupation, 
-        myFakeGender, myFakeMaritalStatus, myFakeCountry, outgoingMessageIdDomainName, minutesDelayBeforeAnsweringAnEmail;
+        myFakeGender, myFakeMaritalStatus, myFakeCountry, outgoingMessageIdDomainName, minutesDelayBeforeAnsweringAnEmail, enableLongMessageTypeReplies, enableShortMessageTypeReplies;
+    private int longMessageUpperLimit, shortMessageLowerLimit;
     private List<string> names, greeting, signoff, introduction, introductionOpening, introductionClosing, personDescriptionMale, personDescriptionFemale, memory, followupLine, acquaintance, 
-        locations, products, paymentMethods, randomThoughts, consignmentBoxImageIncluded, consignmentBoxImageNotIncluded;
+        locations, products, paymentMethods, randomThoughts, consignmentBoxImageIncluded, consignmentBoxImageNotIncluded, responseLongMessageType, responseShortMessageType;
     private List<string> questionsNotListening, questionsJokingAround, questionsNotAnswering, questionsHowAreYou, 
         questionsNotUnderstanding, questionsPermission, questionsSpokenLanguage, questionsTrust, questionsWhyNoAnswer,
         questionsPhoneNumber, questionsAddress, questionsID, questionsAlreadyIncludedID, questionsCannotOpenAttachment, questionsWeAreCaught,
@@ -19,7 +15,7 @@ public class Settings
         questionsHowBigOfLoan, questionsMustPayBefore, questionsMeetUs, questionsFillOutForm, questionsGetBackToUs, questionsNeedBankDetails,
         questionsWhatTypeOfProof, questionsHowDoYouWantFundsReleased, questionsWeCantDoThat, questionsContactTheBank, questionsAreYouMember,
         questionsDidYouSeeOurMessage, questionsInvalidAddress, questionsTellUsWhatTheyAskedYouToDo, questionsTellUsAboutYourself,
-        questionsAutomatedProgram, questionsUseWalmartToPay;
+        questionsAutomatedProgram, questionsUseWalmartToPay, questionsHowMuchMoneyDoIHave;
     private List<string> responseOpeningBlankEmailWithAttachment, responseOpeningLottery, responseOpeningOilAndGas, responseOpeningOilAndGasQuestionList, responseOpeningIlluminati, 
         responseOpeningConsignmentBox, responseOpeningDeathOrDying, responseOpeningLoanOffer, responseOpeningMoneyStorage, responseOpeningAtmCard, responseOpeningPolice, 
         responseOpeningGenericPayment, responseOpeningInvestor, responseOpeningMoneyHack, responseOpeningJobOffer, responseOpeningSellingProducts, responseOpeningFreeMoney, 
@@ -96,6 +92,26 @@ public class Settings
         get { return minutesDelayBeforeAnsweringAnEmail; }
         set { minutesDelayBeforeAnsweringAnEmail = value; }
     }
+    public string EnableLongMessageTypeReplies
+    {
+        get { return enableLongMessageTypeReplies; }
+        set { enableLongMessageTypeReplies = value; }
+    }
+    public string EnableShortMessageTypeReplies
+    {
+        get { return enableShortMessageTypeReplies; }
+        set { enableShortMessageTypeReplies = value; }
+    }
+    public int LongMessageUpperLimit
+    {
+        get { return longMessageUpperLimit; }
+        set { longMessageUpperLimit = value; }
+    }
+    public int ShortMessageLowerLimit
+    {
+        get { return shortMessageLowerLimit; }
+        set { shortMessageLowerLimit = value; }
+    }
     public List<string> Acquaintance
     {
         get { return acquaintance; }
@@ -165,6 +181,16 @@ public class Settings
     {
         get { return signoff; }
         set { signoff = value; }
+    }
+    public List<string> ResponseLongMessageType
+    {
+        get { return responseLongMessageType; }
+        set { responseLongMessageType = value; }
+    }
+    public List<string> ResponseShortMessageType
+    {
+        get { return responseShortMessageType; }
+        set { responseShortMessageType = value; }
     }
     public List<string> ResponseOpeningAtmCard
     {
@@ -625,6 +651,11 @@ public class Settings
     {
         get { return questionsUseWalmartToPay; }
         set { questionsUseWalmartToPay = value; }
+    }
+    public List<string> QuestionsHowMuchMoneyDoIHave
+    {
+        get { return questionsHowMuchMoneyDoIHave; }
+        set { questionsHowMuchMoneyDoIHave = value; }
     }
 
     public List<string> RandomThoughts
