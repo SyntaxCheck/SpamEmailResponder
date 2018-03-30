@@ -3,10 +3,10 @@
 public class Settings
 {
     private string emailAddress, password, myName, myFakeAddress, myFakeBirthdate, pathToMyFakeID, myFakePhoneNumber, myFakeOccupation, 
-        myFakeGender, myFakeMaritalStatus, myFakeCountry, outgoingMessageIdDomainName, minutesDelayBeforeAnsweringAnEmail, enableLongMessageTypeReplies, enableShortMessageTypeReplies;
+        myFakeGender, myFakeMaritalStatus, myFakeCountry, outgoingMessageIdDomainName, minutesDelayBeforeAnsweringAnEmail, enableLongMessageTypeReplies, enableShortMessageTypeReplies, enableSendingTransferReceiptsImageFiles;
     private int longMessageUpperLimit, shortMessageLowerLimit;
     private List<string> names, greeting, signoff, introduction, introductionOpening, introductionClosing, personDescriptionMale, personDescriptionFemale, memory, followupLine, acquaintance, 
-        locations, products, paymentMethods, randomThoughts, consignmentBoxImageIncluded, consignmentBoxImageNotIncluded, responseLongMessageType, responseShortMessageType;
+        locations, products, paymentMethods, randomThoughts, consignmentBoxImageIncluded, consignmentBoxImageNotIncluded, responseLongMessageType, responseShortMessageType, pathToTransferReceipts;
     private List<string> questionsNotListening, questionsJokingAround, questionsNotAnswering, questionsHowAreYou, 
         questionsNotUnderstanding, questionsPermission, questionsSpokenLanguage, questionsTrust, questionsWhyNoAnswer,
         questionsPhoneNumber, questionsAddress, questionsID, questionsAlreadyIncludedID, questionsCannotOpenAttachment, questionsWeAreCaught,
@@ -15,7 +15,7 @@ public class Settings
         questionsHowBigOfLoan, questionsMustPayBefore, questionsMeetUs, questionsFillOutForm, questionsGetBackToUs, questionsNeedBankDetails,
         questionsWhatTypeOfProof, questionsHowDoYouWantFundsReleased, questionsWeCantDoThat, questionsContactTheBank, questionsAreYouMember,
         questionsDidYouSeeOurMessage, questionsInvalidAddress, questionsTellUsWhatTheyAskedYouToDo, questionsTellUsAboutYourself,
-        questionsAutomatedProgram, questionsUseWalmartToPay, questionsHowMuchMoneyDoIHave;
+        questionsAutomatedProgram, questionsUseWalmartToPay, questionsHowMuchMoneyDoIHave, questionsSendTransferReceipt;
     private List<string> responseOpeningBlankEmailWithAttachment, responseOpeningLottery, responseOpeningOilAndGas, responseOpeningOilAndGasQuestionList, responseOpeningIlluminati, 
         responseOpeningConsignmentBox, responseOpeningDeathOrDying, responseOpeningLoanOffer, responseOpeningMoneyStorage, responseOpeningAtmCard, responseOpeningPolice, 
         responseOpeningGenericPayment, responseOpeningInvestor, responseOpeningMoneyHack, responseOpeningJobOffer, responseOpeningSellingProducts, responseOpeningFreeMoney, 
@@ -102,6 +102,11 @@ public class Settings
         get { return enableShortMessageTypeReplies; }
         set { enableShortMessageTypeReplies = value; }
     }
+    public string EnableSendingTransferReceiptsImageFiles
+    {
+        get { return enableSendingTransferReceiptsImageFiles; }
+        set { enableSendingTransferReceiptsImageFiles = value; }
+    }
     public int LongMessageUpperLimit
     {
         get { return longMessageUpperLimit; }
@@ -181,6 +186,11 @@ public class Settings
     {
         get { return signoff; }
         set { signoff = value; }
+    }
+    public List<string> PathToTransferReceipts
+    {
+        get { return pathToTransferReceipts; }
+        set { pathToTransferReceipts = value; }
     }
     public List<string> ResponseLongMessageType
     {
@@ -656,6 +666,11 @@ public class Settings
     {
         get { return questionsHowMuchMoneyDoIHave; }
         set { questionsHowMuchMoneyDoIHave = value; }
+    }
+    public List<string> QuestionsSendTransferReceipt
+    {
+        get { return questionsSendTransferReceipt; }
+        set { questionsSendTransferReceipt = value; }
     }
 
     public List<string> RandomThoughts

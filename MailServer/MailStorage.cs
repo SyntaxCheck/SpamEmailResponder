@@ -8,7 +8,7 @@ public class MailStorage
     private string msgId, emailBodyPlain, emailBodyRich, emailBodyHtml, subjectLine, determinedReply, toAddress, atachmentTypes, personName, attachmentNames, myReplyMsgId, inReplyToMsgId;
     private int numberOfAttachments, messageType;
     private DateTime dateReceived, dateProcessed;
-    private bool replied, includeID, includedIDinPast, isDuplicateMessage, ignored;
+    private bool replied, includeID, includedIDinPast, isDuplicateMessage, ignored, includePaymentReceipt;
 
     public DateTime DateReceived
     {
@@ -117,6 +117,11 @@ public class MailStorage
         get { return isDuplicateMessage; }
         set { isDuplicateMessage = value; }
     }
+    public bool IncludePaymentReceipt
+    {
+        get { return includePaymentReceipt; }
+        set { includePaymentReceipt = value; }
+    }
     public string MyReplyMsgId
     {
         get { return myReplyMsgId; }
@@ -133,6 +138,6 @@ public class MailStorage
         msgId = emailBodyPlain = emailBodyRich = emailBodyHtml = subjectLine = determinedReply = toAddress = atachmentTypes = personName = attachmentNames = myReplyMsgId = inReplyToMsgId = String.Empty;
         numberOfAttachments = messageType = 0;
         dateReceived = dateProcessed = new DateTime(1900,01,01);
-        replied = includeID = includedIDinPast = isDuplicateMessage = ignored = false;
+        replied = includeID = includedIDinPast = isDuplicateMessage = ignored = includePaymentReceipt = false;
     }
 }

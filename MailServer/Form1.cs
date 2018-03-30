@@ -570,7 +570,7 @@ namespace MailServer
                     if (!storage[i].DeterminedReply.Contains("|Get") || !storage[i].DeterminedReply.Contains("System.Collections") || !storage[i].DeterminedReply.Contains("[System.String]"))
                     {
                         string newMsgId = String.Empty;
-                        response = mailServer.SendSMTP(loggerInfo, storage[i].ToAddress, storage[i].SubjectLine, storage[i].DeterminedReply, storage[i].IncludeID, storage[i].MsgId, ref newMsgId);
+                        response = mailServer.SendSMTP(loggerInfo, storage[i].ToAddress, storage[i].SubjectLine, storage[i].DeterminedReply, storage[i].IncludeID, storage[i].IncludePaymentReceipt, storage[i].MsgId, ref newMsgId);
                         if (response.Code >= 0)
                         {
                             storage[i].MyReplyMsgId = newMsgId;
