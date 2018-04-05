@@ -21,7 +21,13 @@ public class FileAttachment
     }
     public string FileExtension
     {
-        get { return fileName.Substring(fileName.LastIndexOf('.')); }
+        get
+        {
+            if (fileName.Contains("."))
+                return fileName.Substring(fileName.LastIndexOf('.'));
+            else
+                return String.Empty;
+        }
     }
     public string ParentZipName
     {

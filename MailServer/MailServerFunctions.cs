@@ -2324,56 +2324,64 @@ public class MailServerFunctions
         if (text.ToUpper().Contains(compare))
         {
             int pos = text.IndexOf(compare);
-            text = text.Substring(0, pos);
+            if(pos > 0)
+                text = text.Substring(0, pos);
         }
 
         compare = "FROM:" + settings.EmailAddress.ToUpper();
         if (text.ToUpper().Contains(compare))
         {
             int pos = text.IndexOf(compare);
-            text = text.Substring(0, pos);
+            if (pos > 0)
+                text = text.Substring(0, pos);
         }
 
         compare = "AM, " + settings.EmailAddress.ToUpper();
         if (text.ToUpper().Contains(compare))
         {
             int pos = text.IndexOf(compare);
-            text = text.Substring(0, pos);
+            if (pos > 0)
+                text = text.Substring(0, pos);
         }
 
         compare = "AM," + settings.EmailAddress.ToUpper();
         if (text.ToUpper().Contains(compare))
         {
             int pos = text.IndexOf(compare);
-            text = text.Substring(0, pos);
+            if (pos > 0)
+                text = text.Substring(0, pos);
         }
 
         compare = "PM, " + settings.EmailAddress.ToUpper();
         if (text.ToUpper().Contains(compare))
         {
             int pos = text.IndexOf(compare);
-            text = text.Substring(0, pos);
+            if (pos > 0)
+                text = text.Substring(0, pos);
         }
 
         compare = "PM," + settings.EmailAddress.ToUpper();
         if (text.ToUpper().Contains(compare))
         {
             int pos = text.IndexOf(compare);
-            text = text.Substring(0, pos);
+            if (pos > 0)
+                text = text.Substring(0, pos);
         }
 
         compare = settings.EmailAddress.ToUpper() + " <" + settings.EmailAddress.ToUpper() + ">";
         if (text.ToUpper().Contains(compare))
         {
             int pos = text.IndexOf(compare);
-            text = text.Substring(0, pos);
+            if (pos > 0)
+                text = text.Substring(0, pos);
         }
 
         compare = settings.EmailAddress.ToUpper() + "<" + settings.EmailAddress.ToUpper() + ">";
         if (text.ToUpper().Contains(compare))
         {
             int pos = text.IndexOf(compare);
-            text = text.Substring(0, pos);
+            if (pos > 0)
+                text = text.Substring(0, pos);
         }
 
         return text;
