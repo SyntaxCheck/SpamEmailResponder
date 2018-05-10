@@ -89,6 +89,7 @@
             this.responseConfigToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.storageViewerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.graphsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.cbxAutoSkip = new System.Windows.Forms.CheckBox();
             this.groupBox1.SuspendLayout();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trckBar)).BeginInit();
@@ -111,6 +112,7 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.cbxAutoSkip);
             this.groupBox1.Controls.Add(this.lblExtendedWait);
             this.groupBox1.Controls.Add(this.panel1);
             this.groupBox1.Controls.Add(this.lblNext);
@@ -678,6 +680,16 @@
             this.graphsToolStripMenuItem.Text = "Graphs";
             this.graphsToolStripMenuItem.Click += new System.EventHandler(this.graphsToolStripMenuItem_Click);
             // 
+            // cbxAutoSkip
+            // 
+            this.cbxAutoSkip.AutoSize = true;
+            this.cbxAutoSkip.Location = new System.Drawing.Point(782, 782);
+            this.cbxAutoSkip.Name = "cbxAutoSkip";
+            this.cbxAutoSkip.Size = new System.Drawing.Size(71, 17);
+            this.cbxAutoSkip.TabIndex = 37;
+            this.cbxAutoSkip.Text = "Auto Skip";
+            this.cbxAutoSkip.UseVisualStyleBackColor = true;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -763,6 +775,7 @@
         private System.Windows.Forms.ToolStripMenuItem storageViewerToolStripMenuItem;
         private System.Windows.Forms.Label lblExtendedWait;
         private System.Windows.Forms.ToolStripMenuItem graphsToolStripMenuItem;
+        private System.Windows.Forms.CheckBox cbxAutoSkip;
     }
 }
 

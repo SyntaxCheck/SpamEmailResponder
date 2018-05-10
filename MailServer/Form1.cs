@@ -476,7 +476,11 @@ namespace MailServer
                         {
                             Regen();
                         }
-                        break;
+
+                        if (!String.IsNullOrEmpty(tbxDeterminedReply.Text) || !cbxAutoSkip.Checked)
+                        {
+                            break;
+                        }
                     }
                     else
                     {

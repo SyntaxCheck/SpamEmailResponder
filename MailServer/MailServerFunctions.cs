@@ -395,7 +395,21 @@ public class MailServerFunctions
             if (String.IsNullOrEmpty(fromAddressReadable)) fromAddressReadable = fromAddress;
             if (String.IsNullOrEmpty(toAddressReadable)) toAddressReadable = toAddress;
 
+            if (toAddress.ToUpper().Contains(".COM*"))
+            {
+                toAddress = toAddress.ToUpper().Replace(".COM*", ".COM");
+            }
+
             string[] toSplit = toAddress.Split(new string[] { ";" }, StringSplitOptions.RemoveEmptyEntries);
+
+            //If we are trying to send to more than 10 people there might be a problem.
+            if (toSplit.Count() > 15)
+            {
+                response.Code = -1;
+                response.Message = "Email has more than 15 people on the email. Do not send the message.";
+
+                return response;
+            }
 
             message.InReplyTo = inReplyTo;
             string inReplyToPartial = String.Empty;
@@ -621,7 +635,15 @@ public class MailServerFunctions
                 if (String.IsNullOrEmpty(storageObj.EmailBodyPlain) && !String.IsNullOrEmpty(storageObj.EmailBodyHtml))
                 {
                     HtmlConvert convert = new HtmlConvert();
-                    storageObj.EmailBodyPlain = convert.ConvertHtml(storageObj.EmailBodyHtml);
+
+                    try
+                    {
+                        storageObj.EmailBodyPlain = convert.ConvertHtml(storageObj.EmailBodyHtml);
+                    }
+                    catch (Exception ex)
+                    {
+                        Logger.Write(loggerInfo, "Failed to convert to plain text from HTML. HTML Message:" + Environment.NewLine + Environment.NewLine + storageObj.EmailBodyHtml + Environment.NewLine + Environment.NewLine + "Error Message: " + ex.Message + Environment.NewLine + "Stack Trace: " + ex.StackTrace);
+                    }
                 }
 
                 foreach (var v in msg.FromAddress)
@@ -2048,6 +2070,11 @@ public class MailServerFunctions
         while (message.Contains("  "))
         {
             message = message.Replace("  ", " ");
+        }
+        if (message.Trim().StartsWith("*") && message.Trim().EndsWith("*"))
+        {
+            if(message.Length > 2)
+                message = message.Substring(1, message.Length - 2);
         }
 
         return message;
