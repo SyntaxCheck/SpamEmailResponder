@@ -89,6 +89,8 @@ namespace MailServer
                 if (response.Code < 0)
                 {
                     tbxOutput.Text = response.AsString();
+                    Logger.Write(loggerInfo, "GetMessage Error: ", response);
+                    processTimer.Interval = 60 * 60 * 1000; //Pause for an hour on disconnect
                 }
             }
             else
@@ -394,7 +396,7 @@ namespace MailServer
             tbxDeterminedName.Text = ms.PersonName;
             tbxDeterminedType.Text = ((EmailType)ms.MessageType).ToString();
             tbxDeterminedReply.Text = ms.DeterminedReply;
-            tbxFromAddress.Text = ms.ToAddress;
+            tbxFromAddress.Text = ms.ToAddress.Replace("P@55W0RD!;","");
             tbxMessageId.Text = ms.MsgId;
             tbxSubject.Text = ms.SubjectLine;
             tbxOutput.Text = String.Empty;
@@ -477,9 +479,15 @@ namespace MailServer
                             Regen();
                         }
 
-                        if (!String.IsNullOrEmpty(tbxDeterminedReply.Text) || !cbxAutoSkip.Checked)
+                        if (!String.IsNullOrEmpty(tbxDeterminedReply.Text.Trim()) || !cbxAutoSkip.Checked)
                         {
+                            //tbxOutput.Text = "Message has a reply determined. Message length: " + tbxDeterminedReply.Text.Length.ToString();
                             break;
+                        }
+                        else
+                        {
+                            skippedMessages += ";;;" + workingOnMsg + ";;;";
+                            skippedCount++;
                         }
                     }
                     else

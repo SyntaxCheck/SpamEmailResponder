@@ -11,3 +11,9 @@
 		""
     ],
 	"EnableSendingTransferReceiptsImageFiles" : "FALSE",
+	
+	"QuestionsSendTransferReceipt": [
+		"I have included the receipt.",
+		"I have attached the receipt.",
+		"As you request here is the receipt."
+    ],
