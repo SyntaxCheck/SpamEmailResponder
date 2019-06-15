@@ -1,0 +1,6 @@
+New Response Types:
+	1) Click the link
+	2) Beneficial information
+
+Question Response:
+	1) Keep me informed
