@@ -19,12 +19,12 @@ public class Settings
     private List<string> responseOpeningBlankEmailWithAttachment, responseOpeningLottery, responseOpeningOilAndGas, responseOpeningOilAndGasQuestionList, responseOpeningIlluminati, 
         responseOpeningConsignmentBox, responseOpeningDeathOrDying, responseOpeningLoanOffer, responseOpeningMoneyStorage, responseOpeningAtmCard, responseOpeningPolice, 
         responseOpeningGenericPayment, responseOpeningInvestor, responseOpeningMoneyHack, responseOpeningJobOffer, responseOpeningSellingProducts, responseOpeningFreeMoney, 
-        responseOpeningInformationGathering, responseOpeningPhishing, responseOpeningScamVictim, responseOpeningForeignLanguage, responseOpeningGenericAdvertisement;
+        responseOpeningInformationGathering, responseOpeningPhishing, responseOpeningScamVictim, responseOpeningForeignLanguage, responseOpeningGenericAdvertisement, responseOpeningShipping;
     private List<string> responseContinuedBlankEmailWithAttachment, responseContinuedLottery, responseContinuedOilAndGas, responseContinuedIlluminati, responseContinuedConsignmentBox, 
         responseContinuedDeathOrDying, responseContinuedLoanOffer, responseContinuedMoneyStorage, responseContinuedAtmCard, responseContinuedPolice, responseContinuedGenericPayment, 
         responseContinuedInvestor, responseContinuedMoneyHack, responseContinuedBuildTrust, responseContinuedInheritance, responseContinuedBeneficiary, responseContinuedJobOffer, 
         responseContinuedSellingProducts, responseContinuedFreeMoney, responseContinuedInformationGathering, responseContinuedPhishing, responseContinuedScamVictim,
-        responseContinuedForeignLanguage, responseContinuedGenericAdvertisement;
+        responseContinuedForeignLanguage, responseContinuedGenericAdvertisement, responseContinuedShipping;
 
     #region Get/sets
     public string EmailAddress
@@ -431,6 +431,16 @@ public class Settings
     {
         get { return responseOpeningGenericAdvertisement; }
         set { responseOpeningGenericAdvertisement = value; }
+    }
+    public List<string> ResponseOpeningShipping
+    {
+        get { return responseOpeningShipping; }
+        set { responseOpeningShipping = value; }
+    }
+    public List<string> ResponseContinuedShipping
+    {
+        get { return responseContinuedShipping; }
+        set { responseContinuedShipping = value; }
     }
     public List<string> QuestionsHowAreYou
     {

@@ -59,7 +59,8 @@ public class MailServerFunctions
         ForeignLanguage = 26,
         GenericAdvertisement = 27,
         MessageTooLong = 28,
-        MessageTooShort = 29
+        MessageTooShort = 29,
+        Shipping = 30
     };
 
     public MailServerFunctions()
@@ -188,6 +189,7 @@ public class MailServerFunctions
             settings.ResponseOpeningPhishing = new List<string>() { "The link you sent did not work. I get a 404 error, please help." };
             settings.ResponseContinuedForeignLanguage = new List<string>() { "I only speak english.", "Can you resend the email in english?" };
             settings.ResponseContinuedGenericAdvertisement = new List<string>() { "I am very interested. Can you tell me why I would go with you over your competitor?", "Can you tell me more about it?" };
+            settings.ResponseContinuedShipping = new List<string>() { "What is the problem with the shipment?" };
 
             //Continued responses
             settings.ResponseContinuedAtmCard = new List<string>() { "I understand what you are saying but can you just provide the card numbers?", "Thank you again for your patience, I think it would be easiest if you just provided the card numbers over email." };
@@ -212,6 +214,7 @@ public class MailServerFunctions
             settings.ResponseContinuedPhishing = new List<string>() { "The link you sent isn't working and I really want to resolve this issue today.", "That isn't working for me. Is there another way to fix it?" };
             settings.ResponseContinuedForeignLanguage = new List<string>() { "Please send the english version.", "I only speak english." };
             settings.ResponseContinuedGenericAdvertisement = new List<string>() { "I would be happy to hear any additional information you have.", "Interesting, do you have more information?" };
+            settings.ResponseContinuedShipping = new List<string>() { "Okay, how can we resolve this issue?" };
 
             string json = new JavaScriptSerializer().Serialize(settings);
             File.WriteAllText(settingFileLocation, JsonHelper.FormatJson(json));
@@ -593,6 +596,8 @@ public class MailServerFunctions
                 !msg.FromAddress[0].ToString().ToUpper().Contains("MAILER-DAEMON@") && 
                 !msg.FromAddress[0].ToString().ToUpper().Contains("POSTMASTER@") &&
                 !msg.FromAddress[0].ToString().ToUpper().Contains("@NIANTICLABS") &&
+                !msg.FromAddress[0].ToString().ToUpper().Contains("ROOT@POST.CV") &&
+                !msg.FromAddress[0].ToString().ToUpper().Contains("UNITEDNATIONSECRETARY@XD.AE") && //For some reason we get stuck in a loop with this email address
                 !msg.FromAddress[0].ToString().ToUpper().Contains("NOTIFICATIONS@LIVE.NEXT"))
             {
                 MailStorage storageObj = new MailStorage();
@@ -930,6 +935,12 @@ public class MailServerFunctions
 
         return greetings + " " + name + ". " + directResponse + SettingPostProcessing(settings.ResponseOpeningGenericAdvertisement[rand.Next(0, settings.ResponseOpeningGenericAdvertisement.Count())], rand);
     }
+    private string GetRandomOpeningResponseForShipping(Random rand, string greetings, string name, MailStorage currentMessage)
+    {
+        string directResponse = HandleDirectQuestions(MakeEmailEasierToRead(currentMessage.EmailBodyPlain), ref currentMessage, rand);
+
+        return greetings + " " + name + ". " + directResponse + SettingPostProcessing(settings.ResponseOpeningShipping[rand.Next(0, settings.ResponseOpeningShipping.Count())], rand);
+    }
     #endregion
 
     //Continued Responses
@@ -1106,6 +1117,12 @@ public class MailServerFunctions
         string directResponse = HandleDirectQuestions(MakeEmailEasierToRead(currentMessage.EmailBodyPlain), ref currentMessage, rand);
 
         return greetings + " " + name + ". " + directResponse + SettingPostProcessing(settings.ResponseContinuedGenericAdvertisement[rand.Next(0, settings.ResponseContinuedGenericAdvertisement.Count())], rand);
+    }
+    private string GetRandomContinuedResponseForShipping(Random rand, string greetings, string name, MailStorage currentMessage)
+    {
+        string directResponse = HandleDirectQuestions(MakeEmailEasierToRead(currentMessage.EmailBodyPlain), ref currentMessage, rand);
+
+        return greetings + " " + name + ". " + directResponse + SettingPostProcessing(settings.ResponseContinuedShipping[rand.Next(0, settings.ResponseContinuedShipping.Count())], rand);
     }
     #endregion
 
@@ -2384,6 +2401,14 @@ public class MailServerFunctions
                 text = text.Substring(0, pos);
         }
 
+        compare = "AM " + settings.EmailAddress.ToUpper() + " <";
+        if (text.ToUpper().Contains(compare))
+        {
+            int pos = text.IndexOf(compare);
+            if (pos > 0)
+                text = text.Substring(0, pos);
+        }
+
         compare = "PM, " + settings.EmailAddress.ToUpper();
         if (text.ToUpper().Contains(compare))
         {
@@ -2393,6 +2418,14 @@ public class MailServerFunctions
         }
 
         compare = "PM," + settings.EmailAddress.ToUpper();
+        if (text.ToUpper().Contains(compare))
+        {
+            int pos = text.IndexOf(compare);
+            if (pos > 0)
+                text = text.Substring(0, pos);
+        }
+
+        compare = "PM " + settings.EmailAddress.ToUpper() + " <";
         if (text.ToUpper().Contains(compare))
         {
             int pos = text.IndexOf(compare);
@@ -2575,6 +2608,9 @@ public class MailServerFunctions
             preProcessedBody.Trim().ToUpper().Contains("IT SEEMS YOU ARE DRUNK") ||
             preProcessedBody.Trim().ToUpper().Contains("IT SEEMS YOURE DRUNK") ||
             preProcessedBody.Trim().ToUpper().Contains("JOKER PLEASE DONT") ||
+            preProcessedBody.Trim().ToUpper().Contains("JOKE WITH") ||
+            preProcessedBody.Trim().ToUpper().Contains("JOKES WITH") ||
+            preProcessedBody.Trim().ToUpper().Contains("JOKER WITH") ||
             preProcessedBody.Trim().ToUpper().Contains("JOKING WITH") ||
             preProcessedBody.Trim().ToUpper().Contains("KIND OF GAME PLAY") ||
             preProcessedBody.Trim().ToUpper().Contains("KIND OF PLAY GAME") ||
@@ -2597,6 +2633,7 @@ public class MailServerFunctions
             preProcessedBody.Trim().ToUpper().Contains("THIS IS A SERIOUS TRANSACTION AND NOT A CHILDS PLAY") ||
             preProcessedBody.Trim().ToUpper().Contains("THIS IS NOT A JOKE") ||
             preProcessedBody.Trim().ToUpper().Contains("THIS IS NOT CHILD PLAY") ||
+            preProcessedBody.Trim().ToUpper().Contains("TO JOKE") ||
             preProcessedBody.Trim().ToUpper().Contains("USELEE FOOL FUCK YOU OFF") ||
             preProcessedBody.Trim().ToUpper().Contains("USELESS FOOL FUCK OFF") ||
             preProcessedBody.Trim().ToUpper().Contains("USELESS FOOL FUCK YOU OFF") ||
@@ -2927,6 +2964,11 @@ public class MailServerFunctions
             preProcessedBody.Trim().ToUpper().Contains("ABLE TO REACH THE BANK") ||
             preProcessedBody.Trim().ToUpper().Contains("GO TO YOUR BANK") ||
             preProcessedBody.Trim().ToUpper().Contains("TAKE IT TO YOUR BANK") ||
+            preProcessedBody.Trim().ToUpper().Contains("DO YOU HEAR FROM BANK") ||
+            preProcessedBody.Trim().ToUpper().Contains("DID YOU HEAR FROM BANK") ||
+            preProcessedBody.Trim().ToUpper().Contains("DO YOU HEAR FROM THE BANK") ||
+            preProcessedBody.Trim().ToUpper().Contains("DID YOU HEAR FROM THE BANK") ||
+            preProcessedBody.Trim().ToUpper().Contains("BANK FOR MORE INFO") ||
             preProcessedBody.Trim().ToUpper().Contains("TALK TO THE BANK"))
         {
             response += GetRandomQuestionsContactTheBank(rand) + " ";
@@ -4219,6 +4261,7 @@ public class MailServerFunctions
         else if ((preProcessedBody.Trim().ToUpper().Contains("CONSIGNMENT") ||
             preProcessedBody.Trim().ToUpper().Contains("TRUNK BOX") ||
             preProcessedBody.Trim().ToUpper().Contains("PACKAGE BOX") ||
+            preProcessedBody.Trim().ToUpper().Contains("SPECIAL PACKAGE") ||
             preProcessedBody.Trim().ToUpper().Contains("PACKAGE DELIVER") ||
             preProcessedBody.Trim().ToUpper().Contains("YOUR PARCEL") ||
             preProcessedBody.Trim().ToUpper().Contains("DELIVER YOUR PACKAGE")) &&
@@ -4604,7 +4647,24 @@ public class MailServerFunctions
         {
             type = EmailType.InformationGathering;
         }
-        else if (preProcessedBody.Trim().ToUpper().Contains("CONSIDER TRADING WITH"))
+        else if (preProcessedBody.Trim().ToUpper().Contains("TRUSTING US WITH YOUR SHIPMENT") ||
+            preProcessedBody.Trim().ToUpper().Contains("DELIVERY TRACKING") ||
+            preProcessedBody.Trim().ToUpper().Contains("DELIVERY UPDATE") ||
+            preProcessedBody.Trim().ToUpper().Contains("DELIVERY NUMBER") ||
+            preProcessedBody.Trim().ToUpper().Contains("DELIVERY PACKAGE") ||
+            preProcessedBody.Trim().ToUpper().Contains("USPS REF") ||
+            preProcessedBody.Trim().ToUpper().Contains("USPS TRACK") ||
+            preProcessedBody.Trim().ToUpper().Contains("FEDEX REF") ||
+            preProcessedBody.Trim().ToUpper().Contains("FEDEX TRACK") ||
+            preProcessedBody.Trim().ToUpper().Contains("UPS REF") ||
+            preProcessedBody.Trim().ToUpper().Contains("UPS TRACK") ||
+            preProcessedBody.Trim().ToUpper().Contains("FIRSTFRONT EXPRESS") ||
+            preProcessedBody.Trim().ToUpper().Contains("STATUS OF YOUR PACKAGE"))
+        {
+            type = EmailType.Shipping;
+        }
+        else if (preProcessedBody.Trim().ToUpper().Contains("CONSIDER TRADING WITH") ||
+            preProcessedBody.Trim().ToUpper().Contains("CREDIT CARD DEBT CLEARANCE"))
         {
             type = EmailType.GenericAdvertisement;
         }
@@ -5001,6 +5061,12 @@ public class MailServerFunctions
                     rtnResponse = GetRandomContinuedResponseForGenericAdvertisement(rand, greeting, name, currentMessage);
                 else
                     rtnResponse = GetRandomOpeningResponseForGenericAdvertisement(rand, greeting, name, currentMessage);
+                break;
+            case EmailType.Shipping:
+                if (pastMessages.Count() > 0)
+                    rtnResponse = GetRandomContinuedResponseForShipping(rand, greeting, name, currentMessage);
+                else
+                    rtnResponse = GetRandomOpeningResponseForShipping(rand, greeting, name, currentMessage);
                 break;
             case EmailType.MessageTooLong:
                 rtnResponse = GetRandomOpeningResponseLongMessageType(rand, greeting, name, currentMessage);

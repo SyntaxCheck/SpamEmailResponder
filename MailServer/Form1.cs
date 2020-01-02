@@ -472,6 +472,8 @@ namespace MailServer
                     {
                         List<MailStorage> previousMessagesInThread = mailServer.GetPreviousMessagesInThread(storage, storage[i]);
 
+                        MailStorage tmp = storage[i];
+
                         found = true;
                         LoadScreen(storage[i], previousMessagesInThread);
                         if (String.IsNullOrEmpty(tbxDeterminedReply.Text))
