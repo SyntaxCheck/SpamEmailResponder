@@ -257,7 +257,14 @@ namespace MailServer
         }
         private void btnRegenerate_Click(object sender, EventArgs e)
         {
-            Regen();
+            if (ModifierKeys.HasFlag(Keys.Control))
+            {
+                RegenAll();
+            }
+            else
+            {
+                Regen();
+            }
         }
         private void btnSaveChanges_Click(object sender, EventArgs e)
         {
@@ -579,7 +586,7 @@ namespace MailServer
 
             for (int i = 0; i < storage.Count(); i++)
             {
-                if (storage[i].MsgId == workingOnMsg)
+                if (!storage[i].Replied && storage[i].MsgId == workingOnMsg)
                 {
                     if (!storage[i].DeterminedReply.Contains("|Get") || !storage[i].DeterminedReply.Contains("System.Collections") || !storage[i].DeterminedReply.Contains("[System.String]"))
                     {
@@ -637,6 +644,43 @@ namespace MailServer
                     }
 
                     break;
+                }
+            }
+        }
+        private void RegenAll()
+        {
+            bool writeStorageFile = false;
+            for (int i = 0; i < storage.Count(); i++)
+            {
+                if (!storage[i].Replied && !storage[i].Ignored && !skippedMessages.Contains(";;;" + storage[i].MsgId + ";;;"))
+                {
+                    if (storage[i].MsgId == workingOnMsg || String.IsNullOrEmpty(storage[i].DeterminedReply.Trim()))
+                    {
+                        List<MailStorage> previousMessagesInThread = mailServer.GetPreviousMessagesInThread(storage, storage[i]);
+                        MailStorage temp = storage[i];
+                        string newReply = mailServer.GetResponseForType(loggerInfo, ref temp, previousMessagesInThread);
+
+                        temp.DeterminedReply = newReply;
+                        storage[i] = temp;
+
+                        if (storage[i].MsgId == workingOnMsg)
+                        {
+                            tbxDeterminedReply.Text = newReply;
+                            LoadScreen(storage[i], previousMessagesInThread);
+                        }
+
+                        writeStorageFile = true;
+                    }
+                }
+            }
+
+            if (writeStorageFile)
+            {
+                //Write Storage object to disk
+                if (storage.Count() > 0)
+                {
+                    string fullPath = Path.Combine(currentDirectory, StaticVariables.STORAGE_OBJECT_FILENAME);
+                    serializeHelper.WriteToBinaryFile(fullPath, storage, false);
                 }
             }
         }

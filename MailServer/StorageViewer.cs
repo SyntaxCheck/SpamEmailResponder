@@ -56,9 +56,13 @@ namespace MailServer
                     tbxDeterminedReply.Text = (string)dgvEmails[9, e.RowIndex].Value;
                     tbxMessageId.Text = (string)dgvEmails[11, e.RowIndex].Value;
 
-                    if (dgvEmails[10, e.RowIndex].Value.ToString().ToUpper() == "TRUE")
+                    int attachCount = 0;
+                    if (int.TryParse(dgvEmails[10, e.RowIndex].Value.ToString(), out attachCount))
                     {
-                        cbxHasAttachments.Checked = true;
+                        if (attachCount > 0)
+                            cbxHasAttachments.Checked = true;
+                        else
+                            cbxHasAttachments.Checked = false;
                     }
                     else
                     {
@@ -72,6 +76,10 @@ namespace MailServer
             }
 }
         private void cbxShowAll_CheckedChanged(object sender, EventArgs e)
+        {
+            LoadScreen();
+        }
+        private void cbxHideWithResponse_CheckedChanged(object sender, EventArgs e)
         {
             LoadScreen();
         }
@@ -118,17 +126,27 @@ namespace MailServer
 
                 dgvEmails.Rows.Clear();
 
+                int count = 0;
                 foreach (MailStorage ms in storage)
                 {
-                    if (cbxShowAll.Checked || !ms.Replied)
+                    if (cbxShowAll.Checked || (!cbxHideWithResponse.Checked && !ms.Replied) || (cbxHideWithResponse.Checked && !ms.Replied && String.IsNullOrEmpty(ms.DeterminedReply.Trim())))
+                    {
                         dgvEmails.Rows.Add(ms.ToAddress, ms.SubjectLine, ms.DateReceived.ToString("yyyy-MM-dd hh:mm"), ms.DateProcessed.ToString("yyyy-MM-dd hh:mm"), ms.PersonName, ((EmailType)ms.MessageType).ToString(), ms.Replied.ToString(), ms.Ignored.ToString(), mailServer.MakeEmailEasierToRead(ms.EmailBodyPlain), mailServer.MakeEmailEasierToRead(ms.DeterminedReply), ms.NumberOfAttachments.ToString(), ms.MsgId, ms.InReplyToMsgId, ms.MyReplyMsgId);
+                        count++;
+                    }
                 }
                 dgvEmails.DataBindingComplete += MakeColumnsSortable_DataBindingComplete;
+                gbxEmails.Text = "Emails, Count: " + count.ToString();
             }
             catch (Exception ex)
             {
                 MessageBox.Show("Error: " + ex.Message + Environment.NewLine + "Stack: " + ex.StackTrace, "Failed to LoadScreen()");
             }
+        }
+
+        private void label10_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }
