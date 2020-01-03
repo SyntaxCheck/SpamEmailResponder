@@ -19,12 +19,13 @@ public class Settings
     private List<string> responseOpeningBlankEmailWithAttachment, responseOpeningLottery, responseOpeningOilAndGas, responseOpeningOilAndGasQuestionList, responseOpeningIlluminati, 
         responseOpeningConsignmentBox, responseOpeningDeathOrDying, responseOpeningLoanOffer, responseOpeningMoneyStorage, responseOpeningAtmCard, responseOpeningPolice, 
         responseOpeningGenericPayment, responseOpeningInvestor, responseOpeningMoneyHack, responseOpeningJobOffer, responseOpeningSellingProducts, responseOpeningFreeMoney, 
-        responseOpeningInformationGathering, responseOpeningPhishing, responseOpeningScamVictim, responseOpeningForeignLanguage, responseOpeningGenericAdvertisement, responseOpeningShipping;
+        responseOpeningInformationGathering, responseOpeningPhishing, responseOpeningScamVictim, responseOpeningForeignLanguage, responseOpeningGenericAdvertisement, responseOpeningShipping,
+        responseOpeningRefugee;
     private List<string> responseContinuedBlankEmailWithAttachment, responseContinuedLottery, responseContinuedOilAndGas, responseContinuedIlluminati, responseContinuedConsignmentBox, 
         responseContinuedDeathOrDying, responseContinuedLoanOffer, responseContinuedMoneyStorage, responseContinuedAtmCard, responseContinuedPolice, responseContinuedGenericPayment, 
         responseContinuedInvestor, responseContinuedMoneyHack, responseContinuedBuildTrust, responseContinuedInheritance, responseContinuedBeneficiary, responseContinuedJobOffer, 
         responseContinuedSellingProducts, responseContinuedFreeMoney, responseContinuedInformationGathering, responseContinuedPhishing, responseContinuedScamVictim,
-        responseContinuedForeignLanguage, responseContinuedGenericAdvertisement, responseContinuedShipping;
+        responseContinuedForeignLanguage, responseContinuedGenericAdvertisement, responseContinuedShipping, responseContinuedRefugee;
 
     #region Get/sets
     public string EmailAddress
@@ -441,6 +442,16 @@ public class Settings
     {
         get { return responseContinuedShipping; }
         set { responseContinuedShipping = value; }
+    }
+    public List<string> ResponseOpeningRefugee
+    {
+        get { return responseOpeningRefugee; }
+        set { responseOpeningRefugee = value; }
+    }
+    public List<string> ResponseContinuedRefugee
+    {
+        get { return responseContinuedRefugee; }
+        set { responseContinuedRefugee = value; }
     }
     public List<string> QuestionsHowAreYou
     {
