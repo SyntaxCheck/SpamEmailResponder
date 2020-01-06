@@ -629,18 +629,21 @@ namespace MailServer
                     MailStorage temp = storage[i];
                     string newReply = mailServer.GetResponseForType(loggerInfo, ref temp, previousMessagesInThread);
 
-                    tbxDeterminedReply.Text = newReply;
-                    temp.DeterminedReply = newReply;
-
-                    storage[i] = temp;
-
-                    LoadScreen(storage[i], previousMessagesInThread);
-
-                    //Write Storage object to disk
-                    if (storage.Count() > 0)
+                    if (newReply != storage[i].DeterminedReply)
                     {
-                        string fullPath = Path.Combine(currentDirectory, StaticVariables.STORAGE_OBJECT_FILENAME);
-                        serializeHelper.WriteToBinaryFile(fullPath, storage, false);
+                        tbxDeterminedReply.Text = newReply;
+                        temp.DeterminedReply = newReply;
+
+                        storage[i] = temp;
+
+                        LoadScreen(storage[i], previousMessagesInThread);
+
+                        //Write Storage object to disk
+                        if (storage.Count() > 0)
+                        {
+                            string fullPath = Path.Combine(currentDirectory, StaticVariables.STORAGE_OBJECT_FILENAME);
+                            serializeHelper.WriteToBinaryFile(fullPath, storage, false);
+                        }
                     }
 
                     break;
@@ -739,15 +742,21 @@ namespace MailServer
                 }
 
                 lblCountdown.Text = "Estimated Time till Mailbox Cleared: ";
+
+                bool valSet = false;
                 if (ts.Days > 0)
                 {
-                    if(ts.Days > 1)
+                    valSet = true;
+
+                    if (ts.Days > 1)
                         lblCountdown.Text += ts.Days.ToString() + " days ";
                     else
                         lblCountdown.Text += ts.Days.ToString() + " day ";
                 }
                 if (ts.Days > 0 || ts.Hours > 0)
                 {
+                    valSet = true;
+
                     if (ts.Hours > 1)
                         lblCountdown.Text += ts.Hours.ToString() + " hours ";
                     else
@@ -755,10 +764,17 @@ namespace MailServer
                 }
                 if (ts.Days > 0 || ts.Hours > 0 || ts.Minutes > 0)
                 {
+                    valSet = true;
+
                     if (ts.Minutes > 1)
                         lblCountdown.Text += ts.Minutes.ToString() + " minutes ";
                     else
                         lblCountdown.Text += ts.Minutes.ToString() + " minute ";
+                }
+
+                if (!valSet)
+                {
+                    lblCountdown.Text = "~ " + ts.ToString("d'd 'h'h 'm'm 's's'");
                 }
             }
 

@@ -6,7 +6,7 @@ public class Settings
         myFakeGender, myFakeMaritalStatus, myFakeCountry, outgoingMessageIdDomainName, minutesDelayBeforeAnsweringAnEmail, enableLongMessageTypeReplies, enableShortMessageTypeReplies, enableSendingTransferReceiptsImageFiles;
     private int longMessageUpperLimit, shortMessageLowerLimit;
     private List<string> names, greeting, signoff, introduction, introductionOpening, introductionClosing, personDescriptionMale, personDescriptionFemale, memory, followupLine, acquaintance, 
-        locations, products, paymentMethods, randomThoughts, consignmentBoxImageIncluded, consignmentBoxImageNotIncluded, responseLongMessageType, responseShortMessageType, pathToTransferReceipts;
+        locations, products, paymentMethods, randomThoughts, consignmentBoxImageIncluded, consignmentBoxImageNotIncluded, responseLongMessageType, responseShortMessageType, pathToTransferReceipts, emailAddressesToIgnore;
     private List<string> questionsNotListening, questionsJokingAround, questionsNotAnswering, questionsHowAreYou, 
         questionsNotUnderstanding, questionsPermission, questionsSpokenLanguage, questionsTrust, questionsWhyNoAnswer,
         questionsPhoneNumber, questionsAddress, questionsID, questionsAlreadyIncludedID, questionsCannotOpenAttachment, questionsWeAreCaught,
@@ -15,7 +15,7 @@ public class Settings
         questionsHowBigOfLoan, questionsMustPayBefore, questionsMeetUs, questionsFillOutForm, questionsGetBackToUs, questionsNeedBankDetails,
         questionsWhatTypeOfProof, questionsHowDoYouWantFundsReleased, questionsWeCantDoThat, questionsContactTheBank, questionsAreYouMember,
         questionsDidYouSeeOurMessage, questionsInvalidAddress, questionsTellUsWhatTheyAskedYouToDo, questionsTellUsAboutYourself,
-        questionsAutomatedProgram, questionsUseWalmartToPay, questionsHowMuchMoneyDoIHave, questionsSendTransferReceipt;
+        questionsAutomatedProgram, questionsUseWalmartToPay, questionsHowMuchMoneyDoIHave, questionsSendTransferReceipt, questionsAlreadyToldYou;
     private List<string> responseOpeningBlankEmailWithAttachment, responseOpeningLottery, responseOpeningOilAndGas, responseOpeningOilAndGasQuestionList, responseOpeningIlluminati, 
         responseOpeningConsignmentBox, responseOpeningDeathOrDying, responseOpeningLoanOffer, responseOpeningMoneyStorage, responseOpeningAtmCard, responseOpeningPolice, 
         responseOpeningGenericPayment, responseOpeningInvestor, responseOpeningMoneyHack, responseOpeningJobOffer, responseOpeningSellingProducts, responseOpeningFreeMoney, 
@@ -187,6 +187,11 @@ public class Settings
     {
         get { return signoff; }
         set { signoff = value; }
+    }
+    public List<string> EmailAddressesToIgnore
+    {
+        get { return emailAddressesToIgnore; }
+        set { emailAddressesToIgnore = value; }
     }
     public List<string> PathToTransferReceipts
     {
@@ -692,6 +697,11 @@ public class Settings
     {
         get { return questionsSendTransferReceipt; }
         set { questionsSendTransferReceipt = value; }
+    }
+    public List<string> QuestionsAlreadyToldYou
+    {
+        get { return questionsAlreadyToldYou; }
+        set { questionsAlreadyToldYou = value; }
     }
 
     public List<string> RandomThoughts
