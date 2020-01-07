@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
-using static MailServerFunctions;
 
 namespace MailServer
 {
@@ -15,6 +14,7 @@ namespace MailServer
         private List<MailStorage> storage;
         private SerializeHelper serializeHelper;
         private MailServerFunctions mailServer;
+        private ResponseProcessing respProc;
         private string workingOnMsg;
         private string skippedMessages;
         private int skippedCount;
@@ -26,6 +26,7 @@ namespace MailServer
             {
                 storage = new List<MailStorage>();
                 mailServer = new MailServerFunctions();
+                respProc = new ResponseProcessing(mailServer.settings);
                 serializeHelper = new SerializeHelper();
                 currentDirectory = Directory.GetCurrentDirectory();
                 workingOnMsg = String.Empty;
@@ -53,7 +54,7 @@ namespace MailServer
                 }
                 else
                 {
-                    this.Text = "Mail Server - " + mailServer.MyName;
+                    this.Text = "Mail Server - " + respProc.MyName;
                 }
 
                 //Load in the storage serialized class
@@ -401,10 +402,10 @@ namespace MailServer
         }
         private void LoadScreen(MailStorage ms, List<MailStorage> previousMessagesInThread)
         {
-            tbxBodyPlainText.Text = mailServer.MakeEmailEasierToRead(ms.EmailBodyPlain);
+            tbxBodyPlainText.Text = TextProcessing.MakeEmailEasierToRead(ms.EmailBodyPlain);
             tbxDateReceived.Text = ms.DateReceived.ToString("yyyy-MM-dd hh:mm");
             tbxDeterminedName.Text = ms.PersonName;
-            tbxDeterminedType.Text = ((EmailType)ms.MessageType).ToString();
+            tbxDeterminedType.Text = ((ResponseProcessing.EmailType)ms.MessageType).ToString();
             tbxDeterminedReply.Text = ms.DeterminedReply;
             tbxFromAddress.Text = ms.ToAddress.Replace("P@55W0RD!;","");
             tbxMessageId.Text = ms.MsgId;
@@ -423,15 +424,15 @@ namespace MailServer
 
             foreach (MailStorage ms2 in previousMessagesInThread)
             {
-                dgvPastEmail.Rows.Add(ms2.SubjectLine, ms2.ToAddress, ms2.DateReceived, mailServer.MakeEmailEasierToRead(ms2.EmailBodyPlain), ms2.DeterminedReply);
+                dgvPastEmail.Rows.Add(ms2.SubjectLine, ms2.ToAddress, ms2.DateReceived, TextProcessing.MakeEmailEasierToRead(ms2.EmailBodyPlain), ms2.DeterminedReply);
             }
 
             workingOnMsg = ms.MsgId;
-            if (((EmailType)ms.MessageType) == EmailType.Unknown)
+            if (((ResponseProcessing.EmailType)ms.MessageType) == ResponseProcessing.EmailType.Unknown)
             {
                 tbxOutput.Text = "Unknown email type. Please add code to handle this type of email or ignore it.";
             }
-            if (((EmailType)ms.MessageType) != EmailType.Unknown || !String.IsNullOrEmpty(tbxDeterminedReply.Text))
+            if (((ResponseProcessing.EmailType)ms.MessageType) != ResponseProcessing.EmailType.Unknown || !String.IsNullOrEmpty(tbxDeterminedReply.Text))
             {
                 btnSendEmail.Enabled = true;
             }
@@ -630,7 +631,7 @@ namespace MailServer
                 {
                     List<MailStorage> previousMessagesInThread = mailServer.GetPreviousMessagesInThread(storage, storage[i]);
                     MailStorage temp = storage[i];
-                    string newReply = mailServer.GetResponseForType(loggerInfo, ref temp, previousMessagesInThread);
+                    string newReply = respProc.GetResponseForType(loggerInfo, ref temp, previousMessagesInThread);
 
                     if (newReply != storage[i].DeterminedReply)
                     {
@@ -664,7 +665,7 @@ namespace MailServer
                     {
                         List<MailStorage> previousMessagesInThread = mailServer.GetPreviousMessagesInThread(storage, storage[i]);
                         MailStorage temp = storage[i];
-                        string newReply = mailServer.GetResponseForType(loggerInfo, ref temp, previousMessagesInThread);
+                        string newReply = respProc.GetResponseForType(loggerInfo, ref temp, previousMessagesInThread);
 
                         temp.DeterminedReply = newReply;
                         storage[i] = temp;
@@ -695,9 +696,9 @@ namespace MailServer
             if (mailServer.InboxCountHistory.Count() > 0)
             {
                 
-                int avg = 0;
-                int sum = 0;
-                int diffSum = 0;
+                long avg = 0;
+                long sum = 0;
+                long diffSum = 0;
                 double diffAvg = 0;
 
                 if (mailServer.InboxCountHistory.Count() > 1)
@@ -778,7 +779,7 @@ namespace MailServer
                 if (!valSet)
                 {
                     if(ts < TimeSpan.Zero)
-                        lblCountdown.Text += "~ -" + ts.ToString("d'd 'h'h 'm'm 's's'");
+                        lblCountdown.Text += "~ Negative " + ts.ToString("d'd 'h'h 'm'm 's's'");
                     else
                         lblCountdown.Text += "~ " + ts.ToString("d'd 'h'h 'm'm 's's'");
                 }

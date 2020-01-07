@@ -18,7 +18,6 @@ public class HtmlConvert
         sw.Flush();
         return sw.ToString();
     }
-
     public string ConvertHtml(string html)
     {
         HtmlDocument doc = new HtmlDocument();
@@ -29,7 +28,6 @@ public class HtmlConvert
         sw.Flush();
         return sw.ToString();
     }
-
     private void ConvertContentTo(HtmlNode node, TextWriter outText)
     {
         foreach (HtmlNode subnode in node.ChildNodes)
@@ -37,7 +35,6 @@ public class HtmlConvert
             ConvertTo(subnode, outText);
         }
     }
-
     public void ConvertTo(HtmlNode node, TextWriter outText)
     {
         string html;

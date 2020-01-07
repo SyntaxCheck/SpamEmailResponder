@@ -79,6 +79,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Crypto.cs" />
     <Compile Include="DateTimeConversion.cs" />
     <Compile Include="FileAtachment.cs" />
     <Compile Include="EmailMessage.cs" />
@@ -96,6 +97,7 @@
       <DependentUpon>Graphs.cs</DependentUpon>
     </Compile>
     <Compile Include="MailStorageStats.cs" />
+    <Compile Include="ResponseProcessing.cs" />
     <Compile Include="SerializeHelper.cs" />
     <Compile Include="HtmlConvert.cs" />
     <Compile Include="JsonHelper.cs" />
@@ -104,7 +106,6 @@
     <Compile Include="LoggerInfo.cs" />
     <Compile Include="MailServerFunctions.cs" />
     <Compile Include="MailStorage.cs" />
-    <Compile Include="OutgoingMessage.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Settings.cs" />
@@ -116,6 +117,7 @@
     <Compile Include="StorageViewer.Designer.cs">
       <DependentUpon>StorageViewer.cs</DependentUpon>
     </Compile>
+    <Compile Include="TextProcessing.cs" />
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
     </EmbeddedResource>

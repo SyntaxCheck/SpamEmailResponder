@@ -45,160 +45,52 @@ public class DateTimeConversion
         // return string 
         return strDateNow;
     }
-
-    //This Method Deals with a date format expected from a CDA document and specified by the CDA architecture 
-    public static DateTime DateTimeFromString(string strDate)
+    public static bool IsStringSomeTypeOfDateTime(string s)
     {
-        // formerly methodname "convertStringToDateFormat"
+        s = s.Trim();
 
-        // inputs: "20120523085619.035-0500" representing ccyymmddhhmmss.millisec and timezone 5 HrsBeforeGMT
-        //         "20120523085619-0200" representing ccyymmddhhmmss and timezone 2 HrsBeforeGMT
-        //         "20120523085619" representing ccyymmddhhmmss
-        //         "20120523" representing ccyymmdd 
-        // Output: 2012-05-23 00:00:00.001000	
+        if (s.ToUpper().StartsWith("SENT:"))
+            s = s.Substring("SENT:".Length - 1).Trim();
+        if (s.StartsWith(":") || s.StartsWith(",") || s.StartsWith(";"))
+            s = s.Substring(1).Trim();
+        if (s.Contains("UTC+"))
+            s = s.Substring(0, s.IndexOf("UTC+")).Trim();
+        if (s.Contains("GMT+"))
+            s = s.Substring(0, s.IndexOf("GMT+")).Trim();
+        if (s.EndsWith(",") || s.EndsWith(":") || s.EndsWith(";"))
+            s = s.Substring(0, s.Length - 1).Trim();
 
-        DateTime? newDateTime = (DateTime?)null;
-        string year = " ", month = "", day = "", hour = "", minute = "", second = "";
+        string[] formats = {"M/d/yyyy h:mm:ss tt", "M/d/yyyy h:mm tt",
+            "MM/dd/yyyy hh:mm:ss", "M/d/yyyy h:mm:ss", "yyyy-MM-dd HH:mm", "yyyy-MM-dd H:mm",
+            "M/d/yyyy hh:mm tt", "M/d/yyyy hh tt", "yyyy-MM-dd HH:m", "yyyy-MM-dd H:m",
+            "M/d/yyyy h:mm", "M/d/yyyy h:mm", "d/M/yy",
+            "MM/dd/yyyy hh:mm", "M/dd/yyyy hh:mm", "dddd, MMMM dd, yyyy 'at' hh:mm tt",
+            "ddd d/MM/yy", "ddd d/M/yy", "ddd M/dd/yy", "ddd M/d/yy",
+            "MMM d/MM/yy", "MMM d/M/yy", "MMM M/dd/yy", "MMM M/d/yy",
+            "'On' ddd, MM/d/yy",
+            "'On' ddd, MMM d, yyyy 'at' hh:mm",
+            "'On' ddd, MMM d, yyyy 'at' hh:mm tt",
+            "'On' ddd, MMM d, yyyy 'at' H:mm",
+            "'On' ddd, MMM d, yyyy 'at' h:mm tt",
+            "'On' ddd, MMM d, yyyy 'at' h:mm",
+            "'On' dddd, MMMM d, yyyy, H:mm:ss tt",
+            "'On' MM/d/yy",
+        };
+        DateTime dateValue;
 
-        try
-        {
-            // strip timezone off end of string if present
-            if (strDate.Contains("-"))
-            {
-                strDate = strDate.Substring(0, strDate.IndexOf('-'));
-            }
+        if (DateTime.TryParseExact(s, formats, new System.Globalization.CultureInfo("en-US"), System.Globalization.DateTimeStyles.None, out dateValue))
+            return true;
 
-            // substring off year,month,day values
-            if (strDate.Length >= 8)
-            {
-                year = strDate.Substring(0, 4);
-                month = strDate.Substring(4, 2);
-                day = strDate.Substring(6, 2);
-            }
+        //Sometimes they include an invalid Month text when there is no part of the date that matches the text for the given month text. Remove the month text and try again
+        s = s.Replace("January", "").Replace("February", "").Replace("March", "").Replace("April", "").Replace("May", "").Replace("June", "").Replace("July", "").Replace("August", "").Replace("September", "").Replace("October", "").Replace("November", "").Replace("December", "").Trim();
+        s = s.Replace("Jan", "").Replace("Feb", "").Replace("Mar", "").Replace("Apr", "").Replace("May", "").Replace("Jun", "").Replace("Jul", "").Replace("Aug", "").Replace("Sep", "").Replace("Oct", "").Replace("Nov", "").Replace("Dec", "").Trim();
 
-            // substring off hours
-            if (strDate.Length > 8)
-            {
-                if (strDate.Length == 9)
-                {
-                    hour = strDate.Substring(8, 1);
-                }
-                else
-                {
-                    hour = strDate.Substring(8, 2);
-                }
-            }
+        while (s.Contains("  "))
+            s = s.Replace("  ", " ");
 
-            // substring off minutes
-            if (strDate.Length > 10)
-            {
-                if (strDate.Length == 11)
-                {
-                    minute = strDate.Substring(10, 1);
-                }
-                else
-                {
-                    minute = strDate.Substring(10, 2);
-                }
-            }
+        if (DateTime.TryParseExact(s, formats, new System.Globalization.CultureInfo("en-US"), System.Globalization.DateTimeStyles.None, out dateValue))
+            return true;
 
-            // substring off seconds
-            if (strDate.Length > 12)
-            {
-                if (strDate.Length == 13)
-                {
-                    second = strDate.Substring(12, 1);
-                }
-                else
-                {
-                    second = strDate.Substring(12, 2);
-                }
-            }
-
-            // YYYYMMDDHHMMSS
-            if (strDate.Length >= 14)
-            {
-                newDateTime = new DateTime(
-                                    Convert.ToInt32(year),
-                                    Convert.ToInt32(month),
-                                    Convert.ToInt32(day),
-                                    Convert.ToInt32(hour),
-                                    Convert.ToInt32(minute),
-                                    Convert.ToInt32(second));
-            }
-
-            // YYYYMMDD
-            else if (strDate.Length >= 8)
-            {
-                newDateTime = new DateTime(
-                                    Convert.ToInt32(year),
-                                    Convert.ToInt32(month),
-                                    Convert.ToInt32(day));
-            }
-
-            // YYYYMM (default to 1st day)
-            else if (strDate.Length == 6)
-            {
-                newDateTime = new DateTime(
-                                    Convert.ToInt32(strDate.Substring(0, 4)),
-                                    Convert.ToInt32(strDate.Substring(4, 2)),
-                                    01);
-            }
-
-            // YYYY (default to 1stMonth & 1st Day)
-            else if (strDate.Length == 4)
-            {
-                newDateTime = new DateTime(
-                                    Convert.ToInt32(strDate.Substring(0, 4)),
-                                    01,
-                                    01);
-            }
-        }
-        catch (Exception ex)
-        {
-            if (strDate == null)
-                strDate = String.Empty;
-
-            //JDW Note that the text: DateTimeFromString is searched for in PHCDARequestOut.ParseNodeET.Get() so changing this text would require changing that code in the catch block
-            throw new Exception("DateTimeFromString(" + strDate + ") " + ex.Message, ex);
-        }
-
-        // cast nullable DateTime variable back to normal DateTime object before returning value
-        return (DateTime)newDateTime;
-    }
-
-    public static DateTime DateTimeFromDB2DateString(string strDate)
-    {
-        // formerly methodname "convertStringToDateFormat"/"DateTimeFromString"
-
-        // output: "2012-09-09-00.00.00.01"
-        // inputs: "20120909"
-
-        DateTime? newDateTime = (DateTime?)null;
-        string year = " ", month = "", day = "";
-
-        try
-        {
-            // substring off year,month,day values
-            if (strDate.Length >= 8)
-            {
-                year = strDate.Substring(0, 4);//YYYY
-                //-
-                month = strDate.Substring(5, 2);//MM
-                //-
-                day = strDate.Substring(8, 2);//DD
-
-                newDateTime = new DateTime(
-                                    Convert.ToInt32(year),
-                                    Convert.ToInt32(month),
-                                    Convert.ToInt32(day));
-            }
-            // cast nullable DateTime variable back to normal DateTime object before returning value
-            return (DateTime)newDateTime;
-        }
-        catch (Exception ex)
-        {
-            throw new Exception("DateTimeFromDB2DateString() " + ex.Message);
-        }
-    }
+        return false;
+    } //Just verify the string is some type of DateTime, we do not care about getting an accurate date from this
 }

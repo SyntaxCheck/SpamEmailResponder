@@ -1,4 +1,4 @@
-﻿using static MailServerFunctions;
+﻿using static ResponseProcessing;
 
 public class MailStorageStats
 {

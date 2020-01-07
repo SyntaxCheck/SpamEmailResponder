@@ -38,5 +38,6 @@ Any Placeholder can be used multiple times or in any place. You could use the |A
 |GetRandomPaymentMethod| - This will get a random payment method from the PaymentMethods setting.
 |GetRandomThought| - This will get a random thought from the RandomThoughts setting.
 |GetPaymentTypeFromMessage| - This will attempt to find the payment type they are asking you to pay with and replace it here. If it cannot determine the payment method they are asking it will simply replace the text with "transfer".
+|GetRandomDevices| - This will get a random device from the Devices setting.
 |attachmentType| - This is exclusivly used for the BlankEmailWithAttachment type. It looks up the first attachment they included and returns the type of file. PDF/PNG/DOCX etc
 |attachmentIncludedText| - This is exclusivly used for the ConsignmentBox type. This will check if they included an attachment and if they did grab a random value from the setting ConsignmentBoxImageIncluded otherwise it will grab a random value from the setting ConsignmentBoxImageNotIncluded if they did not include an attachment.

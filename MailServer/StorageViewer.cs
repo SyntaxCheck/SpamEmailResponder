@@ -8,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using static MailServerFunctions;
+using static ResponseProcessing;
 
 namespace MailServer
 {
@@ -131,7 +131,7 @@ namespace MailServer
                 {
                     if (cbxShowAll.Checked || (!cbxHideWithResponse.Checked && !ms.Replied) || (cbxHideWithResponse.Checked && !ms.Replied && String.IsNullOrEmpty(ms.DeterminedReply.Trim())))
                     {
-                        dgvEmails.Rows.Add(ms.ToAddress, ms.SubjectLine, ms.DateReceived.ToString("yyyy-MM-dd hh:mm"), ms.DateProcessed.ToString("yyyy-MM-dd hh:mm"), ms.PersonName, ((EmailType)ms.MessageType).ToString(), ms.Replied.ToString(), ms.Ignored.ToString(), mailServer.MakeEmailEasierToRead(ms.EmailBodyPlain), mailServer.MakeEmailEasierToRead(ms.DeterminedReply), ms.NumberOfAttachments.ToString(), ms.MsgId, ms.InReplyToMsgId, ms.MyReplyMsgId);
+                        dgvEmails.Rows.Add(ms.ToAddress, ms.SubjectLine, ms.DateReceived.ToString("yyyy-MM-dd hh:mm"), ms.DateProcessed.ToString("yyyy-MM-dd hh:mm"), ms.PersonName, ((EmailType)ms.MessageType).ToString(), ms.Replied.ToString(), ms.Ignored.ToString(), TextProcessing.MakeEmailEasierToRead(ms.EmailBodyPlain), TextProcessing.MakeEmailEasierToRead(ms.DeterminedReply), ms.NumberOfAttachments.ToString(), ms.MsgId, ms.InReplyToMsgId, ms.MyReplyMsgId);
                         count++;
                     }
                 }

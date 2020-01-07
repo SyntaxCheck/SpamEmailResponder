@@ -1,15 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Windows.Forms.DataVisualization.Charting;
-using static MailServerFunctions;
+using static ResponseProcessing;
 
 namespace MailServer
 {
@@ -38,20 +34,18 @@ namespace MailServer
             }
         }
 
-        private void exitToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            Close();
-        }
-
         private void Graphs_Load(object sender, EventArgs e)
         {
 
+        }
+        private void exitToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Close();
         }
         private void rbMessageType_CheckedChanged(object sender, EventArgs e)
         {
             LoadGraph();
         }
-
         private void rbThreadLength_CheckedChanged(object sender, EventArgs e)
         {
             LoadGraph();

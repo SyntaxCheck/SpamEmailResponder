@@ -729,4 +729,14 @@ public class Settings
     public Settings()
     {
     }
+
+    public static bool ParseBooleanSetting(string str)
+    {
+        bool rtn = false;
+
+        if (str.ToUpper().Trim() == "T" || str.ToUpper().Trim() == "TRUE" || str.ToUpper().Trim() == "Y" || str.ToUpper().Trim() == "YES")
+            rtn = true;
+
+        return rtn;
+    }
 }
