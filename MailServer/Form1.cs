@@ -777,7 +777,7 @@ namespace MailServer
 
                 if (!valSet)
                 {
-                    lblCountdown.Text = "~ " + ts.ToString("d'd 'h'h 'm'm 's's'");
+                    lblCountdown.Text += "~ " + ts.ToString("d'd 'h'h 'm'm 's's'");
                 }
             }
 
