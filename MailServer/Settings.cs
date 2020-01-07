@@ -6,7 +6,7 @@ public class Settings
         myFakeGender, myFakeMaritalStatus, myFakeCountry, outgoingMessageIdDomainName, minutesDelayBeforeAnsweringAnEmail, enableLongMessageTypeReplies, enableShortMessageTypeReplies, enableSendingTransferReceiptsImageFiles;
     private int longMessageUpperLimit, shortMessageLowerLimit;
     private List<string> names, greeting, signoff, introduction, introductionOpening, introductionClosing, personDescriptionMale, personDescriptionFemale, memory, followupLine, acquaintance, 
-        locations, products, paymentMethods, randomThoughts, consignmentBoxImageIncluded, consignmentBoxImageNotIncluded, responseLongMessageType, responseShortMessageType, pathToTransferReceipts, emailAddressesToIgnore;
+        locations, products, paymentMethods, randomThoughts, devices, consignmentBoxImageIncluded, consignmentBoxImageNotIncluded, responseLongMessageType, responseShortMessageType, pathToTransferReceipts, emailAddressesToIgnore;
     private List<string> questionsNotListening, questionsJokingAround, questionsNotAnswering, questionsHowAreYou, 
         questionsNotUnderstanding, questionsPermission, questionsSpokenLanguage, questionsTrust, questionsWhyNoAnswer,
         questionsPhoneNumber, questionsAddress, questionsID, questionsAlreadyIncludedID, questionsCannotOpenAttachment, questionsWeAreCaught,
@@ -147,6 +147,11 @@ public class Settings
     {
         get { return products; }
         set { products = value; }
+    }
+    public List<string> Devices
+    {
+        get { return devices; }
+        set { devices = value; }
     }
     public List<string> IntroductionClosing
     {

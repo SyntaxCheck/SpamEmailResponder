@@ -259,7 +259,10 @@ namespace MailServer
         {
             if (ModifierKeys.HasFlag(Keys.Control))
             {
-                RegenAll();
+                if (ModifierKeys.HasFlag(Keys.Shift))
+                    RegenAll(true);
+                else
+                    RegenAll(false);
             }
             else
             {
@@ -650,14 +653,14 @@ namespace MailServer
                 }
             }
         }
-        private void RegenAll()
+        private void RegenAll(bool regenAllUnsent)
         {
             bool writeStorageFile = false;
             for (int i = 0; i < storage.Count(); i++)
             {
                 if (!storage[i].Replied && !storage[i].Ignored && !skippedMessages.Contains(";;;" + storage[i].MsgId + ";;;"))
                 {
-                    if (storage[i].MsgId == workingOnMsg || String.IsNullOrEmpty(storage[i].DeterminedReply.Trim()))
+                    if (storage[i].MsgId == workingOnMsg || (regenAllUnsent || String.IsNullOrEmpty(storage[i].DeterminedReply.Trim())))
                     {
                         List<MailStorage> previousMessagesInThread = mailServer.GetPreviousMessagesInThread(storage, storage[i]);
                         MailStorage temp = storage[i];

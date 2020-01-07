@@ -102,6 +102,7 @@ public class MailServerFunctions
             settings.EmailAddressesToIgnore = new List<string>() { "mailer-daemon@googlemail.com" };
             settings.Acquaintance = new List<string>() { "Bob", "Steve", "Bill", "Chad", "Mary", "Margret", "Joe", "Frank", "Cathy" };
             settings.Products = new List<string>() { "Cars", "Boats", "Lava Lamps", "Blinker Fluid" };
+            settings.Devices = new List<string>() { "Computer", "Phone", "Tablet" };
             settings.PaymentMethods = new List<string>() { "Cash", "Wire Transfer", "Bank Transfer", "Personal Check", "Bitcoin", "USD", "Euros", "Rupels" };
             settings.FollowupLine = new List<string>() { "Let me know what you need from me.", "What info do you need from me?", "Tell me exactly what you need from me." };
             settings.Greeting = new List<string>() { "Hello", "Howdy", "Hi", "How are you" };
@@ -416,6 +417,16 @@ public class MailServerFunctions
             {
                 toAddress = toAddress.ToUpper().Replace("MAIL=", "");
             }
+            if (toAddress.ToUpper().Contains("…"))
+            {
+                toAddress = toAddress.ToUpper().Replace("…", "");
+            }
+
+            ////Remove all non-ascii characters
+            //toAddress = Regex.Replace(toAddress, @"[^\u0000-\u007F]+", string.Empty);
+
+            //Remove all non-printable ascii characters
+            toAddress = Regex.Replace(toAddress, @"[^ -~]+", string.Empty);
 
             string[] toSplit = toAddress.Split(new string[] { ";" }, StringSplitOptions.RemoveEmptyEntries);
 
@@ -1336,6 +1347,12 @@ public class MailServerFunctions
 
         return lst[rand.Next(0, lst.Count())];
     }
+    private string GetRandomDevice(Random rand)
+    {
+        List<string> lst = settings.Devices;
+
+        return lst[rand.Next(0, lst.Count())];
+    }
     private string GetRandomConsignmentBoxImageIncluded(Random rand)
     {
         List<string> lst = settings.ConsignmentBoxImageIncluded;
@@ -1687,6 +1704,8 @@ public class MailServerFunctions
         replacement.Add(GetRandomPaymentMethod(rand));
         placeholder.Add("|GetRandomThought|");
         replacement.Add(GetRandomThought(rand));
+        placeholder.Add("|GetRandomDevice|");
+        replacement.Add(GetRandomDevice(rand));
         placeholder.Add("|PhoneNumber|");
         replacement.Add(settings.MyFakePhoneNumber);
         placeholder.Add("|Address|");
@@ -3689,6 +3708,7 @@ public class MailServerFunctions
             preProcessedBody.Trim().ToUpper().Contains("COMPLETE FULL NAME") ||
             preProcessedBody.Trim().ToUpper().Contains("NAME\r\n") ||
             preProcessedBody.Trim().ToUpper().Contains("YOUR FULL NAME AND YOUR RESIDENT ADDRESS AND PHONE NUMBER") ||
+            preProcessedBody.Trim().ToUpper().Contains("WITH YOUR FULL INFORMATION") ||
             preProcessedBody.Replace(" ", "").ToUpper().Contains("NAME,ADDRESS,EMAIL,TELEPHONE") ||
             preProcessedBody.Trim().ToUpper().Contains("YOUR FULL NAME."))
         {
@@ -3759,6 +3779,7 @@ public class MailServerFunctions
             preProcessedBody.Trim().ToUpper().Contains("ADDRESS\r\n") ||
             preProcessedBody.Trim().ToUpper().Contains("LOCATION\r\n") ||
             preProcessedBody.Trim().ToUpper().Contains("YOUR FULL NAME AND YOUR RESIDENT ADDRESS AND PHONE NUMBER") ||
+            preProcessedBody.Trim().ToUpper().Contains("WITH YOUR FULL INFORMATION") ||
             preProcessedBody.Replace(" ", "").ToUpper().Contains("NAME,ADDRESS,EMAIL,TELEPHONE") ||
             preProcessedBody.Trim().ToUpper().Contains("GIVE ME YOUR ADDRESS"))
         {
@@ -3797,6 +3818,7 @@ public class MailServerFunctions
             preProcessedBody.Trim().ToUpper().Contains("YOUR COUNTRY OF ORIGIN") ||
             preProcessedBody.Trim().ToUpper().Contains("COUNTRY ARE YOU FROM") ||
             preProcessedBody.Trim().ToUpper().Contains("COUNTRY\r\n") ||
+            preProcessedBody.Trim().ToUpper().Contains("WITH YOUR FULL INFORMATION") ||
             preProcessedBody.Trim().ToUpper().Contains("WHAT COUNTRY DO YOU LIVE"))
         {
             askedForDetails = true;
@@ -3839,6 +3861,7 @@ public class MailServerFunctions
             preProcessedBody.Trim().ToUpper().Contains("WORK\r\n") ||
             preProcessedBody.Trim().ToUpper().Contains("JOB\r\n") ||
             preProcessedBody.Trim().ToUpper().Contains("OCCUPATION\r\n") ||
+            preProcessedBody.Trim().ToUpper().Contains("WITH YOUR FULL INFORMATION") ||
             preProcessedBody.Trim().ToUpper().Contains("YOUR JOB"))
         {
             askedForDetails = true;
@@ -3886,6 +3909,7 @@ public class MailServerFunctions
             preProcessedBody.Trim().ToUpper().Contains("MARITALSTATUS:") ||
             preProcessedBody.Trim().ToUpper().Contains(", MARITAL STATUS,") ||
             preProcessedBody.Trim().ToUpper().Contains("AGE/SEX/MARITAL STATUS") ||
+            preProcessedBody.Trim().ToUpper().Contains("WITH YOUR FULL INFORMATION") ||
             preProcessedBody.Trim().ToUpper().Contains("ARE YOU SINGLE"))
         {
             askedForDetails = true;
@@ -3957,6 +3981,7 @@ public class MailServerFunctions
             preProcessedBody.Trim().ToUpper().Contains("DROP YOUR TELL, WOULD LIKE TO CALL") ||
             preProcessedBody.Trim().ToUpper().Contains("WHAT NUMBER DID YOU SAY THAT I SHOULD MESSAGE YOU") ||
             preProcessedBody.Trim().ToUpper().Contains("WHAT NUMBER DID YOU SAID THAT I SHOULD MESSAGE YOU") ||
+            preProcessedBody.Trim().ToUpper().Contains("WITH YOUR FULL INFORMATION") ||
             preProcessedBody.Trim().ToUpper().Contains("HOME PHONE NUMBER") ||
             preProcessedBody.Trim().ToUpper().Contains("HOW CAN I CALL YOU") ||
             preProcessedBody.Trim().ToUpper().Contains("HOW CAN I REACH YOU") ||
@@ -4882,6 +4907,7 @@ public class MailServerFunctions
             preProcessedBody.Trim().ToUpper().Contains("HAVE GOOD RELATIONSHIP WITH YOU") ||
             preProcessedBody.Trim().ToUpper().Contains("HEAR MORE ABOUT YOU") ||
             preProcessedBody.Trim().ToUpper().Contains("HERE MORE ABOUT YOU") ||
+            preProcessedBody.Trim().ToUpper().Contains("HOPE FOR FRIENDS") ||
             preProcessedBody.Trim().ToUpper().Contains("I AM A SINGLE YOUNG LADY") ||
             preProcessedBody.Trim().ToUpper().Contains("I NEED YOUR RELATIONSHIP") ||
             preProcessedBody.Trim().ToUpper().Contains("I LIKE TO HAVE MANY FRIEND") ||
