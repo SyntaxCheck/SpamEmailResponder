@@ -16,6 +16,13 @@ public abstract class EmailTypeBase : IEmailType
     public EmailType Type { get; set; }
     public TypeParseResponse ParseResponse { get; set; }
     public int PassNumber { get; set; }
+    public string AutoResponseKeyword
+    {
+        get
+        {
+            return ("_SYN " + Type + "_").ToUpper();
+        }
+    }
 
     public abstract TypeParseResponse TryTypeParse(LoggerInfo loggerInfo, ref MailStorage currentMessage, List<MailStorage> pastMessages, string preProcessedBody);
 }

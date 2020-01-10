@@ -4,14 +4,18 @@ using static ResponseProcessing;
 
 public class CheckPhishing : EmailTypeBase
 {
-    public CheckPhishing()
+    private ResponseSettings Settings { get; set; }
+
+    public CheckPhishing(ResponseSettings settings) : base()
     {
+        Settings = settings;
         Type = EmailType.Phishing;
     }
 
     public override TypeParseResponse TryTypeParse(LoggerInfo loggerInfo, ref MailStorage currentMessage, List<MailStorage> pastMessages, string preProcessedBody)
     {
-        if (preProcessedBody.Trim().ToUpper().Contains("ACCOUNT HAS BEEN CREATED") ||
+        if ((Settings.IsAdmin && preProcessedBody.Trim().ToUpper().StartsWith(AutoResponseKeyword)) ||
+            preProcessedBody.Trim().ToUpper().Contains("ACCOUNT HAS BEEN CREATED") ||
             preProcessedBody.Trim().ToUpper().Contains("ACCOUNT STATUS HAS BEEN CHANGED") ||
             preProcessedBody.Trim().ToUpper().Contains("BLOCKED ACCESS TO YOUR PAYPAL ACCOUNT") ||
             preProcessedBody.Trim().ToUpper().Contains("CANCEL YOUR PAYPAL") ||

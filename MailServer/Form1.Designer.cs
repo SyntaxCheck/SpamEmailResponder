@@ -29,15 +29,11 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.processTimer = new System.Windows.Forms.Timer(this.components);
             this.tbxOutput = new System.Windows.Forms.TextBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.cbxAutoSkip = new System.Windows.Forms.CheckBox();
             this.lblExtendedWait = new System.Windows.Forms.Label();
             this.panel1 = new System.Windows.Forms.Panel();
             this.trckBar = new System.Windows.Forms.TrackBar();
@@ -56,13 +52,6 @@
             this.btnIgnore = new System.Windows.Forms.Button();
             this.btnNext = new System.Windows.Forms.Button();
             this.btnSendEmail = new System.Windows.Forms.Button();
-            this.label10 = new System.Windows.Forms.Label();
-            this.dgvPastEmail = new System.Windows.Forms.DataGridView();
-            this.Subject = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.FromAddress = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Date = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Body = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Response = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.tbxDeterminedReply = new System.Windows.Forms.TextBox();
             this.label9 = new System.Windows.Forms.Label();
             this.label8 = new System.Windows.Forms.Label();
@@ -89,11 +78,9 @@
             this.responseConfigToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.storageViewerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.graphsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.cbxAutoSkip = new System.Windows.Forms.CheckBox();
             this.groupBox1.SuspendLayout();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trckBar)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.dgvPastEmail)).BeginInit();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -107,7 +94,7 @@
             this.tbxOutput.Margin = new System.Windows.Forms.Padding(4);
             this.tbxOutput.Multiline = true;
             this.tbxOutput.Name = "tbxOutput";
-            this.tbxOutput.Size = new System.Drawing.Size(1841, 74);
+            this.tbxOutput.Size = new System.Drawing.Size(1390, 74);
             this.tbxOutput.TabIndex = 0;
             // 
             // groupBox1
@@ -130,8 +117,6 @@
             this.groupBox1.Controls.Add(this.btnIgnore);
             this.groupBox1.Controls.Add(this.btnNext);
             this.groupBox1.Controls.Add(this.btnSendEmail);
-            this.groupBox1.Controls.Add(this.label10);
-            this.groupBox1.Controls.Add(this.dgvPastEmail);
             this.groupBox1.Controls.Add(this.tbxDeterminedReply);
             this.groupBox1.Controls.Add(this.label9);
             this.groupBox1.Controls.Add(this.label8);
@@ -156,10 +141,20 @@
             this.groupBox1.Margin = new System.Windows.Forms.Padding(4);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Padding = new System.Windows.Forms.Padding(4);
-            this.groupBox1.Size = new System.Drawing.Size(1838, 836);
+            this.groupBox1.Size = new System.Drawing.Size(1387, 836);
             this.groupBox1.TabIndex = 1;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Current Message";
+            // 
+            // cbxAutoSkip
+            // 
+            this.cbxAutoSkip.AutoSize = true;
+            this.cbxAutoSkip.Location = new System.Drawing.Point(625, 784);
+            this.cbxAutoSkip.Name = "cbxAutoSkip";
+            this.cbxAutoSkip.Size = new System.Drawing.Size(71, 17);
+            this.cbxAutoSkip.TabIndex = 37;
+            this.cbxAutoSkip.Text = "Auto Skip";
+            this.cbxAutoSkip.UseVisualStyleBackColor = true;
             // 
             // lblExtendedWait
             // 
@@ -179,9 +174,9 @@
             // 
             this.panel1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.panel1.Controls.Add(this.trckBar);
-            this.panel1.Location = new System.Drawing.Point(978, 783);
+            this.panel1.Location = new System.Drawing.Point(851, 783);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(396, 48);
+            this.panel1.Size = new System.Drawing.Size(371, 48);
             this.panel1.TabIndex = 35;
             this.panel1.Visible = false;
             // 
@@ -193,7 +188,7 @@
             this.trckBar.Maximum = 500;
             this.trckBar.Minimum = 200;
             this.trckBar.Name = "trckBar";
-            this.trckBar.Size = new System.Drawing.Size(394, 45);
+            this.trckBar.Size = new System.Drawing.Size(370, 45);
             this.trckBar.TabIndex = 30;
             this.trckBar.TickFrequency = 10;
             this.trckBar.TickStyle = System.Windows.Forms.TickStyle.Both;
@@ -204,7 +199,7 @@
             // lblNext
             // 
             this.lblNext.AutoSize = true;
-            this.lblNext.Location = new System.Drawing.Point(705, 803);
+            this.lblNext.Location = new System.Drawing.Point(548, 805);
             this.lblNext.Name = "lblNext";
             this.lblNext.Size = new System.Drawing.Size(34, 13);
             this.lblNext.TabIndex = 34;
@@ -215,7 +210,7 @@
             // 
             this.lblTimeTillNextSend.AutoSize = true;
             this.lblTimeTillNextSend.ForeColor = System.Drawing.Color.DarkRed;
-            this.lblTimeTillNextSend.Location = new System.Drawing.Point(745, 803);
+            this.lblTimeTillNextSend.Location = new System.Drawing.Point(588, 805);
             this.lblTimeTillNextSend.Name = "lblTimeTillNextSend";
             this.lblTimeTillNextSend.Size = new System.Drawing.Size(13, 13);
             this.lblTimeTillNextSend.TabIndex = 33;
@@ -225,7 +220,7 @@
             // lblTrackBarValue
             // 
             this.lblTrackBarValue.AutoSize = true;
-            this.lblTrackBarValue.Location = new System.Drawing.Point(897, 803);
+            this.lblTrackBarValue.Location = new System.Drawing.Point(770, 803);
             this.lblTrackBarValue.Name = "lblTrackBarValue";
             this.lblTrackBarValue.Size = new System.Drawing.Size(75, 13);
             this.lblTrackBarValue.TabIndex = 32;
@@ -235,7 +230,7 @@
             // lblSendFreq
             // 
             this.lblSendFreq.AutoSize = true;
-            this.lblSendFreq.Location = new System.Drawing.Point(883, 783);
+            this.lblSendFreq.Location = new System.Drawing.Point(756, 783);
             this.lblSendFreq.Name = "lblSendFreq";
             this.lblSendFreq.Size = new System.Drawing.Size(89, 13);
             this.lblSendFreq.TabIndex = 31;
@@ -245,7 +240,7 @@
             // lblCountdown
             // 
             this.lblCountdown.AutoSize = true;
-            this.lblCountdown.Location = new System.Drawing.Point(1455, 49);
+            this.lblCountdown.Location = new System.Drawing.Point(9, 808);
             this.lblCountdown.Name = "lblCountdown";
             this.lblCountdown.Size = new System.Drawing.Size(23, 13);
             this.lblCountdown.TabIndex = 29;
@@ -254,7 +249,7 @@
             // cbxDebug
             // 
             this.cbxDebug.AutoSize = true;
-            this.cbxDebug.Location = new System.Drawing.Point(1737, 782);
+            this.cbxDebug.Location = new System.Drawing.Point(1282, 807);
             this.cbxDebug.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.cbxDebug.Name = "cbxDebug";
             this.cbxDebug.Size = new System.Drawing.Size(92, 17);
@@ -266,7 +261,7 @@
             // lblMessageInfo
             // 
             this.lblMessageInfo.AutoSize = true;
-            this.lblMessageInfo.Location = new System.Drawing.Point(1439, 21);
+            this.lblMessageInfo.Location = new System.Drawing.Point(996, 0);
             this.lblMessageInfo.Name = "lblMessageInfo";
             this.lblMessageInfo.Size = new System.Drawing.Size(378, 13);
             this.lblMessageInfo.TabIndex = 27;
@@ -276,7 +271,7 @@
             // cbxAutoSend
             // 
             this.cbxAutoSend.AutoSize = true;
-            this.cbxAutoSend.Location = new System.Drawing.Point(699, 782);
+            this.cbxAutoSend.Location = new System.Drawing.Point(542, 784);
             this.cbxAutoSend.Margin = new System.Windows.Forms.Padding(4);
             this.cbxAutoSend.Name = "cbxAutoSend";
             this.cbxAutoSend.Size = new System.Drawing.Size(76, 17);
@@ -319,7 +314,7 @@
             // btnRefresh
             // 
             this.btnRefresh.BackColor = System.Drawing.Color.AliceBlue;
-            this.btnRefresh.Location = new System.Drawing.Point(1564, 778);
+            this.btnRefresh.Location = new System.Drawing.Point(1282, 778);
             this.btnRefresh.Margin = new System.Windows.Forms.Padding(4);
             this.btnRefresh.Name = "btnRefresh";
             this.btnRefresh.Size = new System.Drawing.Size(82, 23);
@@ -332,7 +327,7 @@
             // 
             this.btnIgnore.BackColor = System.Drawing.Color.AliceBlue;
             this.btnIgnore.Enabled = false;
-            this.btnIgnore.Location = new System.Drawing.Point(326, 776);
+            this.btnIgnore.Location = new System.Drawing.Point(269, 776);
             this.btnIgnore.Margin = new System.Windows.Forms.Padding(4);
             this.btnIgnore.Name = "btnIgnore";
             this.btnIgnore.Size = new System.Drawing.Size(82, 23);
@@ -345,7 +340,7 @@
             // 
             this.btnNext.BackColor = System.Drawing.Color.AliceBlue;
             this.btnNext.Enabled = false;
-            this.btnNext.Location = new System.Drawing.Point(236, 776);
+            this.btnNext.Location = new System.Drawing.Point(179, 776);
             this.btnNext.Margin = new System.Windows.Forms.Padding(4);
             this.btnNext.Name = "btnNext";
             this.btnNext.Size = new System.Drawing.Size(82, 23);
@@ -358,7 +353,7 @@
             // 
             this.btnSendEmail.BackColor = System.Drawing.Color.AliceBlue;
             this.btnSendEmail.Enabled = false;
-            this.btnSendEmail.Location = new System.Drawing.Point(542, 776);
+            this.btnSendEmail.Location = new System.Drawing.Point(442, 776);
             this.btnSendEmail.Margin = new System.Windows.Forms.Padding(4);
             this.btnSendEmail.Name = "btnSendEmail";
             this.btnSendEmail.Size = new System.Drawing.Size(82, 23);
@@ -367,100 +362,20 @@
             this.btnSendEmail.UseVisualStyleBackColor = false;
             this.btnSendEmail.Click += new System.EventHandler(this.btnSendEmail_Click);
             // 
-            // label10
-            // 
-            this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(695, 53);
-            this.label10.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(110, 13);
-            this.label10.TabIndex = 18;
-            this.label10.Text = "Past emails in thread:";
-            // 
-            // dgvPastEmail
-            // 
-            this.dgvPastEmail.AllowUserToAddRows = false;
-            this.dgvPastEmail.AllowUserToDeleteRows = false;
-            this.dgvPastEmail.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.AllCellsExceptHeaders;
-            this.dgvPastEmail.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dgvPastEmail.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
-            this.Subject,
-            this.FromAddress,
-            this.Date,
-            this.Body,
-            this.Response});
-            this.dgvPastEmail.Location = new System.Drawing.Point(695, 77);
-            this.dgvPastEmail.Margin = new System.Windows.Forms.Padding(4);
-            this.dgvPastEmail.Name = "dgvPastEmail";
-            this.dgvPastEmail.ReadOnly = true;
-            this.dgvPastEmail.Size = new System.Drawing.Size(1135, 693);
-            this.dgvPastEmail.TabIndex = 17;
-            this.dgvPastEmail.CellContentDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvPastEmail_CellContentDoubleClick);
-            // 
-            // Subject
-            // 
-            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.TopLeft;
-            this.Subject.DefaultCellStyle = dataGridViewCellStyle1;
-            this.Subject.FillWeight = 125F;
-            this.Subject.HeaderText = "Subject";
-            this.Subject.Name = "Subject";
-            this.Subject.ReadOnly = true;
-            this.Subject.Width = 125;
-            // 
-            // FromAddress
-            // 
-            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.TopLeft;
-            this.FromAddress.DefaultCellStyle = dataGridViewCellStyle2;
-            this.FromAddress.FillWeight = 150F;
-            this.FromAddress.HeaderText = "From Address";
-            this.FromAddress.Name = "FromAddress";
-            this.FromAddress.ReadOnly = true;
-            this.FromAddress.Width = 150;
-            // 
-            // Date
-            // 
-            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.TopCenter;
-            this.Date.DefaultCellStyle = dataGridViewCellStyle3;
-            this.Date.FillWeight = 125F;
-            this.Date.HeaderText = "Date";
-            this.Date.Name = "Date";
-            this.Date.ReadOnly = true;
-            this.Date.Width = 125;
-            // 
-            // Body
-            // 
-            dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.TopLeft;
-            this.Body.DefaultCellStyle = dataGridViewCellStyle4;
-            this.Body.FillWeight = 310F;
-            this.Body.HeaderText = "Body";
-            this.Body.Name = "Body";
-            this.Body.ReadOnly = true;
-            this.Body.Width = 310;
-            // 
-            // Response
-            // 
-            dataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.TopLeft;
-            this.Response.DefaultCellStyle = dataGridViewCellStyle5;
-            this.Response.FillWeight = 350F;
-            this.Response.HeaderText = "Response";
-            this.Response.Name = "Response";
-            this.Response.ReadOnly = true;
-            this.Response.Width = 350;
-            // 
             // tbxDeterminedReply
             // 
-            this.tbxDeterminedReply.Location = new System.Drawing.Point(12, 488);
+            this.tbxDeterminedReply.Location = new System.Drawing.Point(15, 180);
             this.tbxDeterminedReply.Margin = new System.Windows.Forms.Padding(4);
             this.tbxDeterminedReply.Multiline = true;
             this.tbxDeterminedReply.Name = "tbxDeterminedReply";
             this.tbxDeterminedReply.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.tbxDeterminedReply.Size = new System.Drawing.Size(675, 280);
+            this.tbxDeterminedReply.Size = new System.Drawing.Size(675, 588);
             this.tbxDeterminedReply.TabIndex = 16;
             // 
             // label9
             // 
             this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(13, 471);
+            this.label9.Location = new System.Drawing.Point(12, 163);
             this.label9.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(116, 13);
@@ -470,7 +385,7 @@
             // label8
             // 
             this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(9, 168);
+            this.label8.Location = new System.Drawing.Point(695, 21);
             this.label8.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(83, 13);
@@ -479,12 +394,12 @@
             // 
             // tbxBodyPlainText
             // 
-            this.tbxBodyPlainText.Location = new System.Drawing.Point(8, 185);
+            this.tbxBodyPlainText.Location = new System.Drawing.Point(695, 38);
             this.tbxBodyPlainText.Margin = new System.Windows.Forms.Padding(4);
             this.tbxBodyPlainText.Multiline = true;
             this.tbxBodyPlainText.Name = "tbxBodyPlainText";
             this.tbxBodyPlainText.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.tbxBodyPlainText.Size = new System.Drawing.Size(679, 280);
+            this.tbxBodyPlainText.Size = new System.Drawing.Size(679, 730);
             this.tbxBodyPlainText.TabIndex = 2;
             // 
             // tbxDateReceived
@@ -631,7 +546,7 @@
             this.optionsToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(1858, 24);
+            this.menuStrip1.Size = new System.Drawing.Size(1405, 24);
             this.menuStrip1.TabIndex = 2;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -680,22 +595,12 @@
             this.graphsToolStripMenuItem.Text = "Graphs";
             this.graphsToolStripMenuItem.Click += new System.EventHandler(this.graphsToolStripMenuItem_Click);
             // 
-            // cbxAutoSkip
-            // 
-            this.cbxAutoSkip.AutoSize = true;
-            this.cbxAutoSkip.Location = new System.Drawing.Point(782, 782);
-            this.cbxAutoSkip.Name = "cbxAutoSkip";
-            this.cbxAutoSkip.Size = new System.Drawing.Size(71, 17);
-            this.cbxAutoSkip.TabIndex = 37;
-            this.cbxAutoSkip.Text = "Auto Skip";
-            this.cbxAutoSkip.UseVisualStyleBackColor = true;
-            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.LightSteelBlue;
-            this.ClientSize = new System.Drawing.Size(1858, 962);
+            this.ClientSize = new System.Drawing.Size(1405, 962);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.tbxOutput);
             this.Controls.Add(this.menuStrip1);
@@ -711,7 +616,6 @@
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trckBar)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.dgvPastEmail)).EndInit();
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
             this.ResumeLayout(false);
@@ -742,18 +646,11 @@
         private System.Windows.Forms.TextBox tbxBodyPlainText;
         private System.Windows.Forms.Label label9;
         private System.Windows.Forms.TextBox tbxDeterminedReply;
-        private System.Windows.Forms.Label label10;
-        private System.Windows.Forms.DataGridView dgvPastEmail;
         private System.Windows.Forms.Button btnSendEmail;
         private System.Windows.Forms.Button btnNext;
         private System.Windows.Forms.Button btnIgnore;
         private System.Windows.Forms.Button btnRefresh;
         private System.Windows.Forms.Button btnRegenerate;
-        private System.Windows.Forms.DataGridViewTextBoxColumn Subject;
-        private System.Windows.Forms.DataGridViewTextBoxColumn FromAddress;
-        private System.Windows.Forms.DataGridViewTextBoxColumn Date;
-        private System.Windows.Forms.DataGridViewTextBoxColumn Body;
-        private System.Windows.Forms.DataGridViewTextBoxColumn Response;
         private System.Windows.Forms.TextBox tbxAttachmentNames;
         private System.Windows.Forms.Button btnSaveChanges;
         private System.Windows.Forms.CheckBox cbxAutoSend;

@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Web.Script.Serialization;
@@ -22,8 +23,8 @@ public class MailServerFunctions
     public string UserName;
     public string Password;
     private int messagesSendSinceRandomize;
-
     public Settings settings;
+    ResponseProcessing respProc;
 
     public MailServerFunctions()
     {
@@ -191,6 +192,8 @@ public class MailServerFunctions
 
         UserName = settings.EmailAddress;
         Password = settings.Password;
+
+        respProc = new ResponseProcessing(settings);
     }
 
     //This function will process a single message
@@ -351,7 +354,6 @@ public class MailServerFunctions
         SmtpClient client = new SmtpClient();
         MimeMessage message = new MimeMessage();
         Random rand = new Random();
-        ResponseProcessing respProc = new ResponseProcessing(settings);
 
         if (messagesSendSinceRandomize > 25)
         {
@@ -460,6 +462,18 @@ public class MailServerFunctions
                         }
                     }
                 }
+                if (realAddress.Contains('/'))
+                {
+                    string[] addrSplit = realAddress.Split(new char[] { '/' });
+                    foreach (string addrS in addrSplit)
+                    {
+                        if (addrS.Contains('@'))
+                        {
+                            realAddress = addrS;
+                            break;
+                        }
+                    }
+                }
 
                 while (realAddress.EndsWith(".") || realAddress.EndsWith(","))
                 {
@@ -473,97 +487,105 @@ public class MailServerFunctions
                 }
             }
 
-            if (!subject.StartsWith("RE:"))
-                subject = "RE: " + subject;
-
-            message.Subject = subject;
-
-            string htmlBodyText = TextProcessing.TextToHtml(bodyText);
-
-            Multipart alternative = new Multipart("alternative");
-            TextPart plainText = null;
-            plainText = new TextPart("plain");
-            plainText.Text = bodyText;
-            alternative.Add(plainText);
-
-            //No need, plain text should be fine. HTML formatted with <PRE> looks different and might tip them off on my program
-            //TextPart htmlText = null;
-            //htmlText = new TextPart("html");
-            //htmlText.Text = htmlBodyText;
-            //alternative.Add(htmlText);
-
-            Multipart messageBodyMultiPart = new Multipart("mixed");
-            messageBodyMultiPart.Add(alternative);
-
-            if (includeID)
+            if (message.To.Count() > 0)
             {
-                MimePart attach = new MimePart();
-                attach.ContentObject = new ContentObject(new MemoryStream(File.ReadAllBytes(settings.PathToMyFakeID)), ContentEncoding.Default);
-                attach.ContentDisposition = new ContentDisposition(ContentDisposition.Attachment);
-                attach.ContentTransferEncoding = ContentEncoding.Default;
-                attach.FileName = Path.GetFileName(settings.PathToMyFakeID);
+                if (!subject.StartsWith("RE:"))
+                    subject = "RE: " + subject;
 
-                messageBodyMultiPart.Add(attach);
-            }
-            if (includePaymentReceipt)
-            {
-                string randomPath = respProc.GetRandomPaymentReceiptPath(rand);
-                if (!String.IsNullOrEmpty(randomPath) || File.Exists(randomPath))
+                message.Subject = subject;
+
+                string htmlBodyText = TextProcessing.TextToHtml(bodyText);
+
+                Multipart alternative = new Multipart("alternative");
+                TextPart plainText = null;
+                plainText = new TextPart("plain");
+                plainText.Text = bodyText;
+                alternative.Add(plainText);
+
+                //No need, plain text should be fine. HTML formatted with <PRE> looks different and might tip them off on my program
+                //TextPart htmlText = null;
+                //htmlText = new TextPart("html");
+                //htmlText.Text = htmlBodyText;
+                //alternative.Add(htmlText);
+
+                Multipart messageBodyMultiPart = new Multipart("mixed");
+                messageBodyMultiPart.Add(alternative);
+
+                if (includeID)
                 {
                     MimePart attach = new MimePart();
-                    attach.ContentObject = new ContentObject(new MemoryStream(File.ReadAllBytes(randomPath)), ContentEncoding.Default);
+                    attach.ContentObject = new ContentObject(new MemoryStream(File.ReadAllBytes(settings.PathToMyFakeID)), ContentEncoding.Default);
                     attach.ContentDisposition = new ContentDisposition(ContentDisposition.Attachment);
                     attach.ContentTransferEncoding = ContentEncoding.Default;
-                    attach.FileName = Path.GetFileName(randomPath);
+                    attach.FileName = Path.GetFileName(settings.PathToMyFakeID);
 
                     messageBodyMultiPart.Add(attach);
                 }
+                if (includePaymentReceipt)
+                {
+                    string randomPath = respProc.GetRandomPaymentReceiptPath(rand);
+                    if (!String.IsNullOrEmpty(randomPath) || File.Exists(randomPath))
+                    {
+                        MimePart attach = new MimePart();
+                        attach.ContentObject = new ContentObject(new MemoryStream(File.ReadAllBytes(randomPath)), ContentEncoding.Default);
+                        attach.ContentDisposition = new ContentDisposition(ContentDisposition.Attachment);
+                        attach.ContentTransferEncoding = ContentEncoding.Default;
+                        attach.FileName = Path.GetFileName(randomPath);
+
+                        messageBodyMultiPart.Add(attach);
+                    }
+                }
+
+                message.Body = messageBodyMultiPart;
+
+                Logger.WriteDbg(loggerInfo, "Message Built");
+
+                int failedCount = 0;
+                while (failedCount < 5)
+                {
+                    try
+                    {
+                        if (timeout > 0)
+                        {
+                            client.Timeout = timeout;
+                        }
+                        client.ServerCertificateValidationCallback = (s, c, h, e) => true;
+                        client.Connect(hostName, port, true);
+                        Logger.WriteDbg(loggerInfo, "Connected to Host");
+
+                        // Note: since we don't have an OAuth2 token, disable
+                        // the XOAUTH2 authentication mechanism.
+                        client.AuthenticationMechanisms.Remove("XOAUTH2");
+
+                        client.Authenticate(username, password);
+                        Logger.WriteDbg(loggerInfo, "Authenticated User");
+                        client.Send(message);
+                        Logger.WriteDbg(loggerInfo, "Sent Message. Subject: " + message.Subject);
+                        client.Disconnect(true);
+                        Logger.WriteDbg(loggerInfo, "Disconnect");
+
+                        messagesSendSinceRandomize++;
+
+                        break; //If no exception was thrown break the loop
+                    }
+                    catch (Exception iex)
+                    {
+                        if (iex.Message.Contains("established connection failed because connected host has failed to respond"))
+                        {
+                            failedCount++;
+                            Thread.Sleep(10000); //Sleep for 10 seconds and wait for the connection issue to clear up
+                        }
+                        else
+                        {
+                            throw iex;
+                        }
+                    }
+                }
             }
-
-            message.Body = messageBodyMultiPart;
-
-            Logger.WriteDbg(loggerInfo, "Message Built");
-
-            int failedCount = 0;
-            while (failedCount < 5)
+            else
             {
-                try
-                {
-                    if (timeout > 0)
-                    {
-                        client.Timeout = timeout;
-                    }
-                    client.ServerCertificateValidationCallback = (s, c, h, e) => true;
-                    client.Connect(hostName, port, true);
-                    Logger.WriteDbg(loggerInfo, "Connected to Host");
-
-                    // Note: since we don't have an OAuth2 token, disable
-                    // the XOAUTH2 authentication mechanism.
-                    client.AuthenticationMechanisms.Remove("XOAUTH2");
-
-                    client.Authenticate(username, password);
-                    Logger.WriteDbg(loggerInfo, "Authenticated User");
-                    client.Send(message);
-                    Logger.WriteDbg(loggerInfo, "Sent Message. Subject: " + message.Subject);
-                    client.Disconnect(true);
-                    Logger.WriteDbg(loggerInfo, "Disconnect");
-
-                    messagesSendSinceRandomize++;
-
-                    break; //If no exception was thrown break the loop
-                }
-                catch (Exception iex)
-                {
-                    if (iex.Message.Contains("established connection failed because connected host has failed to respond"))
-                    {
-                        failedCount++;
-                        Thread.Sleep(10000); //Sleep for 10 seconds and wait for the connection issue to clear up
-                    }
-                    else
-                    {
-                        throw iex;
-                    }
-                }
+                response.Code = -1;
+                response.Message = "Failed to Send SMTP Message, no valid 'To' addresses found.";
             }
         }
         catch (Exception ex)
@@ -581,7 +603,6 @@ public class MailServerFunctions
     public StandardResponse HandleMessage(LoggerInfo loggerInfo, EmailMessage msg, ref List<MailStorage> storage)
     {
         StandardResponse response = new StandardResponse { Code = 0, Message = String.Empty, Data = String.Empty };
-        ResponseProcessing respProc = new ResponseProcessing(settings);
 
         try
         {
@@ -666,6 +687,14 @@ public class MailServerFunctions
                 {
                     if (!FoundIgnoreEmail(v.ToString()))
                         storageObj.ToAddress += v.ToString() + ";";
+                }
+                if (String.IsNullOrEmpty(storageObj.ToAddress))
+                {
+                    if(msg.Sender != null)
+                    {
+                        if (!FoundIgnoreEmail(msg.Sender.ToString()))
+                            storageObj.ToAddress += msg.Sender.ToString() + ";";
+                    }
                 }
                 foreach (var v in msg.FileAttachments)
                 {
@@ -787,12 +816,12 @@ public class MailServerFunctions
 
             rtn += "The MinutesDelayBeforeAnsweringAnEmail must be an integer value.";
         }
-        else if (outInt <= 0)
+        else if (outInt < 0)
         {
             if (!String.IsNullOrEmpty(rtn))
                 rtn += Environment.NewLine;
 
-            rtn += "The MinutesDelayBeforeAnsweringAnEmail must be greater than 0.";
+            rtn += "The MinutesDelayBeforeAnsweringAnEmail must be greater than or equal to 0.";
         }
         if (!String.IsNullOrEmpty(settings.PathToMyFakeID))
         {
@@ -822,55 +851,151 @@ public class MailServerFunctions
 
         return rtn;
     }
+//    public List<MailStorage> GetPreviousMessagesInThread(List<MailStorage> storage, MailStorage mail)
+//    {
+//        List<MailStorage> previousMessagesInThread = new List<MailStorage>();
+
+//        foreach (MailStorage ms in storage)
+//        {
+//            if (ms.Ignored) //Dont add ignored messages to stats since it most likely is duplicates
+//                continue;
+
+//            if (ms.MsgId != mail.MsgId) //Skip including the message we are working on
+//            {
+//                if (!String.IsNullOrEmpty(ms.MyReplyMsgId) && !String.IsNullOrEmpty(mail.InReplyToMsgId) && ms.MyReplyMsgId == mail.InReplyToMsgId)
+//                {
+//                    if (!previousMessagesInThread.Contains(ms))
+//                    {
+//                        previousMessagesInThread.Add(ms);
+
+//                        List<MailStorage> prevPreviousMessagesInThread = new List<MailStorage>();
+//                        prevPreviousMessagesInThread = GetPreviousMessagesInThread(storage, ms);
+
+//                        foreach (MailStorage prms in prevPreviousMessagesInThread)
+//                        {
+//                            if (!previousMessagesInThread.Contains(prms))
+//                            {
+//                                previousMessagesInThread.Add(prms);
+//                            }
+//                        }
+//                    }
+//                }
+//                else if (ms.SubjectLine.Replace("RE:", "").Replace("FW:", "").Trim() == mail.SubjectLine.Replace("RE:", "").Replace("FW:", "").Trim())
+//                {
+//                    int foundCount = 0;
+
+//                    foreach (string v in mail.ToAddressList)
+//                    {
+//                        string emailAddres = 
+//String.Empty;
+
+//                        try
+//                        {
+//                            System.Net.Mail.MailAddress address = new System.Net.Mail.MailAddress(v.Replace("\"", ""));
+//                            emailAddres = address.Address;
+//                        }
+//                        catch (Exception)
+//                        {
+//                            emailAddres = TextProcessing.AttemptManualParseOfEmailAddress(v);
+//                        }
+
+//                        if (ms.ToAddress.Contains(emailAddres))
+//                        {
+//                            foundCount++;
+//                            break;
+//                        }
+//                    }
+
+//                    if (foundCount > 0)
+//                    {
+//                        if (!previousMessagesInThread.Contains(ms))
+//                        {
+//                            previousMessagesInThread.Add(ms);
+
+//                            List<MailStorage> prevPreviousMessagesInThread = new List<MailStorage>();
+//                            prevPreviousMessagesInThread = GetPreviousMessagesInThread(storage, ms);
+
+//                            foreach (MailStorage prms in prevPreviousMessagesInThread)
+//                            {
+//                                if (!previousMessagesInThread.Contains(prms))
+//                                {
+//                                    previousMessagesInThread.Add(prms);
+//                                }
+//                            }
+//                        }
+//                    }
+//                }
+//            }
+//        }
+
+//        return previousMessagesInThread;
+//    }
     public List<MailStorage> GetPreviousMessagesInThread(List<MailStorage> storage, MailStorage mail)
     {
-        List<MailStorage> previousMessagesInThread = new List<MailStorage>();
+        List<MailStorage> prevMsgs = new List<MailStorage>();
 
+        GetPreviousMessagesInThreadRecursiveRecursive(storage, mail, ref prevMsgs);
+
+        return prevMsgs;
+    }
+    public void GetPreviousMessagesInThreadRecursiveRecursive(List<MailStorage> storage, MailStorage mail, ref List<MailStorage> prevMsgs)
+    {
         foreach (MailStorage ms in storage)
         {
-            if (ms.Ignored) //Dont add ignored messages to stats since it most likely is duplicates
-                continue;
-
-            if (ms.MsgId != mail.MsgId) //Skip including the message we are working on
+            if (ms.MsgId != mail.MsgId)
             {
-                if (!String.IsNullOrEmpty(ms.MyReplyMsgId) && !String.IsNullOrEmpty(mail.InReplyToMsgId) && ms.MyReplyMsgId == mail.InReplyToMsgId)
+                if (!String.IsNullOrEmpty(ms.MyReplyMsgId) && !String.IsNullOrEmpty(mail.InReplyToMsgId) && (ms.MyReplyMsgId == mail.InReplyToMsgId || ms.MsgId == mail.InReplyToMsgId))
                 {
-                    previousMessagesInThread.Add(ms);
-                }
-                else if (ms.SubjectLine.Replace("RE:", "").Replace("FW:", "").Trim() == mail.SubjectLine.Replace("RE:", "").Replace("FW:", "").Trim())
-                {
-                    int foundCount = 0;
-
-                    foreach (string v in mail.ToAddressList)
+                    if (!prevMsgs.Contains(ms))
                     {
-                        string emailAddres  =String.Empty;
-
-                        try
-                        {
-                            System.Net.Mail.MailAddress address = new System.Net.Mail.MailAddress(v.Replace("\"", ""));
-                            emailAddres = address.Address;
-                        }
-                        catch (Exception)
-                        {
-                            emailAddres = TextProcessing.AttemptManualParseOfEmailAddress(v);
-                        }
-
-                        if (ms.ToAddress.Contains(emailAddres))
-                        {
-                            foundCount++;
-                            break;
-                        }
-                    }
-
-                    if (foundCount > 0)
-                    {
-                        previousMessagesInThread.Add(ms);
+                        prevMsgs.Add(ms);
+                        GetPreviousMessagesInThreadRecursiveRecursive(storage, ms, ref prevMsgs);
                     }
                 }
             }
         }
+    }
+    public string BuildPreviousMessageText(List<MailStorage> previousMessages)
+    {
+        StringBuilder sb = new StringBuilder();
 
-        return previousMessagesInThread;
+        if (previousMessages.Count() > 0)
+        {
+            foreach (MailStorage ms in previousMessages)
+            {
+                sb.AppendLine("___________________________________________________________");
+                if (ms.Replied)
+                {
+                    sb.AppendLine("From: Our Email, Type: " + ((ResponseProcessing.EmailType)ms.MessageType).ToString());
+                    sb.AppendLine("Date: " + ms.DateProcessed.ToString("dddd, MMMM d, yyyy hh:mm tt"));
+                    sb.AppendLine("To: " + ms.ToAddress);
+                    sb.AppendLine("Subject: " + ms.SubjectLine + Environment.NewLine);
+                    sb.AppendLine(ms.DeterminedReply);
+                    if (ms.IncludeID)
+                    {
+                        sb.AppendLine("<<ID Included as attachment>>");
+                    }
+                    if (ms.IncludePaymentReceipt)
+                    {
+                        sb.AppendLine("<<Payment Receipt included as attachment>>");
+                    }
+                    sb.AppendLine("");
+                }
+                sb.AppendLine("___________________________________________________________");
+                sb.AppendLine("From: " + ms.ToAddress);
+                sb.AppendLine("Date: " + ms.DateReceived.ToString("dddd, MMMM d, yyyy hh:mm tt"));
+                sb.AppendLine("To: Our Email");
+                sb.AppendLine("Subject: " + ms.SubjectLine + Environment.NewLine);
+                sb.AppendLine(TextProcessing.RemoveUselessText(TextProcessing.MakeEmailEasierToRead(TextProcessing.RemoveReplyTextFromMessage(settings, ms.EmailBodyPlain))));
+                if (ms.NumberOfAttachments > 0)
+                {
+                    sb.AppendLine("<< Included Attachments: " + ms.AttachmentNames + " >>");
+                }
+                sb.AppendLine("");
+            }
+        }
+
+        return sb.ToString();
     }
     #endregion
 }

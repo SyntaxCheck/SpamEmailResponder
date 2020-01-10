@@ -81,6 +81,39 @@
   <ItemGroup>
     <Compile Include="Crypto.cs" />
     <Compile Include="DateTimeConversion.cs" />
+    <Compile Include="EmailTypes\CheckAtmCard.cs" />
+    <Compile Include="EmailTypes\CheckBeneficiary.cs" />
+    <Compile Include="EmailTypes\CheckBlankWithAttachment.cs" />
+    <Compile Include="EmailTypes\CheckBuildTrust.cs" />
+    <Compile Include="EmailTypes\CheckConsignmentBox.cs" />
+    <Compile Include="EmailTypes\CheckDeathOrDying.cs" />
+    <Compile Include="EmailTypes\CheckForeignLanguage.cs" />
+    <Compile Include="EmailTypes\CheckFreeMoney.cs" />
+    <Compile Include="EmailTypes\CheckGenericAdvertisement.cs" />
+    <Compile Include="EmailTypes\CheckGenericPayment.cs" />
+    <Compile Include="EmailTypes\CheckIlluminati.cs" />
+    <Compile Include="EmailTypes\CheckInformationGathering.cs" />
+    <Compile Include="EmailTypes\CheckInheritance.cs" />
+    <Compile Include="EmailTypes\CheckInvestor.cs" />
+    <Compile Include="EmailTypes\CheckJobOffer.cs" />
+    <Compile Include="EmailTypes\CheckLoanOffer.cs" />
+    <Compile Include="EmailTypes\CheckLottery.cs" />
+    <Compile Include="EmailTypes\CheckMessageTooLong.cs" />
+    <Compile Include="EmailTypes\CheckMessageTooShort.cs" />
+    <Compile Include="EmailTypes\CheckMoneyHack.cs" />
+    <Compile Include="EmailTypes\CheckMoneyStorage.cs" />
+    <Compile Include="EmailTypes\CheckOilAndGas.cs" />
+    <Compile Include="EmailTypes\CheckOnlineMarketingConsult.cs" />
+    <Compile Include="EmailTypes\CheckPhishing.cs" />
+    <Compile Include="EmailTypes\CheckPolice.cs" />
+    <Compile Include="EmailTypes\CheckRefugee.cs" />
+    <Compile Include="EmailTypes\CheckScamVictim.cs" />
+    <Compile Include="EmailTypes\CheckSellingProducts.cs" />
+    <Compile Include="EmailTypes\CheckSellingServices.cs" />
+    <Compile Include="EmailTypes\CheckShipping.cs" />
+    <Compile Include="EmailTypes\EmailTypeBase.cs" />
+    <Compile Include="EmailTypes\IEmailType.cs" />
+    <Compile Include="EmailTypes\TypeParseResponse.cs" />
     <Compile Include="FileAtachment.cs" />
     <Compile Include="EmailMessage.cs" />
     <Compile Include="FileMimeType.cs" />
@@ -98,6 +131,7 @@
     </Compile>
     <Compile Include="MailStorageStats.cs" />
     <Compile Include="ResponseProcessing.cs" />
+    <Compile Include="ResponseSettings.cs" />
     <Compile Include="SerializeHelper.cs" />
     <Compile Include="HtmlConvert.cs" />
     <Compile Include="JsonHelper.cs" />
@@ -159,6 +193,7 @@
     <Content Include="TempNotes.txt" />
     <Content Include="ToDo.txt" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

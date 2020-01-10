@@ -4,14 +4,18 @@ using static ResponseProcessing;
 
 public class CheckMoneyStorage : EmailTypeBase
 {
-    public CheckMoneyStorage()
+    private ResponseSettings Settings { get; set; }
+
+    public CheckMoneyStorage(ResponseSettings settings) : base()
     {
+        Settings = settings;
         Type = EmailType.MoneyStorage;
     }
 
     public override TypeParseResponse TryTypeParse(LoggerInfo loggerInfo, ref MailStorage currentMessage, List<MailStorage> pastMessages, string preProcessedBody)
     {
-        if (preProcessedBody.Trim().ToUpper().Contains("ABANDONED SUM") ||
+        if ((Settings.IsAdmin && preProcessedBody.Trim().ToUpper().StartsWith(AutoResponseKeyword)) ||
+            preProcessedBody.Trim().ToUpper().Contains("ABANDONED SUM") ||
             preProcessedBody.Trim().ToUpper().Contains("AMOUNT OF MONEY IN YOU") ||
             preProcessedBody.Trim().ToUpper().Contains("AMOUNT OF MONEY TO YOU") ||
             preProcessedBody.Trim().ToUpper().Contains("AMOUNT OF MONEY YOU") ||

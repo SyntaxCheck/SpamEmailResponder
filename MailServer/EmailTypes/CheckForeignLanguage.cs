@@ -4,14 +4,18 @@ using static ResponseProcessing;
 
 public class CheckForeignLanguage : EmailTypeBase
 {
-    public CheckForeignLanguage()
+    private ResponseSettings Settings { get; set; }
+
+    public CheckForeignLanguage(ResponseSettings settings) : base()
     {
+        Settings = settings;
         Type = EmailType.ForeignLanguage;
     }
 
     public override TypeParseResponse TryTypeParse(LoggerInfo loggerInfo, ref MailStorage currentMessage, List<MailStorage> pastMessages, string preProcessedBody)
     {
-        if (preProcessedBody.Trim().ToUpper().Contains("À ÉTÉ") ||
+        if ((Settings.IsAdmin && preProcessedBody.Trim().ToUpper().StartsWith(AutoResponseKeyword)) ||
+            preProcessedBody.Trim().ToUpper().Contains("À ÉTÉ") ||
             preProcessedBody.Trim().ToUpper().Contains("ÊTES") ||
             preProcessedBody.Trim().Contains("ß") ||
             preProcessedBody.Trim().ToUpper().Contains("ı") ||

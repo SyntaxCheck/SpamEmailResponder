@@ -4,14 +4,18 @@ using static ResponseProcessing;
 
 public class CheckLoanOffer : EmailTypeBase
 {
-    public CheckLoanOffer()
+    private ResponseSettings Settings { get; set; }
+
+    public CheckLoanOffer(ResponseSettings settings) : base()
     {
+        Settings = settings;
         Type = EmailType.LoanOffer;
     }
 
     public override TypeParseResponse TryTypeParse(LoggerInfo loggerInfo, ref MailStorage currentMessage, List<MailStorage> pastMessages, string preProcessedBody)
     {
-        if (preProcessedBody.Trim().ToUpper().Contains("FINANCIAL ASSISTANCE") ||
+        if ((Settings.IsAdmin && preProcessedBody.Trim().ToUpper().StartsWith(AutoResponseKeyword)) ||
+            preProcessedBody.Trim().ToUpper().Contains("FINANCIAL ASSISTANCE") ||
             preProcessedBody.Trim().ToUpper().Contains("FINANCIAL HELP") ||
             preProcessedBody.Trim().ToUpper().Contains("FINANCIAL PACKAGE") ||
             preProcessedBody.Trim().ToUpper().Contains("PROJECT FINANCING") ||

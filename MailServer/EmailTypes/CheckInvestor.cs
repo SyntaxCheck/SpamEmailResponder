@@ -4,14 +4,18 @@ using static ResponseProcessing;
 
 public class CheckInvestor : EmailTypeBase
 {
-    public CheckInvestor()
+    private ResponseSettings Settings { get; set; }
+
+    public CheckInvestor(ResponseSettings settings) : base()
     {
+        Settings = settings;
         Type = EmailType.Investor;
     }
 
     public override TypeParseResponse TryTypeParse(LoggerInfo loggerInfo, ref MailStorage currentMessage, List<MailStorage> pastMessages, string preProcessedBody)
     {
-        if (preProcessedBody.Trim().ToUpper().Contains("ASSIST ME TO RECEIVE AND INVEST THIS") ||
+        if ((Settings.IsAdmin && preProcessedBody.Trim().ToUpper().StartsWith(AutoResponseKeyword)) ||
+            preProcessedBody.Trim().ToUpper().Contains("ASSIST ME TO RECEIVE AND INVEST THIS") ||
             preProcessedBody.Trim().ToUpper().Contains("BUSINESS CONTRACT") ||
             preProcessedBody.Trim().ToUpper().Contains("BUSINESS COOPERATION") ||
             preProcessedBody.Trim().ToUpper().Contains("BUSINESS DEAL") ||

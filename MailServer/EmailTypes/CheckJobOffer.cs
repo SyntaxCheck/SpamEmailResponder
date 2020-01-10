@@ -4,8 +4,11 @@ using static ResponseProcessing;
 
 public class CheckJobOffer : EmailTypeBase
 {
-    public CheckJobOffer()
+    private ResponseSettings Settings { get; set; }
+
+    public CheckJobOffer(ResponseSettings settings) : base()
     {
+        Settings = settings;
         Type = EmailType.JobOffer;
     }
 
@@ -13,7 +16,8 @@ public class CheckJobOffer : EmailTypeBase
     {
         if (PassNumber <= 1)
         {
-            if (preProcessedBody.Trim().ToUpper().Contains("ASSIST ME GO INTO INDUSTRIALIZATION") ||
+            if ((Settings.IsAdmin && preProcessedBody.Trim().ToUpper().StartsWith(AutoResponseKeyword)) ||
+                preProcessedBody.Trim().ToUpper().Contains("ASSIST ME GO INTO INDUSTRIALIZATION") ||
                 preProcessedBody.Trim().ToUpper().Contains("CRUDE OIL LICENSE OPERATOR") ||
                 preProcessedBody.Trim().ToUpper().Contains("DEVELOPMENT FOR SMALL TO LARGE") ||
                 preProcessedBody.Trim().ToUpper().Contains("DOESNT INTERFERE WITH YOUR REGULAR WORK") ||
@@ -35,7 +39,9 @@ public class CheckJobOffer : EmailTypeBase
                 preProcessedBody.Trim().ToUpper().Contains("PART TIME JOB") ||
                 preProcessedBody.Trim().ToUpper().Contains("POSITION IN COMPANY") ||
                 preProcessedBody.Trim().ToUpper().Contains("POSITION IN OUR COMPANY") ||
+                preProcessedBody.Trim().ToUpper().Contains("RAW MATERIALS EXPORTERS") ||
                 preProcessedBody.Trim().ToUpper().Contains("SEEKING A BROAD VARIETY OF INDIVIDUALS") ||
+                preProcessedBody.Trim().ToUpper().Contains("SEEKING CERTIFIED BUSINESS INDIVIDUALS") ||
                 preProcessedBody.Trim().ToUpper().Contains("SEND US YOUR RESUME") ||
                 preProcessedBody.Trim().ToUpper().Contains("SEND US YOUR UPDATED RESUME") ||
                 preProcessedBody.Trim().ToUpper().Contains("SUBMIT YOUR RESUME") ||

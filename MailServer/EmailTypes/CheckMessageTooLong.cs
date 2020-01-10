@@ -4,8 +4,11 @@ using static ResponseProcessing;
 
 public class CheckMessageTooLong : EmailTypeBase
 {
-    public CheckMessageTooLong()
+    private ResponseSettings Settings { get; set; }
+
+    public CheckMessageTooLong(ResponseSettings settings) : base()
     {
+        Settings = settings;
         Type = EmailType.MessageTooLong;
     }
 

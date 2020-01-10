@@ -28,8 +28,7 @@ namespace MailServer
                 serializeHelper = new SerializeHelper();
                 mailServer = new MailServerFunctions();
 
-
-                LoadScreen();
+                LoadStorage();
             }
             catch (Exception ex)
             {
@@ -68,6 +67,27 @@ namespace MailServer
                     {
                         cbxHasAttachments.Checked = false;
                     }
+
+                    if (cbxShowHistory.Checked && !String.IsNullOrEmpty(tbxMessageId.Text))
+                    {
+                        //Get previous messages
+                        MailStorage currentMessage = storage.Where(t => t.MsgId == tbxMessageId.Text).First();
+                        if (currentMessage != null)
+                        {
+                            List<MailStorage> previousMessages = mailServer.GetPreviousMessagesInThread(storage, currentMessage);
+
+                            if (previousMessages.Count() > 0)
+                            {
+                                string previousText = mailServer.BuildPreviousMessageText(previousMessages);
+
+                                if (!String.IsNullOrEmpty(previousText))
+                                {
+                                    //First try to remove the reply text from the message since we will add it back
+                                    tbxBodyPlainText.Text = TextProcessing.RemoveReplyTextFromMessage(mailServer.settings, tbxBodyPlainText.Text) + Environment.NewLine + previousText;
+                                }
+                            }
+                        }
+                    }
                 }
             }
             catch (Exception ex)
@@ -77,15 +97,19 @@ namespace MailServer
 }
         private void cbxShowAll_CheckedChanged(object sender, EventArgs e)
         {
-            LoadScreen();
+            LoadStorage();
         }
         private void cbxHideWithResponse_CheckedChanged(object sender, EventArgs e)
         {
-            LoadScreen();
+            LoadStorage();
+        }
+        private void cbxShowHistory_CheckedChanged(object sender, EventArgs e)
+        {
+            LoadStorage();
         }
         private void btnRefresh_Click(object sender, EventArgs e)
         {
-            LoadScreen();
+            LoadStorage();
         }
         private void dgvEmails_ColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
         {
@@ -112,7 +136,7 @@ namespace MailServer
         }
 
         //Private functions
-        private void LoadScreen()
+        private void LoadStorage()
         {
             try
             {
@@ -142,11 +166,6 @@ namespace MailServer
             {
                 MessageBox.Show("Error: " + ex.Message + Environment.NewLine + "Stack: " + ex.StackTrace, "Failed to LoadScreen()");
             }
-        }
-
-        private void label10_Click(object sender, EventArgs e)
-        {
-
         }
     }
 }

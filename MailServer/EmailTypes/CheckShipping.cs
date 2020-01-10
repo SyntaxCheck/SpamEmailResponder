@@ -4,14 +4,18 @@ using static ResponseProcessing;
 
 public class CheckShipping : EmailTypeBase
 {
-    public CheckShipping()
+    private ResponseSettings Settings { get; set; }
+
+    public CheckShipping(ResponseSettings settings) : base()
     {
+        Settings = settings;
         Type = EmailType.Shipping;
     }
 
     public override TypeParseResponse TryTypeParse(LoggerInfo loggerInfo, ref MailStorage currentMessage, List<MailStorage> pastMessages, string preProcessedBody)
     {
-        if (preProcessedBody.Trim().ToUpper().Contains("TRUSTING US WITH YOUR SHIPMENT") ||
+        if ((Settings.IsAdmin && preProcessedBody.Trim().ToUpper().StartsWith(AutoResponseKeyword)) ||
+            preProcessedBody.Trim().ToUpper().Contains("TRUSTING US WITH YOUR SHIPMENT") ||
             preProcessedBody.Trim().ToUpper().Contains("DELIVERY TRACKING") ||
             preProcessedBody.Trim().ToUpper().Contains("DELIVERY UPDATE") ||
             preProcessedBody.Trim().ToUpper().Contains("DELIVERY NUMBER") ||

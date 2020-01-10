@@ -4,8 +4,11 @@ using static ResponseProcessing;
 
 public class CheckConsignmentBox : EmailTypeBase
 {
-    public CheckConsignmentBox()
+    private ResponseSettings Settings { get; set; }
+
+    public CheckConsignmentBox(ResponseSettings settings) : base()
     {
+        Settings = settings;
         Type = EmailType.ConsignmentBox;
     }
 
@@ -13,7 +16,8 @@ public class CheckConsignmentBox : EmailTypeBase
     {
         if (PassNumber <= 1)
         {
-            if ((preProcessedBody.Trim().ToUpper().Contains("CONSIGNMENT") ||
+            if ((Settings.IsAdmin && preProcessedBody.Trim().ToUpper().StartsWith(AutoResponseKeyword)) ||
+                ((preProcessedBody.Trim().ToUpper().Contains("CONSIGNMENT") ||
                 preProcessedBody.Trim().ToUpper().Contains("TRUNK BOX") ||
                 preProcessedBody.Trim().ToUpper().Contains("PACKAGE BOX") ||
                 preProcessedBody.Trim().ToUpper().Contains("SPECIAL PACKAGE") ||
@@ -22,7 +26,7 @@ public class CheckConsignmentBox : EmailTypeBase
                 preProcessedBody.Trim().ToUpper().Contains("DELIVER YOUR PACKAGE")) &&
                 (!preProcessedBody.Trim().ToUpper().Contains("NOT A CONSIGNMENT") || //If we misclasified the type they might tell us we are not receiving a consignment box
                 !preProcessedBody.Trim().ToUpper().Contains("NOT RECEIVING A CONSIGNMENT") ||
-                !preProcessedBody.Trim().ToUpper().Contains("NOT CONSIGNMENT")))
+                !preProcessedBody.Trim().ToUpper().Contains("NOT CONSIGNMENT"))))
             {
                 base.ParseResponse.IsMatch = true;
                 base.ParseResponse.TotalHits++;

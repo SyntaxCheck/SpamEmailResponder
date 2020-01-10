@@ -49,17 +49,27 @@ public class DateTimeConversion
     {
         s = s.Trim();
 
+        //Remove the ">" characters that sometimes used as indentation characters to denote the text is from a previous message
+        while (s.StartsWith(">"))
+        {
+            s = s.Substring(1).Trim();
+        }
+
         if (s.ToUpper().StartsWith("SENT:"))
             s = s.Substring("SENT:".Length - 1).Trim();
         if (s.StartsWith(":") || s.StartsWith(",") || s.StartsWith(";"))
             s = s.Substring(1).Trim();
         if (s.Contains("UTC+"))
             s = s.Substring(0, s.IndexOf("UTC+")).Trim();
+        if (s.Contains("UTC,"))
+            s = s.Substring(0, s.IndexOf("UTC,")).Trim();
         if (s.Contains("GMT+"))
             s = s.Substring(0, s.IndexOf("GMT+")).Trim();
+        if (s.Contains("GMT,"))
+            s = s.Substring(0, s.IndexOf("GMT,")).Trim();
         if (s.EndsWith(",") || s.EndsWith(":") || s.EndsWith(";"))
             s = s.Substring(0, s.Length - 1).Trim();
-
+        
         string[] formats = {"M/d/yyyy h:mm:ss tt", "M/d/yyyy h:mm tt",
             "MM/dd/yyyy hh:mm:ss", "M/d/yyyy h:mm:ss", "yyyy-MM-dd HH:mm", "yyyy-MM-dd H:mm",
             "M/d/yyyy hh:mm tt", "M/d/yyyy hh tt", "yyyy-MM-dd HH:m", "yyyy-MM-dd H:m",
@@ -67,6 +77,9 @@ public class DateTimeConversion
             "MM/dd/yyyy hh:mm", "M/dd/yyyy hh:mm", "dddd, MMMM dd, yyyy 'at' hh:mm tt",
             "ddd d/MM/yy", "ddd d/M/yy", "ddd M/dd/yy", "ddd M/d/yy",
             "MMM d/MM/yy", "MMM d/M/yy", "MMM M/dd/yy", "MMM M/d/yy",
+            "'On' ddd, d MMM yyyy 'at' hh:mm",
+            "'On' ddd, d MMM yyyy 'at' H:mm",
+            "'On' ddd, d MMM yyyy 'at' h:mm",
             "'On' ddd, MM/d/yy",
             "'On' ddd, MMM d, yyyy 'at' hh:mm",
             "'On' ddd, MMM d, yyyy 'at' hh:mm tt",
@@ -74,6 +87,10 @@ public class DateTimeConversion
             "'On' ddd, MMM d, yyyy 'at' h:mm tt",
             "'On' ddd, MMM d, yyyy 'at' h:mm",
             "'On' dddd, MMMM d, yyyy, H:mm:ss tt",
+            "'On' MMM d, yyyy 'at' h:mm tt",
+            "'On' MMM d, yyyy, 'at' h:mm tt",
+            "'On' MMM d, yyyy 'at' H:mm",
+            "'On' MMM d, yyyy, 'at' H:mm",
             "'On' MM/d/yy",
         };
         DateTime dateValue;

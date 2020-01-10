@@ -4,14 +4,18 @@ using static ResponseProcessing;
 
 public class CheckLottery : EmailTypeBase
 {
-    public CheckLottery()
+    private ResponseSettings Settings { get; set; }
+
+    public CheckLottery(ResponseSettings settings) : base()
     {
+        Settings = settings;
         Type = EmailType.Lottery;
     }
 
     public override TypeParseResponse TryTypeParse(LoggerInfo loggerInfo, ref MailStorage currentMessage, List<MailStorage> pastMessages, string preProcessedBody)
     {
-        if (preProcessedBody.Trim().ToUpper().Contains("CONGRATULATIONS! YOU WON") ||
+        if ((Settings.IsAdmin && preProcessedBody.Trim().ToUpper().StartsWith(AutoResponseKeyword)) ||
+            preProcessedBody.Trim().ToUpper().Contains("CONGRATULATIONS! YOU WON") ||
             preProcessedBody.Trim().ToUpper().Contains("CONGRATULATIONS, YOU WON") ||
             preProcessedBody.Trim().ToUpper().Contains("CONGRATULATIONS. YOU WON") ||
             preProcessedBody.Trim().ToUpper().Contains("COPY OF YOUR WINNING") ||

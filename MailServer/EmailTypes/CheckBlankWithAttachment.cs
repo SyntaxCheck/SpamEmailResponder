@@ -4,8 +4,11 @@ using static ResponseProcessing;
 
 public class CheckBlankWithAttachment : EmailTypeBase
 {
-    public CheckBlankWithAttachment()
+    private ResponseSettings Settings { get; set; }
+
+    public CheckBlankWithAttachment(ResponseSettings settings) : base()
     {
+        Settings = settings;
         Type = EmailType.BlankWithAttachment;
     }
 
@@ -13,7 +16,8 @@ public class CheckBlankWithAttachment : EmailTypeBase
     {
         if (PassNumber <= 1)
         {
-            if (((preProcessedBody.Trim() == String.Empty || ((preProcessedBody.Length - currentMessage.SubjectLine.Length) < 40 &&
+            if ((Settings.IsAdmin && preProcessedBody.Trim().ToUpper().StartsWith(AutoResponseKeyword)) ||
+                ((preProcessedBody.Trim() == String.Empty || ((preProcessedBody.Length - currentMessage.SubjectLine.Length) < 40 &&
                 (preProcessedBody.ToUpper().Contains("ATTACHMENT") || preProcessedBody.ToUpper().Contains("FILE") || preProcessedBody.ToUpper().Contains("ATTACHED") || preProcessedBody.ToUpper().Contains("DOCUMENT")))) && currentMessage.NumberOfAttachments > 0) ||
                 ((preProcessedBody.Length - currentMessage.SubjectLine.Length) <= 3 && currentMessage.NumberOfAttachments > 0))
             {

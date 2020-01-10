@@ -4,14 +4,18 @@ using static ResponseProcessing;
 
 public class CheckFreeMoney : EmailTypeBase
 {
-    public CheckFreeMoney()
+    private ResponseSettings Settings { get; set; }
+
+    public CheckFreeMoney(ResponseSettings settings) : base()
     {
+        Settings = settings;
         Type = EmailType.FreeMoney;
     }
 
     public override TypeParseResponse TryTypeParse(LoggerInfo loggerInfo, ref MailStorage currentMessage, List<MailStorage> pastMessages, string preProcessedBody)
     {
-        if (preProcessedBody.Trim().ToUpper().Contains("ABANDONED FUND") ||
+        if ((Settings.IsAdmin && preProcessedBody.Trim().ToUpper().StartsWith(AutoResponseKeyword)) ||
+            preProcessedBody.Trim().ToUpper().Contains("ABANDONED FUND") ||
             preProcessedBody.Trim().ToUpper().Contains("ABANDON FUND") ||
             preProcessedBody.Trim().ToUpper().Contains("AMOUNT OF GRANT") ||
             preProcessedBody.Trim().ToUpper().Contains("ASK HIM TO SEND YOU THE TOTAL") ||

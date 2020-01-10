@@ -4,8 +4,11 @@ using static ResponseProcessing;
 
 public class CheckGenericPayment : EmailTypeBase
 {
-    public CheckGenericPayment()
+    private ResponseSettings Settings { get; set; }
+
+    public CheckGenericPayment(ResponseSettings settings) : base()
     {
+        Settings = settings;
         Type = EmailType.GenericPayment;
     }
 
@@ -13,7 +16,8 @@ public class CheckGenericPayment : EmailTypeBase
     {
         if (PassNumber <= 1)
         {
-            if (preProcessedBody.Trim().ToUpper().Contains("PAYMENT") ||
+            if ((Settings.IsAdmin && preProcessedBody.Trim().ToUpper().StartsWith(AutoResponseKeyword)) ||
+                preProcessedBody.Trim().ToUpper().Contains("PAYMENT") ||
                 preProcessedBody.Trim().ToUpper().Contains("COST FOR THE") ||
                 preProcessedBody.Trim().ToUpper().Contains("MONEYGRAM") ||
                 preProcessedBody.Trim().ToUpper().Contains("MONEY GRAM") ||

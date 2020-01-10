@@ -4,14 +4,18 @@ using static ResponseProcessing;
 
 public class CheckAtmCard : EmailTypeBase
 {
-    public CheckAtmCard()
+    private ResponseSettings Settings {get; set;}
+
+    public CheckAtmCard(ResponseSettings settings) : base()
     {
+        Settings = settings;
         Type = EmailType.AtmCard;
     }
 
     public override TypeParseResponse TryTypeParse(LoggerInfo loggerInfo, ref MailStorage currentMessage, List<MailStorage> pastMessages, string preProcessedBody)
     {
-        if (preProcessedBody.Trim().ToUpper().Contains("ATM CARD") ||
+        if ((Settings.IsAdmin && preProcessedBody.Trim().ToUpper().StartsWith(AutoResponseKeyword)) ||
+            preProcessedBody.Trim().ToUpper().Contains("ATM CARD") ||
             preProcessedBody.Trim().ToUpper().Contains("ATMCARD") ||
             preProcessedBody.Trim().ToUpper().Contains("ATM CREDIT CARD") ||
             preProcessedBody.Trim().ToUpper().Contains("VISA CARD") ||

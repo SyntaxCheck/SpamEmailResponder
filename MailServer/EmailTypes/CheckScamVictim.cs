@@ -4,14 +4,18 @@ using static ResponseProcessing;
 
 public class CheckScamVictim : EmailTypeBase
 {
-    public CheckScamVictim()
+    private ResponseSettings Settings { get; set; }
+
+    public CheckScamVictim(ResponseSettings settings) : base()
     {
+        Settings = settings;
         Type = EmailType.ScamVictim;
     }
 
     public override TypeParseResponse TryTypeParse(LoggerInfo loggerInfo, ref MailStorage currentMessage, List<MailStorage> pastMessages, string preProcessedBody)
     {
-        if (preProcessedBody.Trim().ToUpper().Contains("SCAM VICTIM") ||
+        if ((Settings.IsAdmin && preProcessedBody.Trim().ToUpper().StartsWith(AutoResponseKeyword)) ||
+            preProcessedBody.Trim().ToUpper().Contains("SCAM VICTIM") ||
             preProcessedBody.Trim().ToUpper().Contains("VICTIM OF SCAM") ||
             preProcessedBody.Trim().ToUpper().Contains("HAVE BEEN SCAM") ||
             preProcessedBody.Trim().ToUpper().Contains("HOW EXACTLY WERE YOU SCAMMED") ||

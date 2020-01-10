@@ -18,6 +18,8 @@ public class TextProcessing
         {
             //lineSplit[i] = lineSplit[i].TrimEnd(new char[] { ' ', '\t', '\r', '\n', '\u0009' });
             lineSplit[i] = lineSplit[i].Trim(); //Just remove front/back spacing. If they indent a paragraph we will lose that indenting which is fine since they do not exactly have good grammer or proper sentence structure anyways.
+            if (lineSplit[i] == "Â")
+                lineSplit[i] = String.Empty;
         }
 
         message = String.Empty;
@@ -120,8 +122,32 @@ public class TextProcessing
         {
             message = message.Substring(0, pos);
         }
-
+        
         pos = message.ToUpper().IndexOf("This email has been checked for viruses by Avast".ToUpper());
+        if (pos > 0)
+        {
+            message = message.Substring(0, pos);
+        }
+
+        pos = message.ToUpper().IndexOf("Virus-free. www.avast.com".ToUpper());
+        if (pos > 0)
+        {
+            message = message.Substring(0, pos);
+        }
+
+        pos = message.ToUpper().IndexOf("* The information contained in this e-mail (including attachments) is confidential and is meant solely for the intended recipient.".ToUpper());
+        if (pos > 0)
+        {
+            message = message.Substring(0, pos);
+        }
+
+        pos = message.ToUpper().IndexOf("*This email and any attachments are confidential and are intended solely for the addressee. If you are not the addressee tell the sender immediately and destroy it. Do not open, read, copy, disclose,".ToUpper());
+        if (pos > 0)
+        {
+            message = message.Substring(0, pos);
+        }
+
+        pos = message.ToUpper().IndexOf("----------------------------------------------------------------------------------------------------------------------------------------------------------------------");
         if (pos > 0)
         {
             message = message.Substring(0, pos);
@@ -134,6 +160,14 @@ public class TextProcessing
         while (message.EndsWith(Environment.NewLine))
         {
             message = message.Substring(0, message.Length - Environment.NewLine.Length);
+        }
+        while (message.StartsWith(" "))
+        {
+            message = message.Substring(1);
+        }
+        while (message.StartsWith(Environment.NewLine))
+        {
+            message = message.Substring(Environment.NewLine.Length);
         }
 
         return message;
@@ -277,6 +311,50 @@ public class TextProcessing
             }
         }
 
+        compare = "PM, \"" + settings.EmailAddress.ToUpper();
+        if (text.ToUpper().Contains(compare))
+        {
+            if (!RemoveReplyTextFromMessageStartingAtDate(ref text, compare))
+            {
+                pos = text.ToUpper().IndexOf(compare);
+                if (pos > 0)
+                    text = text.Substring(0, pos);
+            }
+        }
+
+        compare = "AM, \"" + settings.EmailAddress.ToUpper();
+        if (text.ToUpper().Contains(compare))
+        {
+            if (!RemoveReplyTextFromMessageStartingAtDate(ref text, compare))
+            {
+                pos = text.ToUpper().IndexOf(compare);
+                if (pos > 0)
+                    text = text.Substring(0, pos);
+            }
+        }
+
+        compare = "PM,\"" + settings.EmailAddress.ToUpper();
+        if (text.ToUpper().Contains(compare))
+        {
+            if (!RemoveReplyTextFromMessageStartingAtDate(ref text, compare))
+            {
+                pos = text.ToUpper().IndexOf(compare);
+                if (pos > 0)
+                    text = text.Substring(0, pos);
+            }
+        }
+
+        compare = "AM,\"" + settings.EmailAddress.ToUpper();
+        if (text.ToUpper().Contains(compare))
+        {
+            if (!RemoveReplyTextFromMessageStartingAtDate(ref text, compare))
+            {
+                pos = text.ToUpper().IndexOf(compare);
+                if (pos > 0)
+                    text = text.Substring(0, pos);
+            }
+        }
+
         compare = settings.EmailAddress.ToUpper() + " <" + settings.EmailAddress.ToUpper() + ">";
         if (text.ToUpper().Contains(compare))
         {
@@ -296,6 +374,78 @@ public class TextProcessing
                 pos = text.ToUpper().IndexOf(compare);
                 if (pos > 0)
                     text = text.Substring(0, pos);
+            }
+        }
+
+        compare = ", " + settings.EmailAddress.ToUpper() + " <";
+        if (text.ToUpper().Contains(compare))
+        {
+            if (!RemoveReplyTextFromMessageStartingAtDate(ref text, compare))
+            {
+                pos = text.ToUpper().IndexOf(compare.ToUpper());
+                if (pos > 0)
+                    text = text.Substring(0, pos);
+            }
+        }
+
+        compare = ", " + settings.EmailAddress.ToUpper() + "<";
+        if (text.ToUpper().Contains(compare))
+        {
+            if (!RemoveReplyTextFromMessageStartingAtDate(ref text, compare))
+            {
+                pos = text.ToUpper().IndexOf(compare.ToUpper());
+                if (pos > 0)
+                    text = text.Substring(0, pos);
+            }
+        }
+
+        compare = "," + settings.EmailAddress.ToUpper() + " <";
+        if (text.ToUpper().Contains(compare))
+        {
+            if (!RemoveReplyTextFromMessageStartingAtDate(ref text, compare))
+            {
+                pos = text.ToUpper().IndexOf(compare.ToUpper());
+                if (pos > 0)
+                    text = text.Substring(0, pos);
+            }
+        }
+
+        compare = "," + settings.EmailAddress.ToUpper() + "<";
+        if (text.ToUpper().Contains(compare))
+        {
+            if (!RemoveReplyTextFromMessageStartingAtDate(ref text, compare))
+            {
+                pos = text.ToUpper().IndexOf(compare.ToUpper());
+                if (pos > 0)
+                    text = text.Substring(0, pos);
+            }
+        }
+
+        //Gmail reply to your own message check
+        int wrotePos = text.ToUpper().IndexOf("WROTE:" + Environment.NewLine);
+        if (wrotePos > 0)
+        {
+            int onPos = text.ToUpper().IndexOf("ON ", 0);
+            while (onPos >= 0)
+            {
+                //If the ON text is the beginning of the email OR the previous character is a NewLine meaning its the start of a line
+                if (onPos == 0 || (onPos > Environment.NewLine.Length && text.Substring(onPos - Environment.NewLine.Length, Environment.NewLine.Length) == Environment.NewLine))
+                {
+                    int endEmailPos = text.ToUpper().IndexOf(">" + Environment.NewLine, onPos);
+
+                    if (endEmailPos > 0 && (wrotePos - endEmailPos) < 5)
+                    {
+                        //Make sure there is no NewLine characters between the two positions meaning that both are on the same line of the message 
+                        string emailLine = text.Substring(onPos, endEmailPos - onPos);
+                        if (!emailLine.Contains(Environment.NewLine))
+                        {
+                            text = text.Substring(0, onPos);
+                            break;
+                        }
+                    }
+                }
+
+                onPos = text.ToUpper().IndexOf("ON ", onPos + 3); //Search after the last found string
             }
         }
 
@@ -369,7 +519,7 @@ public class TextProcessing
     public static string AttemptToFindPersonName(string body)
     {
         string rtn = String.Empty;
-        string regards = "Regards;Yours Faithfully;Yours Truely;Best,;Yours in Services;My Best,;My best to you;All best,;All the best;Best wishes;Bests,;Best Regards;Rgds;Warm Regards;Warmest Regards;Warmly,;Take care;Looking forward,;Rushing,;In haste,;Be well,;Peace,;Yours Truly;Very truely yours;Sincerely;Sincerely yours;See you around;With love,;Lots of love,;Warm wishes,;Take care;Remain Blessed;Many thanks,;Thanks,;Your beloved sister;God Bless,;Yours;God bless you;";
+        string regards = "Regards;Yours Faithfully;Yours Truely;Best,;Yours in Services;My Best,;My best to you;All best,;All the best;Best wishes;Bests,;Best Regards;Rgds;Warm Regards;Warmest Regards;Warmly,;Take care;Looking forward,;Rushing,;In haste,;Be well,;Peace,;Yours Truly;Very truely yours;Sincerely;Sincerely yours;See you around;With love,;Lots of love,;Warm wishes,;Take care;Remain Blessed;Many thanks,;Thanks,;Your beloved sister;God Bless,;Yours;God bless you;Thanks for Your Co-operation.;Thanks for Your Cooperation.;";
 
         //Get rid of all extra line breaks for the parsing
         while (body.Contains(Environment.NewLine + Environment.NewLine))

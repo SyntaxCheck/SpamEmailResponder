@@ -4,14 +4,18 @@ using static ResponseProcessing;
 
 public class CheckBuildTrust : EmailTypeBase
 {
-    public CheckBuildTrust()
+    private ResponseSettings Settings { get; set; }
+
+    public CheckBuildTrust(ResponseSettings settings) : base()
     {
+        Settings = settings;
         Type = EmailType.BuildTrust;
     }
 
     public override TypeParseResponse TryTypeParse(LoggerInfo loggerInfo, ref MailStorage currentMessage, List<MailStorage> pastMessages, string preProcessedBody)
     {
-        if (preProcessedBody.Trim().ToUpper().Contains("ALWAYS WITH STORY") ||
+        if ((Settings.IsAdmin && preProcessedBody.Trim().ToUpper().StartsWith(AutoResponseKeyword)) ||
+            preProcessedBody.Trim().ToUpper().Contains("ALWAYS WITH STORY") ||
             preProcessedBody.Trim().ToUpper().Contains("AS LONG AS YOU REMAIN HONEST") ||
             preProcessedBody.Trim().ToUpper().Contains("AWARE OF YOUR BACKGROUND") ||
             preProcessedBody.Trim().ToUpper().Contains("BECOME A GOOD FRIEND") ||

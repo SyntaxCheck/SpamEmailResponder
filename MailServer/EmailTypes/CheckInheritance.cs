@@ -4,14 +4,18 @@ using static ResponseProcessing;
 
 public class CheckInheritance : EmailTypeBase
 {
-    public CheckInheritance()
+    private ResponseSettings Settings { get; set; }
+
+    public CheckInheritance(ResponseSettings settings) : base()
     {
+        Settings = settings;
         Type = EmailType.Inheritance;
     }
 
     public override TypeParseResponse TryTypeParse(LoggerInfo loggerInfo, ref MailStorage currentMessage, List<MailStorage> pastMessages, string preProcessedBody)
     {
-        if (preProcessedBody.Trim().ToUpper().Contains("INHERITENCE") ||
+        if ((Settings.IsAdmin && preProcessedBody.Trim().ToUpper().StartsWith(AutoResponseKeyword)) ||
+            preProcessedBody.Trim().ToUpper().Contains("INHERITENCE") ||
             preProcessedBody.Trim().ToUpper().Contains("INHERIT"))
         {
             base.ParseResponse.IsMatch = true;

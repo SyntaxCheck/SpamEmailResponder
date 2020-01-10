@@ -70,6 +70,7 @@
             this.cbxShowAll = new System.Windows.Forms.CheckBox();
             this.btnRefresh = new System.Windows.Forms.Button();
             this.cbxHideWithResponse = new System.Windows.Forms.CheckBox();
+            this.cbxShowHistory = new System.Windows.Forms.CheckBox();
             this.menuStrip1.SuspendLayout();
             this.gbxEmails.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvEmails)).BeginInit();
@@ -442,12 +443,25 @@
             this.cbxHideWithResponse.UseVisualStyleBackColor = false;
             this.cbxHideWithResponse.CheckedChanged += new System.EventHandler(this.cbxHideWithResponse_CheckedChanged);
             // 
+            // cbxShowHistory
+            // 
+            this.cbxShowHistory.AutoSize = true;
+            this.cbxShowHistory.BackColor = System.Drawing.Color.Turquoise;
+            this.cbxShowHistory.Location = new System.Drawing.Point(655, 4);
+            this.cbxShowHistory.Name = "cbxShowHistory";
+            this.cbxShowHistory.Size = new System.Drawing.Size(89, 17);
+            this.cbxShowHistory.TabIndex = 46;
+            this.cbxShowHistory.Text = "Show History";
+            this.cbxShowHistory.UseVisualStyleBackColor = false;
+            this.cbxShowHistory.CheckedChanged += new System.EventHandler(this.cbxShowHistory_CheckedChanged);
+            // 
             // StorageViewer
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.LightSteelBlue;
             this.ClientSize = new System.Drawing.Size(992, 644);
+            this.Controls.Add(this.cbxShowHistory);
             this.Controls.Add(this.cbxHideWithResponse);
             this.Controls.Add(this.btnRefresh);
             this.Controls.Add(this.cbxShowAll);
@@ -529,5 +543,6 @@
         private System.Windows.Forms.ToolStripMenuItem optionsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem graphsToolStripMenuItem;
         private System.Windows.Forms.CheckBox cbxHideWithResponse;
+        private System.Windows.Forms.CheckBox cbxShowHistory;
     }
 }

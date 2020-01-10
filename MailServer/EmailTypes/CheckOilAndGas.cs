@@ -4,14 +4,18 @@ using static ResponseProcessing;
 
 public class CheckOilAndGas : EmailTypeBase
 {
-    public CheckOilAndGas()
+    private ResponseSettings Settings { get; set; }
+
+    public CheckOilAndGas(ResponseSettings settings) : base()
     {
+        Settings = settings;
         Type = EmailType.OilAndGas;
     }
 
     public override TypeParseResponse TryTypeParse(LoggerInfo loggerInfo, ref MailStorage currentMessage, List<MailStorage> pastMessages, string preProcessedBody)
     {
-        if (preProcessedBody.Trim().ToUpper().Contains("OIL AND GAS") ||
+        if ((Settings.IsAdmin && preProcessedBody.Trim().ToUpper().StartsWith(AutoResponseKeyword)) ||
+            preProcessedBody.Trim().ToUpper().Contains("OIL AND GAS") ||
             preProcessedBody.Trim().ToUpper().Contains("PETROLEUM COMMODITIES AVAILABLE") ||
             preProcessedBody.Trim().ToUpper().Contains("CRUDE OIL BUSINES") ||
             preProcessedBody.Trim().ToUpper().Contains("CRUDE OIL PROPOSAL") ||

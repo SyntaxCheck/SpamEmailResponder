@@ -19,6 +19,7 @@ namespace MailServer
         private string skippedMessages;
         private int skippedCount;
         private int countdownRemaining;
+        private bool isAdminOverride;
 
         public Form1()
         {
@@ -57,6 +58,17 @@ namespace MailServer
                     this.Text = "Mail Server - " + respProc.MyName;
                 }
 
+                //Check for send time override file
+                string overrideAdminfullPath = Path.Combine(currentDirectory, StaticVariables.ADMIN_FILENAME);
+                if (File.Exists(overrideAdminfullPath))
+                {
+                    isAdminOverride = true;
+                }
+                else
+                {
+                    isAdminOverride = false;
+                }
+
                 //Load in the storage serialized class
                 string fullPath = Path.Combine(currentDirectory, StaticVariables.STORAGE_OBJECT_FILENAME);
                 if (File.Exists(fullPath))
@@ -67,6 +79,11 @@ namespace MailServer
                 skippedCount = 0;
 
                 CheckForMessages();
+
+                if (isAdminOverride)
+                {
+                    trckBar.Minimum = 30;
+                }
 
                 processTimer.Interval = SEND_INTERVAL;
                 //processTimer.Start();
@@ -187,6 +204,17 @@ namespace MailServer
                             }
                         }
                     }
+                    else if (rtn == 0)
+                    {
+                        processTimer.Interval = trckBar.Value * 1000;
+                        processTimer.Start();
+
+                        countdownTimer.Stop();
+                        countdownRemaining = (int)Math.Round((double)processTimer.Interval, 0) / 1000;
+
+                        Logger.WriteDbg(loggerInfo, "No messages found, start the timers again to check later");
+                        countdownTimer.Start();
+                    }
                 }
             }
             else
@@ -279,10 +307,6 @@ namespace MailServer
             btnNext.Enabled = true;
             btnIgnore.Enabled = true;
             btnRegenerate.Enabled = true;
-        }
-        private void dgvPastEmail_CellContentDoubleClick(object sender, DataGridViewCellEventArgs e)
-        {
-            string myValue = dgvPastEmail[e.ColumnIndex, e.RowIndex].Value.ToString();
         }
         private void cbxAutoSend_CheckedChanged(object sender, EventArgs e)
         {
@@ -396,7 +420,6 @@ namespace MailServer
             tbxOutput.Text = String.Empty;
             tbxSubject.Text = String.Empty;
             cbxHasAttachments.Checked = false;
-            dgvPastEmail.Rows.Clear();
             tbxOutput.Text = String.Empty;
             tbxAttachmentNames.Text = String.Empty;
         }
@@ -418,13 +441,15 @@ namespace MailServer
                 tbxAttachmentNames.Text = ms.AttachmentNames;
             }
 
-            dgvPastEmail.Rows.Clear();
-            dgvPastEmail.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
-            dgvPastEmail.DefaultCellStyle.WrapMode = DataGridViewTriState.True;
-
-            foreach (MailStorage ms2 in previousMessagesInThread)
+            if (previousMessagesInThread.Count() > 0)
             {
-                dgvPastEmail.Rows.Add(ms2.SubjectLine, ms2.ToAddress, ms2.DateReceived, TextProcessing.MakeEmailEasierToRead(ms2.EmailBodyPlain), ms2.DeterminedReply);
+                string previousText = mailServer.BuildPreviousMessageText(previousMessagesInThread);
+
+                if (!String.IsNullOrEmpty(previousText))
+                {
+                    //First try to remove the reply text from the message since we will add it back
+                    tbxBodyPlainText.Text = TextProcessing.RemoveReplyTextFromMessage(mailServer.settings, tbxBodyPlainText.Text) + Environment.NewLine + previousText;
+                }
             }
 
             workingOnMsg = ms.MsgId;

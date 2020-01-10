@@ -4,14 +4,18 @@ using static ResponseProcessing;
 
 public class CheckRefugee : EmailTypeBase
 {
-    public CheckRefugee()
+    private ResponseSettings Settings { get; set; }
+
+    public CheckRefugee(ResponseSettings settings) : base()
     {
+        Settings = settings;
         Type = EmailType.Refugee;
     }
 
     public override TypeParseResponse TryTypeParse(LoggerInfo loggerInfo, ref MailStorage currentMessage, List<MailStorage> pastMessages, string preProcessedBody)
     {
-        if (preProcessedBody.Trim().ToUpper().Contains("AS A RESULT OF MY PRESENT SIT") ||
+        if ((Settings.IsAdmin && preProcessedBody.Trim().ToUpper().StartsWith(AutoResponseKeyword)) ||
+            preProcessedBody.Trim().ToUpper().Contains("AS A RESULT OF MY PRESENT SIT") ||
             preProcessedBody.Trim().ToUpper().Contains("HELP US COME OVER TO YOUR PLACE") ||
             preProcessedBody.Trim().ToUpper().Contains("HELP ME AND ME SISTER") ||
             preProcessedBody.Trim().ToUpper().Contains("REFUGEE") ||

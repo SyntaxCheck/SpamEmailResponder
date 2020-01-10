@@ -4,8 +4,11 @@ using static ResponseProcessing;
 
 public class CheckMessageTooShort : EmailTypeBase
 {
-    public CheckMessageTooShort()
+    private ResponseSettings Settings { get; set; }
+
+    public CheckMessageTooShort(ResponseSettings settings) : base()
     {
+        Settings = settings;
         Type = EmailType.MessageTooShort;
     }
 

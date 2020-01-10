@@ -4,14 +4,18 @@ using static ResponseProcessing;
 
 public class CheckDeathOrDying : EmailTypeBase
 {
-    public CheckDeathOrDying()
+    private ResponseSettings Settings { get; set; }
+
+    public CheckDeathOrDying(ResponseSettings settings) : base()
     {
+        Settings = settings;
         Type = EmailType.DeathOrDying;
     }
 
     public override TypeParseResponse TryTypeParse(LoggerInfo loggerInfo, ref MailStorage currentMessage, List<MailStorage> pastMessages, string preProcessedBody)
     {
-        if (preProcessedBody.Trim().ToUpper().Contains("AS A RESULT OF MY HEALTH") ||
+        if ((Settings.IsAdmin && preProcessedBody.Trim().ToUpper().StartsWith(AutoResponseKeyword)) ||
+            preProcessedBody.Trim().ToUpper().Contains("AS A RESULT OF MY HEALTH") ||
             preProcessedBody.Trim().ToUpper().Contains("BEFORE I DIE I HAVE AN IMPORTANT") ||
             preProcessedBody.Trim().ToUpper().Contains("BEFORE HE DIED") ||
             preProcessedBody.Trim().ToUpper().Contains("BEFORE SHE DIED") ||

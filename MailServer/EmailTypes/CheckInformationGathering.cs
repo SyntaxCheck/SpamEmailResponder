@@ -4,14 +4,18 @@ using static ResponseProcessing;
 
 public class CheckInformationGathering : EmailTypeBase
 {
-    public CheckInformationGathering()
+    private ResponseSettings Settings { get; set; }
+
+    public CheckInformationGathering(ResponseSettings settings) : base()
     {
+        Settings = settings;
         Type = EmailType.InformationGathering;
     }
 
     public override TypeParseResponse TryTypeParse(LoggerInfo loggerInfo, ref MailStorage currentMessage, List<MailStorage> pastMessages, string preProcessedBody)
     {
-        if (preProcessedBody.Trim().ToUpper().Contains("AM NOW A SINGER") ||
+        if ((Settings.IsAdmin && preProcessedBody.Trim().ToUpper().StartsWith(AutoResponseKeyword)) ||
+            preProcessedBody.Trim().ToUpper().Contains("AM NOW A SINGER") ||
             preProcessedBody.Trim().ToUpper().Contains("ANY PROBLEM IN LIFE") ||
             preProcessedBody.Trim().ToUpper().Contains("ARE YOU STILL INTERESTED") ||
             preProcessedBody.Trim().ToUpper().Contains("BEEN TRYING TO REACH YOU") ||
