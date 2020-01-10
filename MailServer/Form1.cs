@@ -20,6 +20,7 @@ namespace MailServer
         private int skippedCount;
         private int countdownRemaining;
         private bool isAdminOverride;
+        private DateTime lastTimeRemainCalc;
 
         public Form1()
         {
@@ -32,6 +33,7 @@ namespace MailServer
                 currentDirectory = Directory.GetCurrentDirectory();
                 workingOnMsg = String.Empty;
                 skippedMessages = String.Empty;
+                lastTimeRemainCalc = DateTime.Now;
 
                 InitializeComponent();
 
@@ -348,7 +350,7 @@ namespace MailServer
         {
             processTimer.Interval = trckBar.Value * 1000;
             lblTrackBarValue.Text = "(" + trckBar.Value.ToString() + ") seconds";
-            mailServer.InboxCountHistory = new List<int>(); //If they adjust the send interval we need to clear the inbox count since we do not track the amount of time between each InboxCount
+            mailServer.InboxCountHistory = new List<InboxCountHistory>(); //If they adjust the send interval we need to clear the inbox count since we do not track the amount of time between each InboxCount
         }
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -404,7 +406,11 @@ namespace MailServer
                 }
             }
 
-            SetMessageCountLabel();
+            if ((DateTime.Now - lastTimeRemainCalc).TotalMinutes >= 10)
+            {
+                SetMessageCountLabel();
+                lastTimeRemainCalc = DateTime.Now;
+            }
 
             return rtn;
         }
@@ -720,55 +726,41 @@ namespace MailServer
         {
             if (mailServer.InboxCountHistory.Count() > 0)
             {
-                
-                long avg = 0;
-                long sum = 0;
-                long diffSum = 0;
-                double diffAvg = 0;
-
-                if (mailServer.InboxCountHistory.Count() > 1)
+                for (int i = mailServer.InboxCountHistory.Count() - 1; i >= 0; i--)
                 {
-                    for (int i = 0; i < mailServer.InboxCountHistory.Count(); i++)
+                    //Cleanup the old counts
+                    if ((DateTime.Now - mailServer.InboxCountHistory[i].HistoryTime).Hours > 24)
                     {
-                        sum += mailServer.InboxCountHistory[i];
+                        mailServer.InboxCountHistory.RemoveAt(i);
                     }
-
-                    avg = sum / mailServer.InboxCountHistory.Count();
-
-                    for (int i = mailServer.InboxCountHistory.Count() - 1; i >= 0; i--)
-                    {
-                        //Remove any 0 counts reported when we have a large average size, these were probably the result of server errors incorrectly reporting the count
-                        //Also cleanup any counts that are old so that Old data does not keep affecting current rates
-                        if (mailServer.InboxCountHistory[i] == 0 && avg > 50 || Math.Abs(mailServer.InboxCountHistory[i] - (avg * 0.5)) > (avg * 0.5))
-                        {
-                            mailServer.InboxCountHistory.RemoveAt(i);
-                        }
-                    }
-
-                    for (int i = 0; i < mailServer.InboxCountHistory.Count() - 1; i++)
-                    {
-                        diffSum += Math.Abs(mailServer.InboxCountHistory[i] - mailServer.InboxCountHistory[i + 1]);
-                    }
-
-                    diffAvg = (double)diffSum / mailServer.InboxCountHistory.Count() - 1;
                 }
 
                 TimeSpan ts = new TimeSpan();
-                int totalTimeNeeded = 0;
-                int secondsBetweenSends = trckBar.Value;
 
-                if (mailServer.InboxCountHistory.Count() > 1)
+                for (int i = 0; i < mailServer.InboxCountHistory.Count() - 1; i++)
                 {
-                    totalTimeNeeded = (int)Math.Round((mailServer.LastInboxCount * secondsBetweenSends) / diffAvg, 0);
-                    ts = TimeSpan.FromSeconds(totalTimeNeeded);
+                    if (!mailServer.InboxCountHistory[i].RateCalculated)
+                    {
+                        mailServer.InboxCountHistory[i].RateCalculated = true;
+
+                        int totalDifference = mailServer.InboxCountHistory[i].InboxCount - mailServer.InboxCountHistory[mailServer.InboxCountHistory.Count() - 1].InboxCount;
+
+                        mailServer.InboxCountHistory[i].MessageSendRate = totalDifference / (mailServer.InboxCountHistory[mailServer.InboxCountHistory.Count() - 1].HistoryTime - mailServer.InboxCountHistory[i].HistoryTime).TotalSeconds;
+                    }
                 }
 
-                //When the calculated time is negative or we do not have enough data yet
-                if (ts == null || ts == TimeSpan.Zero || totalTimeNeeded == 0 || ts.TotalSeconds == 0)
+                double rateAvg = 0d;
+                double rateSum = 0d;
+                for (int i = 0; i < mailServer.InboxCountHistory.Count() - 1; i++)
                 {
-                    totalTimeNeeded = mailServer.LastInboxCount * secondsBetweenSends;
-                    ts = TimeSpan.FromSeconds(totalTimeNeeded);
+                    rateSum += mailServer.InboxCountHistory[i].MessageSendRate;
                 }
+
+                rateAvg = rateSum / (mailServer.InboxCountHistory.Count() - 1);
+
+                double secondsRemainingTillEmpty = (1.0 / rateAvg) * mailServer.InboxCountHistory[mailServer.InboxCountHistory.Count() - 1].InboxCount;
+
+                ts = TimeSpan.FromSeconds(secondsRemainingTillEmpty);
 
                 lblCountdown.Text = "Estimated Time till Mailbox Cleared: ";
 

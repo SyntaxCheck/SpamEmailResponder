@@ -129,6 +129,7 @@
     <Compile Include="Graphs.Designer.cs">
       <DependentUpon>Graphs.cs</DependentUpon>
     </Compile>
+    <Compile Include="InboxCountHistory.cs" />
     <Compile Include="MailStorageStats.cs" />
     <Compile Include="ResponseProcessing.cs" />
     <Compile Include="ResponseSettings.cs" />

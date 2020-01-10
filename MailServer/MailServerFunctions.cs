@@ -19,18 +19,18 @@ public class MailServerFunctions
     public const string ProcessFolderName = "AutoProcessedMail";
     public const int Timeout = 50000; //TODO turn this into a setting
     public int LastInboxCount;
-    public List<int> InboxCountHistory;
+    public List<InboxCountHistory> InboxCountHistory;
     public string UserName;
     public string Password;
     private int messagesSendSinceRandomize;
     public Settings settings;
-    ResponseProcessing respProc;
+    private ResponseProcessing respProc;
 
     public MailServerFunctions()
     {
         LastInboxCount = 0;
         messagesSendSinceRandomize = 0;
-        InboxCountHistory = new List<int>();
+        InboxCountHistory = new List<InboxCountHistory>();
         settings = new Settings();
 
         if (File.Exists(settingFileLocation))
@@ -239,7 +239,9 @@ public class MailServerFunctions
                             int processAmount = 0;
 
                             LastInboxCount = inbox.Count;
-                            InboxCountHistory.Add(LastInboxCount);
+
+                            if(InboxCountHistory.Count() == 0 || (DateTime.Now - InboxCountHistory[InboxCountHistory.Count() - 1].HistoryTime).TotalMinutes >= 10)
+                                InboxCountHistory.Add(new InboxCountHistory() { HistoryTime = DateTime.Now, InboxCount = LastInboxCount });
 
                             //Hard code to process a single message at a time, this is due to some memory issues we received from a series of emails with large attachments
                             //TODO Add threading
