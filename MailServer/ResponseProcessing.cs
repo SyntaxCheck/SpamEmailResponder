@@ -900,6 +900,7 @@ public class ResponseProcessing
             preProcessedBody.Trim().ToUpper().Contains("NAME.....") ||
             preProcessedBody.Trim().ToUpper().Contains("NAME .....") ||
             preProcessedBody.Trim().ToUpper().Contains("NAME___") ||
+            preProcessedBody.Trim().ToUpper().Contains("NAME:___") ||
             preProcessedBody.Trim().ToUpper().Contains("NAME----") ||
             preProcessedBody.Trim().ToUpper().Contains("NAME====") ||
             preProcessedBody.Trim().ToUpper().Contains("NAME :") ||
@@ -907,6 +908,7 @@ public class ResponseProcessing
             preProcessedBody.Trim().ToUpper().Contains("NAMES.....") ||
             preProcessedBody.Trim().ToUpper().Contains("NAMES .....") ||
             preProcessedBody.Trim().ToUpper().Contains("NAMES___") ||
+            preProcessedBody.Trim().ToUpper().Contains("NAMES:___") ||
             preProcessedBody.Trim().ToUpper().Contains("NAMES----") ||
             preProcessedBody.Trim().ToUpper().Contains("NAMES====") ||
             preProcessedBody.Trim().ToUpper().Contains("NAMES :") ||
@@ -953,6 +955,7 @@ public class ResponseProcessing
             preProcessedBody.Trim().ToUpper().Contains("ADDRESS.....") ||
             preProcessedBody.Trim().ToUpper().Contains("ADDRESS .....") ||
             preProcessedBody.Trim().ToUpper().Contains("ADDRESS___") ||
+            preProcessedBody.Trim().ToUpper().Contains("ADDRESS:___") ||
             preProcessedBody.Trim().ToUpper().Contains("ADDRESS----") ||
             preProcessedBody.Trim().ToUpper().Contains("ADDRESS====") ||
             preProcessedBody.Trim().ToUpper().Contains("ADDRESS :") ||
@@ -1011,6 +1014,7 @@ public class ResponseProcessing
             preProcessedBody.Trim().ToUpper().Contains("COUNTRY :") ||
             preProcessedBody.Trim().ToUpper().Contains("COUNTRY:") ||
             preProcessedBody.Trim().ToUpper().Contains("COUNTRY___") ||
+            preProcessedBody.Trim().ToUpper().Contains("COUNTRY:___") ||
             preProcessedBody.Trim().ToUpper().Contains("COUNTRY----") ||
             preProcessedBody.Trim().ToUpper().Contains("COUNTRY====") ||
             preProcessedBody.Trim().ToUpper().Contains("COUNTRY NAME.....") ||
@@ -1048,6 +1052,7 @@ public class ResponseProcessing
             preProcessedBody.Trim().ToUpper().Contains("OCCUPATION :") ||
             preProcessedBody.Trim().ToUpper().Contains("OCCUPATION:") ||
             preProcessedBody.Trim().ToUpper().Contains("OCCUPATION___") ||
+            preProcessedBody.Trim().ToUpper().Contains("OCCUPATION:___") ||
             preProcessedBody.Trim().ToUpper().Contains("OCCUPATION----") ||
             preProcessedBody.Trim().ToUpper().Contains("OCCUPATION====") ||
             preProcessedBody.Trim().ToUpper().Contains("POSITION.....") ||
@@ -1060,6 +1065,7 @@ public class ResponseProcessing
             preProcessedBody.Trim().ToUpper().Contains("YOUR OCCUPATION.") ||
             preProcessedBody.Trim().ToUpper().Contains("YOUR JOB.") ||
             preProcessedBody.Trim().ToUpper().Contains("JOB___") ||
+            preProcessedBody.Trim().ToUpper().Contains("JOB:___") ||
             preProcessedBody.Trim().ToUpper().Contains("JOB----") ||
             preProcessedBody.Trim().ToUpper().Contains("JOB====") ||
             preProcessedBody.Trim().ToUpper().Contains("JOB.....") ||
@@ -1090,6 +1096,7 @@ public class ResponseProcessing
             preProcessedBody.Trim().ToUpper().Contains("SEX :") ||
             preProcessedBody.Trim().ToUpper().Contains("SEX:") ||
             preProcessedBody.Trim().ToUpper().Contains("SEX___") ||
+            preProcessedBody.Trim().ToUpper().Contains("SEX:___") ||
             preProcessedBody.Trim().ToUpper().Contains("SEX----") ||
             preProcessedBody.Trim().ToUpper().Contains("SEX====") ||
             preProcessedBody.Trim().ToUpper().Contains("GENDER.....") ||
@@ -1142,6 +1149,7 @@ public class ResponseProcessing
             preProcessedBody.Trim().ToUpper().Contains("AGE .....") ||
             preProcessedBody.Trim().ToUpper().Contains("AGE :") ||
             preProcessedBody.Trim().ToUpper().Contains("AGE:") ||
+            preProcessedBody.Trim().ToUpper().Contains("AGE:___") ||
             preProcessedBody.Trim().ToUpper().Contains("AGE___") ||
             preProcessedBody.Trim().ToUpper().Contains("AGE----") ||
             preProcessedBody.Trim().ToUpper().Contains("AGE====") ||
@@ -1273,6 +1281,7 @@ public class ResponseProcessing
             preProcessedBody.Trim().ToUpper().Contains("NUMBER.....") ||
             preProcessedBody.Trim().ToUpper().Contains("NUMBER .....") ||
             preProcessedBody.Trim().ToUpper().Contains("NUMBER___") ||
+            preProcessedBody.Trim().ToUpper().Contains("NUMBER:___") ||
             preProcessedBody.Trim().ToUpper().Contains("NUMBER----") ||
             preProcessedBody.Trim().ToUpper().Contains("NUMBER====") ||
             preProcessedBody.Trim().ToUpper().Contains("NUMBER :") ||
@@ -1301,11 +1310,13 @@ public class ResponseProcessing
             preProcessedBody.Trim().ToUpper().Contains("AMOUNT REQUESTED :") ||
             preProcessedBody.Trim().ToUpper().Contains("AMOUNT REQUESTED.....") ||
             preProcessedBody.Trim().ToUpper().Contains("AMOUNT REQUESTED______") ||
+            preProcessedBody.Trim().ToUpper().Contains("AMOUNT REQUESTED:______") ||
             preProcessedBody.Trim().ToUpper().Contains("AMOUNT REQUESTED-----") ||
             preProcessedBody.Trim().ToUpper().Contains("LOAN AMOUNT:") ||
             preProcessedBody.Trim().ToUpper().Contains("LOAN AMOUNT :") ||
             preProcessedBody.Trim().ToUpper().Contains("LOAN AMOUNT.....") ||
             preProcessedBody.Trim().ToUpper().Contains("LOAN AMOUNT______") ||
+            preProcessedBody.Trim().ToUpper().Contains("LOAN AMOUNT:______") ||
             preProcessedBody.Trim().ToUpper().Contains("LOAN AMOUNT-----") ||
             preProcessedBody.Trim().ToUpper().Contains("LOAN AMOUNT NEED") ||
             preProcessedBody.Trim().ToUpper().Contains("LOAN AMOUNT REQUEST") ||
@@ -1346,6 +1357,7 @@ public class ResponseProcessing
             preProcessedBody.Trim().ToUpper().Contains("ID CARD.....") ||
             preProcessedBody.Trim().ToUpper().Contains("ID CARD .....") ||
             preProcessedBody.Trim().ToUpper().Contains("ID CARD___") ||
+            preProcessedBody.Trim().ToUpper().Contains("ID CARD:___") ||
             preProcessedBody.Trim().ToUpper().Contains("ID CARD----") ||
             preProcessedBody.Trim().ToUpper().Contains("ID CARD====") ||
             preProcessedBody.Trim().ToUpper().Contains("ID CARD :") ||
@@ -1353,6 +1365,7 @@ public class ResponseProcessing
             preProcessedBody.Trim().ToUpper().Contains("I.D CARD.....") ||
             preProcessedBody.Trim().ToUpper().Contains("I.D CARD .....") ||
             preProcessedBody.Trim().ToUpper().Contains("I.D CARD___") ||
+            preProcessedBody.Trim().ToUpper().Contains("I.D CARD:___") ||
             preProcessedBody.Trim().ToUpper().Contains("I.D CARD----") ||
             preProcessedBody.Trim().ToUpper().Contains("I.D CARD====") ||
             preProcessedBody.Trim().ToUpper().Contains("I.D CARD :") ||
@@ -1360,6 +1373,7 @@ public class ResponseProcessing
             preProcessedBody.Trim().ToUpper().Contains("IDENTITY CARD.....") ||
             preProcessedBody.Trim().ToUpper().Contains("IDENTITY CARD .....") ||
             preProcessedBody.Trim().ToUpper().Contains("IDENTITY CARD___") ||
+            preProcessedBody.Trim().ToUpper().Contains("IDENTITY CARD:___") ||
             preProcessedBody.Trim().ToUpper().Contains("IDENTITY CARD----") ||
             preProcessedBody.Trim().ToUpper().Contains("IDENTITY CARD====") ||
             preProcessedBody.Trim().ToUpper().Contains("IDENTITY CARD :") ||
@@ -1367,6 +1381,7 @@ public class ResponseProcessing
             preProcessedBody.Trim().ToUpper().Contains("LICENSE.....") ||
             preProcessedBody.Trim().ToUpper().Contains("LICENSE .....") ||
             preProcessedBody.Trim().ToUpper().Contains("LICENSE___") ||
+            preProcessedBody.Trim().ToUpper().Contains("LICENSE:___") ||
             preProcessedBody.Trim().ToUpper().Contains("LICENSE----") ||
             preProcessedBody.Trim().ToUpper().Contains("LICENSE====") ||
             preProcessedBody.Trim().ToUpper().Contains("LICENSE :") ||
@@ -1374,6 +1389,7 @@ public class ResponseProcessing
             preProcessedBody.Trim().ToUpper().Contains("PASSPORT.....") ||
             preProcessedBody.Trim().ToUpper().Contains("PASSPORT .....") ||
             preProcessedBody.Trim().ToUpper().Contains("PASSPORT___") ||
+            preProcessedBody.Trim().ToUpper().Contains("PASSPORT:___") ||
             preProcessedBody.Trim().ToUpper().Contains("PASSPORT----") ||
             preProcessedBody.Trim().ToUpper().Contains("PASSPORT====") ||
             preProcessedBody.Trim().ToUpper().Contains("PASSPORT :") ||
@@ -1381,6 +1397,7 @@ public class ResponseProcessing
             preProcessedBody.Trim().ToUpper().Contains("IDENTITYCARD.....") ||
             preProcessedBody.Trim().ToUpper().Contains("IDENTITYCARD .....") ||
             preProcessedBody.Trim().ToUpper().Contains("IDENTITYCARD___") ||
+            preProcessedBody.Trim().ToUpper().Contains("IDENTITYCARD:___") ||
             preProcessedBody.Trim().ToUpper().Contains("IDENTITYCARD----") ||
             preProcessedBody.Trim().ToUpper().Contains("IDENTITYCARD====") ||
             preProcessedBody.Trim().ToUpper().Contains("IDENTITYCARD :") ||
@@ -1405,6 +1422,7 @@ public class ResponseProcessing
             preProcessedBody.Trim().ToUpper().Contains("WITHOUT ID CARD") ||
             preProcessedBody.Trim().ToUpper().Contains("WITH OUT I.D CARD") ||
             preProcessedBody.Trim().ToUpper().Contains("WITHOUT I.D CARD") ||
+            preProcessedBody.Trim().ToUpper().Contains("WORKING IDENTITY CARD") ||
             preProcessedBody.Trim().ToUpper().Contains("PERSONAL ID CARD") ||
             preProcessedBody.Trim().ToUpper().Contains("SCAN YOUR ID CARD") ||
             preProcessedBody.Trim().ToUpper().Contains("SEND ME ANY OF YOUR ID") ||

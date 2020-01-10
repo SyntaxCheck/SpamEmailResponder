@@ -406,11 +406,7 @@ namespace MailServer
                 }
             }
 
-            if ((DateTime.Now - lastTimeRemainCalc).TotalMinutes >= 10)
-            {
-                SetMessageCountLabel();
-                lastTimeRemainCalc = DateTime.Now;
-            }
+            SetMessageCountLabel();
 
             return rtn;
         }
@@ -724,8 +720,10 @@ namespace MailServer
         }
         private void SetMessageCountLabel()
         {
-            if (mailServer.InboxCountHistory.Count() > 0)
+            if (mailServer.InboxCountHistory.Count() >= 3 && (DateTime.Now - lastTimeRemainCalc).TotalMinutes >= 10)
             {
+                lastTimeRemainCalc = DateTime.Now;
+
                 for (int i = mailServer.InboxCountHistory.Count() - 1; i >= 0; i--)
                 {
                     //Cleanup the old counts
@@ -737,28 +735,11 @@ namespace MailServer
 
                 TimeSpan ts = new TimeSpan();
 
-                for (int i = 0; i < mailServer.InboxCountHistory.Count() - 1; i++)
-                {
-                    if (!mailServer.InboxCountHistory[i].RateCalculated)
-                    {
-                        mailServer.InboxCountHistory[i].RateCalculated = true;
+                int totalDifference = mailServer.InboxCountHistory[0].InboxCount - mailServer.InboxCountHistory[mailServer.InboxCountHistory.Count() - 1].InboxCount;
 
-                        int totalDifference = mailServer.InboxCountHistory[i].InboxCount - mailServer.InboxCountHistory[mailServer.InboxCountHistory.Count() - 1].InboxCount;
+                mailServer.InboxCountHistory[0].MessageSendRate = totalDifference / (mailServer.InboxCountHistory[mailServer.InboxCountHistory.Count() - 1].HistoryTime - mailServer.InboxCountHistory[0].HistoryTime).TotalSeconds;
 
-                        mailServer.InboxCountHistory[i].MessageSendRate = totalDifference / (mailServer.InboxCountHistory[mailServer.InboxCountHistory.Count() - 1].HistoryTime - mailServer.InboxCountHistory[i].HistoryTime).TotalSeconds;
-                    }
-                }
-
-                double rateAvg = 0d;
-                double rateSum = 0d;
-                for (int i = 0; i < mailServer.InboxCountHistory.Count() - 1; i++)
-                {
-                    rateSum += mailServer.InboxCountHistory[i].MessageSendRate;
-                }
-
-                rateAvg = rateSum / (mailServer.InboxCountHistory.Count() - 1);
-
-                double secondsRemainingTillEmpty = (1.0 / rateAvg) * mailServer.InboxCountHistory[mailServer.InboxCountHistory.Count() - 1].InboxCount;
+                double secondsRemainingTillEmpty = (1.0 / mailServer.InboxCountHistory[0].MessageSendRate) * mailServer.InboxCountHistory[mailServer.InboxCountHistory.Count() - 1].InboxCount;
 
                 ts = TimeSpan.FromSeconds(secondsRemainingTillEmpty);
 
@@ -795,11 +776,15 @@ namespace MailServer
 
                 if (!valSet)
                 {
-                    if(ts < TimeSpan.Zero)
+                    if (ts < TimeSpan.Zero)
                         lblCountdown.Text += "~ Negative " + ts.ToString("d'd 'h'h 'm'm 's's'");
                     else
                         lblCountdown.Text += "~ " + ts.ToString("d'd 'h'h 'm'm 's's'");
                 }
+            }
+            else if (mailServer.InboxCountHistory.Count() < 3)
+            {
+                lblCountdown.Text = "Time remaining will display when more data is collected, counts gathered: " + mailServer.InboxCountHistory.Count().ToString();
             }
 
             lblMessageInfo.Text = "Sent: " + storage.Count(t => t.Replied).ToString("#,##0") + "   Skipped: " + skippedCount.ToString("#,##0") + "   Ignored: " + storage.Count(t => t.Ignored).ToString("#,##0") + "   Pending: " + storage.Count(t => !t.Replied).ToString("#,##0") + "   Unread: " + mailServer.LastInboxCount.ToString("#,##0");
