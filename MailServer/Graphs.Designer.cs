@@ -41,6 +41,9 @@
             this.rbMessageType = new System.Windows.Forms.RadioButton();
             this.calcTimer = new System.Windows.Forms.Timer(this.components);
             this.lblCalculating = new System.Windows.Forms.Label();
+            this.lblSaveMsgId = new System.Windows.Forms.Label();
+            this.txtThreadLength = new System.Windows.Forms.TextBox();
+            this.cbxPopupMsgIds = new System.Windows.Forms.CheckBox();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.chartMain)).BeginInit();
             this.groupBox1.SuspendLayout();
@@ -69,7 +72,7 @@
             // exitToolStripMenuItem
             // 
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(92, 22);
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(93, 22);
             this.exitToolStripMenuItem.Text = "Exit";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
             // 
@@ -91,6 +94,9 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.cbxPopupMsgIds);
+            this.groupBox1.Controls.Add(this.txtThreadLength);
+            this.groupBox1.Controls.Add(this.lblSaveMsgId);
             this.groupBox1.Controls.Add(this.rbThreadLength);
             this.groupBox1.Controls.Add(this.rbMessageType);
             this.groupBox1.Location = new System.Drawing.Point(12, 27);
@@ -137,12 +143,43 @@
             this.lblCalculating.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.lblCalculating.Font = new System.Drawing.Font("Tahoma", 19.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblCalculating.ForeColor = System.Drawing.Color.Red;
-            this.lblCalculating.Location = new System.Drawing.Point(50, 241);
+            this.lblCalculating.Location = new System.Drawing.Point(104, 253);
             this.lblCalculating.Name = "lblCalculating";
             this.lblCalculating.Size = new System.Drawing.Size(366, 35);
             this.lblCalculating.TabIndex = 37;
             this.lblCalculating.Text = "Stats are being calculated";
             this.lblCalculating.Visible = false;
+            // 
+            // lblSaveMsgId
+            // 
+            this.lblSaveMsgId.AutoSize = true;
+            this.lblSaveMsgId.Location = new System.Drawing.Point(748, 22);
+            this.lblSaveMsgId.Name = "lblSaveMsgId";
+            this.lblSaveMsgId.Size = new System.Drawing.Size(167, 13);
+            this.lblSaveMsgId.TabIndex = 2;
+            this.lblSaveMsgId.Text = "Save MsgId Over Thread Length:";
+            this.lblSaveMsgId.Visible = false;
+            // 
+            // txtThreadLength
+            // 
+            this.txtThreadLength.Location = new System.Drawing.Point(921, 19);
+            this.txtThreadLength.Name = "txtThreadLength";
+            this.txtThreadLength.Size = new System.Drawing.Size(100, 21);
+            this.txtThreadLength.TabIndex = 3;
+            this.txtThreadLength.Text = "50";
+            this.txtThreadLength.Visible = false;
+            this.txtThreadLength.TextChanged += new System.EventHandler(this.txtThreadLength_TextChanged);
+            // 
+            // cbxPopupMsgIds
+            // 
+            this.cbxPopupMsgIds.AutoSize = true;
+            this.cbxPopupMsgIds.Location = new System.Drawing.Point(605, 21);
+            this.cbxPopupMsgIds.Name = "cbxPopupMsgIds";
+            this.cbxPopupMsgIds.Size = new System.Drawing.Size(98, 17);
+            this.cbxPopupMsgIds.TabIndex = 4;
+            this.cbxPopupMsgIds.Text = "Show Msg IDs?";
+            this.cbxPopupMsgIds.UseVisualStyleBackColor = true;
+            this.cbxPopupMsgIds.CheckedChanged += new System.EventHandler(this.cbxPopupMsgIds_CheckedChanged);
             // 
             // Graphs
             // 
@@ -180,5 +217,8 @@
         private System.Windows.Forms.RadioButton rbThreadLength;
         private System.Windows.Forms.Timer calcTimer;
         private System.Windows.Forms.Label lblCalculating;
+        private System.Windows.Forms.TextBox txtThreadLength;
+        private System.Windows.Forms.Label lblSaveMsgId;
+        private System.Windows.Forms.CheckBox cbxPopupMsgIds;
     }
 }

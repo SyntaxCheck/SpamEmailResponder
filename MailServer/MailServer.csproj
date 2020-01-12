@@ -126,6 +126,12 @@
     <Compile Include="Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
+    <Compile Include="PopupText.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="PopupText.Designer.cs">
+      <DependentUpon>PopupText.cs</DependentUpon>
+    </Compile>
     <Compile Include="Graphs.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -159,6 +165,9 @@
     <Compile Include="TextProcessing.cs" />
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PopupText.resx">
+      <DependentUpon>PopupText.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Graphs.resx">
       <DependentUpon>Graphs.cs</DependentUpon>

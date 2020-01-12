@@ -71,6 +71,8 @@
             this.btnRefresh = new System.Windows.Forms.Button();
             this.cbxHideWithResponse = new System.Windows.Forms.CheckBox();
             this.cbxShowHistory = new System.Windows.Forms.CheckBox();
+            this.tbxSearch = new System.Windows.Forms.TextBox();
+            this.btnSearch = new System.Windows.Forms.Button();
             this.menuStrip1.SuspendLayout();
             this.gbxEmails.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvEmails)).BeginInit();
@@ -101,7 +103,7 @@
             // exitToolStripMenuItem
             // 
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(92, 22);
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(93, 22);
             this.exitToolStripMenuItem.Text = "Exit";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
             // 
@@ -455,12 +457,31 @@
             this.cbxShowHistory.UseVisualStyleBackColor = false;
             this.cbxShowHistory.CheckedChanged += new System.EventHandler(this.cbxShowHistory_CheckedChanged);
             // 
+            // tbxSearch
+            // 
+            this.tbxSearch.Location = new System.Drawing.Point(327, 2);
+            this.tbxSearch.Name = "tbxSearch";
+            this.tbxSearch.Size = new System.Drawing.Size(142, 21);
+            this.tbxSearch.TabIndex = 47;
+            // 
+            // btnSearch
+            // 
+            this.btnSearch.Location = new System.Drawing.Point(475, 0);
+            this.btnSearch.Name = "btnSearch";
+            this.btnSearch.Size = new System.Drawing.Size(75, 23);
+            this.btnSearch.TabIndex = 48;
+            this.btnSearch.Text = "Search";
+            this.btnSearch.UseVisualStyleBackColor = true;
+            this.btnSearch.Click += new System.EventHandler(this.btnSearch_Click);
+            // 
             // StorageViewer
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.LightSteelBlue;
             this.ClientSize = new System.Drawing.Size(992, 644);
+            this.Controls.Add(this.btnSearch);
+            this.Controls.Add(this.tbxSearch);
             this.Controls.Add(this.cbxShowHistory);
             this.Controls.Add(this.cbxHideWithResponse);
             this.Controls.Add(this.btnRefresh);
@@ -544,5 +565,7 @@
         private System.Windows.Forms.ToolStripMenuItem graphsToolStripMenuItem;
         private System.Windows.Forms.CheckBox cbxHideWithResponse;
         private System.Windows.Forms.CheckBox cbxShowHistory;
+        private System.Windows.Forms.TextBox tbxSearch;
+        private System.Windows.Forms.Button btnSearch;
     }
 }

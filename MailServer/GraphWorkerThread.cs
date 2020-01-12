@@ -9,11 +9,13 @@ public class GraphWorkerThread
 {
     public double Progress { get; set; }
     public bool Finished { get; set; }
+    public string MsgIdsForLongest { get; set; }
     public List<MailStorageStats> ReturnStats;
 
     private MailServerFunctions mailServer;
     private List<MailStorage> storage;
     private GraphType type;
+    private int saveMsgIdForThreadLength { get; set; }
 
     public enum GraphType
     {
@@ -21,14 +23,16 @@ public class GraphWorkerThread
         ThreadLength = 2
     }
 
-    public GraphWorkerThread(MailServerFunctions mailServerIn, List<MailStorage> storageIn, GraphType typeIn)
+    public GraphWorkerThread(MailServerFunctions mailServerIn, List<MailStorage> storageIn, GraphType typeIn, int saveMsgIdForThreadLengthIn)
     {
         Finished = false;
         Progress = 0d;
+        MsgIdsForLongest = String.Empty;
         ReturnStats = new List<MailStorageStats>();
         mailServer = mailServerIn;
         storage = storageIn;
         type = typeIn;
+        saveMsgIdForThreadLength = saveMsgIdForThreadLengthIn;
     }
 
     public void DoWork()
@@ -36,6 +40,9 @@ public class GraphWorkerThread
         List<MailStorage> copy = CopyList(storage);
         ReturnStats = new List<MailStorageStats>();
         int count = 0;
+
+        Finished = false;
+        Progress = 0d;
 
         switch (type)
         {
@@ -73,6 +80,8 @@ public class GraphWorkerThread
                 break;
             case GraphType.ThreadLength:
                 List<string> skipMsgIds = new List<string>();
+                int longestThread = 0;
+                string longestThreadMsgId = String.Empty;
 
                 //foreach (MailStorage ms in storage)
                 for(int i = storage.Count() - 1; i >= 0; i--)
@@ -87,6 +96,18 @@ public class GraphWorkerThread
                     //Get Thread Length for current Message
                     List<MailStorage> thread = mailServer.GetPreviousMessagesInThread(copy, storage[i]);
                     int threadCount = thread.Count() + 1;
+
+                    //Keep track of the longest thread's message ID
+                    if (threadCount > longestThread)
+                    {
+                        longestThread = threadCount;
+                        longestThreadMsgId = storage[i].MsgId;
+                    }
+
+                    if (threadCount >= saveMsgIdForThreadLength)
+                    {
+                        MsgIdsForLongest += "(" + threadCount.ToString() + ") " + storage[i].MsgId + Environment.NewLine;
+                    }
 
                     //Add all the MsgIds from the thread list to the skip IDs list
                     foreach (MailStorage tms in thread)
@@ -115,6 +136,9 @@ public class GraphWorkerThread
                     count++;
                     Progress = (count / (double)storage.Count()) * 100;
                 }
+
+                if(!MsgIdsForLongest.Contains(") " + longestThreadMsgId + Environment.NewLine))
+                    MsgIdsForLongest += "(" + longestThread.ToString() + ") " + longestThreadMsgId + Environment.NewLine;
 
                 Finished = true;
                 Progress = 100d;

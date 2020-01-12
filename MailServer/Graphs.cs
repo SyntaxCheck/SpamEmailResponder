@@ -57,24 +57,64 @@ namespace MailServer
         {
             CheckThread();
         }
+        private void txtThreadLength_TextChanged(object sender, EventArgs e)
+        {
+            int intOut = 0;
+            if (!int.TryParse(txtThreadLength.Text, out intOut))
+            {
+                txtThreadLength.Text = "50";
+            }
+        }
+        private void cbxPopupMsgIds_CheckedChanged(object sender, EventArgs e)
+        {
+            if (cbxPopupMsgIds.Checked)
+            {
+                lblSaveMsgId.Visible = true;
+                txtThreadLength.Visible = true;
+            }
+            else
+            {
+                lblSaveMsgId.Visible = false;
+                txtThreadLength.Visible = false;
+            }
+        }
 
         //Helper functions
         private void LoadGraph()
         {
+            int intOut = 0;
+            if (!int.TryParse(txtThreadLength.Text, out intOut))
+            {
+                txtThreadLength.Text = "50";
+                intOut = 50;
+            }
+
             if (rbMessageType.Checked)
             {
-                worker = new GraphWorkerThread(mailServer, storage, GraphWorkerThread.GraphType.MessageType);
+                if (calculateThread != null && calculateThread.ThreadState == ThreadState.Running)
+                    calculateThread.Abort();
+
+                worker = new GraphWorkerThread(mailServer, storage, GraphWorkerThread.GraphType.MessageType, intOut);
                 calculateThread = new Thread(new ThreadStart(worker.DoWork));
                 calculateThread.Start();
+
+                rbMessageType.Enabled = false;
+                rbThreadLength.Enabled = false;
 
                 calcTimer.Start();
                 CheckThread();
             }
             else if (rbThreadLength.Checked)
             {
-                worker = new GraphWorkerThread(mailServer, storage, GraphWorkerThread.GraphType.ThreadLength);
+                if (calculateThread != null && calculateThread.ThreadState == ThreadState.Running)
+                    calculateThread.Abort();
+
+                worker = new GraphWorkerThread(mailServer, storage, GraphWorkerThread.GraphType.ThreadLength, intOut);
                 calculateThread = new Thread(new ThreadStart(worker.DoWork));
                 calculateThread.Start();
+
+                rbMessageType.Enabled = false;
+                rbThreadLength.Enabled = false;
 
                 calcTimer.Start();
                 CheckThread();
@@ -135,9 +175,20 @@ namespace MailServer
                         tmpSeries.BorderWidth = 100;
                         tmpSeries["PixelPointWidth"] = "600";
                     }
+
+                    if (cbxPopupMsgIds.Checked)
+                    {
+                        PopupText popTxt = new PopupText();
+                        popTxt.Show();
+                        popTxt.GroupBoxText = "Msg IDs";
+                        popTxt.TextToDisplay = worker.MsgIdsForLongest;
+                        popTxt.SetValues();
+                    }
                 }
 
                 calcTimer.Stop();
+                rbMessageType.Enabled = true;
+                rbThreadLength.Enabled = true;
             }
             else
             {

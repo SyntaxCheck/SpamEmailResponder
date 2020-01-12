@@ -17,6 +17,7 @@ namespace MailServer
         private List<MailStorage> storage;
         private SerializeHelper serializeHelper;
         private MailServerFunctions mailServer;
+        private string searchMsgId;
 
         public StorageViewer()
         {
@@ -27,6 +28,7 @@ namespace MailServer
                 storage = new List<MailStorage>();
                 serializeHelper = new SerializeHelper();
                 mailServer = new MailServerFunctions();
+                searchMsgId = String.Empty;
 
                 LoadStorage();
             }
@@ -134,6 +136,11 @@ namespace MailServer
             Graphs graph = new Graphs();
             graph.Show();
         }
+        private void btnSearch_Click(object sender, EventArgs e)
+        {
+            searchMsgId = tbxSearch.Text;
+            LoadStorage();
+        }
 
         //Private functions
         private void LoadStorage()
@@ -155,8 +162,11 @@ namespace MailServer
                 {
                     if (cbxShowAll.Checked || (!cbxHideWithResponse.Checked && !ms.Replied) || (cbxHideWithResponse.Checked && !ms.Replied && String.IsNullOrEmpty(ms.DeterminedReply.Trim())))
                     {
-                        dgvEmails.Rows.Add(ms.ToAddress, ms.SubjectLine, ms.DateReceived.ToString("yyyy-MM-dd hh:mm"), ms.DateProcessed.ToString("yyyy-MM-dd hh:mm"), ms.PersonName, ((EmailType)ms.MessageType).ToString(), ms.Replied.ToString(), ms.Ignored.ToString(), TextProcessing.MakeEmailEasierToRead(ms.EmailBodyPlain), TextProcessing.MakeEmailEasierToRead(ms.DeterminedReply), ms.NumberOfAttachments.ToString(), ms.MsgId, ms.InReplyToMsgId, ms.MyReplyMsgId);
-                        count++;
+                        if (String.IsNullOrEmpty(searchMsgId) || ms.MsgId.Trim() == searchMsgId.Trim())
+                        {
+                            dgvEmails.Rows.Add(ms.ToAddress, ms.SubjectLine, ms.DateReceived.ToString("yyyy-MM-dd hh:mm"), ms.DateProcessed.ToString("yyyy-MM-dd hh:mm"), ms.PersonName, ((EmailType)ms.MessageType).ToString(), ms.Replied.ToString(), ms.Ignored.ToString(), TextProcessing.MakeEmailEasierToRead(ms.EmailBodyPlain), TextProcessing.MakeEmailEasierToRead(ms.DeterminedReply), ms.NumberOfAttachments.ToString(), ms.MsgId, ms.InReplyToMsgId, ms.MyReplyMsgId);
+                            count++;
+                        }
                     }
                 }
                 dgvEmails.DataBindingComplete += MakeColumnsSortable_DataBindingComplete;
