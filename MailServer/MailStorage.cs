@@ -140,4 +140,33 @@ public class MailStorage
         dateReceived = dateProcessed = new DateTime(1900,01,01);
         replied = includeID = includedIDinPast = isDuplicateMessage = ignored = includePaymentReceipt = false;
     }
+    public MailStorage DeepCopy()
+    {
+        MailStorage copy = new MailStorage();
+
+        copy.DateReceived = DateReceived;
+        copy.DateProcessed = DateProcessed;
+        copy.EmailBodyHtml = EmailBodyHtml;
+        copy.EmailBodyPlain = EmailBodyPlain;
+        copy.EmailBodyRich = EmailBodyRich;
+        copy.MsgId = MsgId;
+        copy.SubjectLine = SubjectLine;
+        copy.DeterminedReply = DeterminedReply;
+        copy.ToAddress = ToAddress;
+        copy.AtachmentTypes = AtachmentTypes;
+        copy.PersonName = PersonName;
+        copy.NumberOfAttachments = NumberOfAttachments;
+        copy.MessageType = MessageType;
+        copy.Replied = Replied;
+        copy.AttachmentNames = AttachmentNames;
+        copy.IncludeID = IncludeID;
+        copy.IncludedIDinPast = IncludedIDinPast;
+        copy.Ignored = Ignored;
+        copy.IsDuplicateMessage = IsDuplicateMessage;
+        copy.IncludePaymentReceipt = IncludePaymentReceipt;
+        copy.MyReplyMsgId = MyReplyMsgId;
+        copy.InReplyToMsgId = InReplyToMsgId;
+
+        return copy;
+    }
 }

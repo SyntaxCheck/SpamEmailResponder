@@ -131,6 +131,7 @@
     <Compile Include="Graphs.Designer.cs">
       <DependentUpon>Graphs.cs</DependentUpon>
     </Compile>
+    <Compile Include="GraphWorkerThread.cs" />
     <Compile Include="InboxCountHistory.cs" />
     <Compile Include="MailStorageStats.cs" />
     <Compile Include="ResponseProcessing.cs" />

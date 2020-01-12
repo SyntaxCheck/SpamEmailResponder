@@ -28,9 +28,10 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea2 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend2 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series2 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            this.components = new System.ComponentModel.Container();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea3 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend3 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series3 = new System.Windows.Forms.DataVisualization.Charting.Series();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -38,6 +39,8 @@
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.rbThreadLength = new System.Windows.Forms.RadioButton();
             this.rbMessageType = new System.Windows.Forms.RadioButton();
+            this.calcTimer = new System.Windows.Forms.Timer(this.components);
+            this.lblCalculating = new System.Windows.Forms.Label();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.chartMain)).BeginInit();
             this.groupBox1.SuspendLayout();
@@ -72,16 +75,16 @@
             // 
             // chartMain
             // 
-            chartArea2.Name = "ChartArea1";
-            this.chartMain.ChartAreas.Add(chartArea2);
-            legend2.Name = "Legend1";
-            this.chartMain.Legends.Add(legend2);
+            chartArea3.Name = "ChartArea1";
+            this.chartMain.ChartAreas.Add(chartArea3);
+            legend3.Name = "Legend1";
+            this.chartMain.Legends.Add(legend3);
             this.chartMain.Location = new System.Drawing.Point(12, 82);
             this.chartMain.Name = "chartMain";
-            series2.ChartArea = "ChartArea1";
-            series2.Legend = "Legend1";
-            series2.Name = "Series1";
-            this.chartMain.Series.Add(series2);
+            series3.ChartArea = "ChartArea1";
+            series3.Legend = "Legend1";
+            series3.Name = "Series1";
+            this.chartMain.Series.Add(series3);
             this.chartMain.Size = new System.Drawing.Size(1027, 455);
             this.chartMain.TabIndex = 1;
             this.chartMain.Text = "Main Chart";
@@ -122,12 +125,32 @@
             this.rbMessageType.UseVisualStyleBackColor = true;
             this.rbMessageType.CheckedChanged += new System.EventHandler(this.rbMessageType_CheckedChanged);
             // 
+            // calcTimer
+            // 
+            this.calcTimer.Interval = 500;
+            this.calcTimer.Tick += new System.EventHandler(this.calcTimer_Tick);
+            // 
+            // lblCalculating
+            // 
+            this.lblCalculating.AutoSize = true;
+            this.lblCalculating.BackColor = System.Drawing.Color.White;
+            this.lblCalculating.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.lblCalculating.Font = new System.Drawing.Font("Tahoma", 19.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblCalculating.ForeColor = System.Drawing.Color.Red;
+            this.lblCalculating.Location = new System.Drawing.Point(50, 241);
+            this.lblCalculating.Name = "lblCalculating";
+            this.lblCalculating.Size = new System.Drawing.Size(366, 35);
+            this.lblCalculating.TabIndex = 37;
+            this.lblCalculating.Text = "Stats are being calculated";
+            this.lblCalculating.Visible = false;
+            // 
             // Graphs
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.LightSteelBlue;
             this.ClientSize = new System.Drawing.Size(1051, 549);
+            this.Controls.Add(this.lblCalculating);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.chartMain);
             this.Controls.Add(this.menuStrip1);
@@ -155,5 +178,7 @@
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.RadioButton rbMessageType;
         private System.Windows.Forms.RadioButton rbThreadLength;
+        private System.Windows.Forms.Timer calcTimer;
+        private System.Windows.Forms.Label lblCalculating;
     }
 }
