@@ -98,138 +98,146 @@ namespace MailServer
 
         private void processTimer_Tick(object sender, EventArgs e)
         {
-            StandardResponse response = new StandardResponse() { Code = 0, Message = String.Empty, Data = String.Empty };
-            processTimer.Interval = SEND_INTERVAL;
-
-            Logger.WriteDbg(loggerInfo, "Debug Timestamp Pre Get Messages: " + DateTime.Now.ToString("hh:mm:ss.fff"));
-            int preCount = storage.Count();
-            if ((storage.Count(t => !t.Replied) - skippedCount) <= 10)
+            try
             {
-                response = mailServer.GetMessages(loggerInfo, ref storage);
-                if (response.Code < 0)
+                StandardResponse response = new StandardResponse() { Code = 0, Message = String.Empty, Data = String.Empty };
+                processTimer.Interval = SEND_INTERVAL;
+
+                Logger.WriteDbg(loggerInfo, "Debug Timestamp Pre Get Messages: " + DateTime.Now.ToString("hh:mm:ss.fff"));
+                int preCount = storage.Count();
+                if ((storage.Count(t => !t.Replied) - skippedCount) <= 10)
                 {
-                    tbxOutput.Text = response.AsString();
-                    Logger.Write(loggerInfo, "GetMessage Error: ", response);
-                    processTimer.Interval = 60 * 60 * 1000; //Pause for an hour on disconnect
-                }
-            }
-            else
-            {
-                response = new StandardResponse() { Code = 0 };
-                Logger.Write(loggerInfo, "Skipping the check for messages. Unreplied count: " + storage.Count(t => !t.Replied).ToString() + ", Skip count: " + skippedCount.ToString());
-            }
-            Logger.WriteDbg(loggerInfo, "Debug Timestamp Post Get Messages: " + DateTime.Now.ToString("hh:mm:ss.fff"));
-            //response = mailServer.GetMessages(loggerInfo, ref storage);
-            //if (response.Code < 0)
-            //{
-            //    tbxOutput.Text = response.AsString();
-            //    Logger.Write(loggerInfo, "Process Timer/MailServer.GetMessage()", response);
-            //}
-
-            int postCount = storage.Count();
-            if (preCount == postCount)
-            {
-                Logger.Write(loggerInfo, "Pre and post counts match. Pre: " + preCount.ToString() + ", Post: " + postCount.ToString());
-            }
-
-            //Write Storage object to disk
-            if (storage.Count() > 0)
-            {
-                Logger.WriteDbg(loggerInfo, "Debug Timestamp Pre Write storage file: " + DateTime.Now.ToString("hh:mm:ss.fff"));
-                string fullPath = Path.Combine(currentDirectory, StaticVariables.STORAGE_OBJECT_FILENAME);
-                serializeHelper.WriteToBinaryFile(fullPath, storage, false);
-                Logger.WriteDbg(loggerInfo, "Debug Timestamp Post Write storage file: " + DateTime.Now.ToString("hh:mm:ss.fff"));
-            }
-
-            if (cbxAutoSend.Checked)
-            {
-                if (response.Code < 0)
-                {
-                    tbxOutput.Text = response.AsString();
-                    processTimer.Stop();
-                    MessageBox.Show(response.AsString(), "Failed to get new mail");
+                    response = mailServer.GetMessages(loggerInfo, ref storage);
+                    if (response.Code < 0)
+                    {
+                        tbxOutput.Text = response.AsString();
+                        Logger.Write(loggerInfo, "GetMessage Error: ", response);
+                        processTimer.Interval = 60 * 60 * 1000; //Pause for an hour on disconnect
+                    }
                 }
                 else
                 {
-                    bool foundMessageToSend = false;
-                    //Load the message onto the screen
-                    Logger.WriteDbg(loggerInfo, "Debug Timestamp Pre LoadMessage(): " + DateTime.Now.ToString("hh:mm:ss.fff"));
-                    int rtn = LoadMessage();
-                    Logger.WriteDbg(loggerInfo, "Debug Timestamp Post LoadMessage(): " + DateTime.Now.ToString("hh:mm:ss.fff"));
+                    response = new StandardResponse() { Code = 0 };
+                    Logger.Write(loggerInfo, "Skipping the check for messages. Unreplied count: " + storage.Count(t => !t.Replied).ToString() + ", Skip count: " + skippedCount.ToString());
+                }
+                Logger.WriteDbg(loggerInfo, "Debug Timestamp Post Get Messages: " + DateTime.Now.ToString("hh:mm:ss.fff"));
+                //response = mailServer.GetMessages(loggerInfo, ref storage);
+                //if (response.Code < 0)
+                //{
+                //    tbxOutput.Text = response.AsString();
+                //    Logger.Write(loggerInfo, "Process Timer/MailServer.GetMessage()", response);
+                //}
 
-                    if (rtn > 0)
+                int postCount = storage.Count();
+                if (preCount == postCount)
+                {
+                    Logger.Write(loggerInfo, "Pre and post counts match. Pre: " + preCount.ToString() + ", Post: " + postCount.ToString());
+                }
+
+                //Write Storage object to disk
+                if (storage.Count() > 0)
+                {
+                    Logger.WriteDbg(loggerInfo, "Debug Timestamp Pre Write storage file: " + DateTime.Now.ToString("hh:mm:ss.fff"));
+                    string fullPath = Path.Combine(currentDirectory, StaticVariables.STORAGE_OBJECT_FILENAME);
+                    serializeHelper.WriteToBinaryFile(fullPath, storage, false);
+                    Logger.WriteDbg(loggerInfo, "Debug Timestamp Post Write storage file: " + DateTime.Now.ToString("hh:mm:ss.fff"));
+                }
+
+                if (cbxAutoSend.Checked)
+                {
+                    if (response.Code < 0)
                     {
-                        while (!foundMessageToSend)
+                        tbxOutput.Text = response.AsString();
+                        processTimer.Stop();
+                        MessageBox.Show(response.AsString(), "Failed to get new mail");
+                    }
+                    else
+                    {
+                        bool foundMessageToSend = false;
+                        //Load the message onto the screen
+                        Logger.WriteDbg(loggerInfo, "Debug Timestamp Pre LoadMessage(): " + DateTime.Now.ToString("hh:mm:ss.fff"));
+                        int rtn = LoadMessage();
+                        Logger.WriteDbg(loggerInfo, "Debug Timestamp Post LoadMessage(): " + DateTime.Now.ToString("hh:mm:ss.fff"));
+
+                        if (rtn > 0)
                         {
-                            if (String.IsNullOrEmpty(tbxDeterminedReply.Text.Trim()))
+                            while (!foundMessageToSend)
                             {
-                                //If the reply is blank try to regen before we skip as more code is added to handle new types of emails
-                                Regen();
+                                if (String.IsNullOrEmpty(tbxDeterminedReply.Text.Trim()))
+                                {
+                                    //If the reply is blank try to regen before we skip as more code is added to handle new types of emails
+                                    Regen();
+                                }
+
+                                if (String.IsNullOrEmpty(tbxDeterminedReply.Text.Trim()) || String.IsNullOrEmpty(tbxFromAddress.Text.Trim()))
+                                {
+                                    skippedMessages += ";;;" + workingOnMsg + ";;;";
+                                    skippedCount++;
+
+                                    Logger.WriteDbg(loggerInfo, "Debug Timestamp Pre CheckForMessages(): " + DateTime.Now.ToString("hh:mm:ss.fff"));
+                                    rtn = CheckForMessages();
+                                    Logger.WriteDbg(loggerInfo, "Debug Timestamp Post CheckForMessages(): " + DateTime.Now.ToString("hh:mm:ss.fff"));
+                                    if (rtn <= 0) //End the loop if there are no more messages or we encountered an error
+                                        break;
+                                }
+                                else
+                                {
+                                    foundMessageToSend = true;
+                                }
                             }
 
-                            if (String.IsNullOrEmpty(tbxDeterminedReply.Text.Trim()) || String.IsNullOrEmpty(tbxFromAddress.Text.Trim()))
+                            if (foundMessageToSend)
                             {
-                                skippedMessages += ";;;" + workingOnMsg + ";;;";
-                                skippedCount++;
-
-                                Logger.WriteDbg(loggerInfo, "Debug Timestamp Pre CheckForMessages(): " + DateTime.Now.ToString("hh:mm:ss.fff"));
-                                rtn = CheckForMessages();
-                                Logger.WriteDbg(loggerInfo, "Debug Timestamp Post CheckForMessages(): " + DateTime.Now.ToString("hh:mm:ss.fff"));
-                                if (rtn <= 0) //End the loop if there are no more messages or we encountered an error
-                                    break;
+                                Logger.WriteDbg(loggerInfo, "Debug Timestamp Pre SendEmail(): " + DateTime.Now.ToString("hh:mm:ss.fff"));
+                                rtn = SendEmail();
+                                Logger.WriteDbg(loggerInfo, "Debug Timestamp Post SendEmail(): " + DateTime.Now.ToString("hh:mm:ss.fff"));
+                                if (rtn < 0) //If the email fails to send add to the temp skip list for someone to deal with later
+                                {
+                                    skippedMessages += ";;;" + workingOnMsg + ";;;";
+                                }
                             }
-                            else
+
+                            //Start the visual countdown on screen
+                            if (!lblExtendedWait.Visible)
                             {
-                                foundMessageToSend = true;
+                                Logger.WriteDbg(loggerInfo, "Setting countdown timer to trackbar value inside of Process Timer.");
+                                countdownRemaining = trckBar.Value;
+                                if (!countdownTimer.Enabled)
+                                {
+                                    countdownTimer.Start();
+                                }
                             }
                         }
-
-                        if (foundMessageToSend)
+                        else if (rtn == 0)
                         {
-                            Logger.WriteDbg(loggerInfo, "Debug Timestamp Pre SendEmail(): " + DateTime.Now.ToString("hh:mm:ss.fff"));
-                            rtn = SendEmail();
-                            Logger.WriteDbg(loggerInfo, "Debug Timestamp Post SendEmail(): " + DateTime.Now.ToString("hh:mm:ss.fff"));
-                            if (rtn < 0) //If the email fails to send add to the temp skip list for someone to deal with later
-                            {
-                                skippedMessages += ";;;" + workingOnMsg + ";;;";
-                            }
-                        }
+                            processTimer.Interval = trckBar.Value * 1000;
+                            processTimer.Start();
 
-                        //Start the visual countdown on screen
-                        if (!lblExtendedWait.Visible)
-                        {
-                            Logger.WriteDbg(loggerInfo, "Setting countdown timer to trackbar value inside of Process Timer.");
-                            countdownRemaining = trckBar.Value;
-                            if (!countdownTimer.Enabled)
-                            {
-                                countdownTimer.Start();
-                            }
+                            countdownTimer.Stop();
+                            countdownRemaining = (int)Math.Round((double)processTimer.Interval, 0) / 1000;
+
+                            Logger.WriteDbg(loggerInfo, "No messages found, start the timers again to check later");
+                            countdownTimer.Start();
                         }
                     }
-                    else if (rtn == 0)
+                }
+                else
+                {
+                    if (response.Code < 0)
                     {
-                        processTimer.Interval = trckBar.Value * 1000;
-                        processTimer.Start();
-
-                        countdownTimer.Stop();
-                        countdownRemaining = (int)Math.Round((double)processTimer.Interval, 0) / 1000;
-
-                        Logger.WriteDbg(loggerInfo, "No messages found, start the timers again to check later");
-                        countdownTimer.Start();
+                        tbxOutput.Text = response.AsString();
+                    }
+                    else if (postCount > preCount)
+                    {
+                        processTimer.Stop();
+                        LoadMessage();
                     }
                 }
             }
-            else
+            catch (Exception ex)
             {
-                if (response.Code < 0)
-                {
-                    tbxOutput.Text = response.AsString();
-                }
-                else if (postCount > preCount)
-                {
-                    processTimer.Stop();
-                    LoadMessage();
-                }
+                Logger.Write(loggerInfo, "Generic Error: " + ex.Message + Environment.NewLine + "Stack: " + ex.StackTrace);
+                tbxOutput.Text = "Generic Error: " + ex.Message;
             }
         }
         private void countdownTimer_Tick(object sender, EventArgs e)

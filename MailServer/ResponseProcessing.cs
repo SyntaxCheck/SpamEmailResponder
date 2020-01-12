@@ -1725,7 +1725,7 @@ public class ResponseProcessing
         EmailTypeParseLit.Add(new CheckGenericPayment(responseSettings) { PassNumber = 2 });
         EmailTypeParseLit.Add(new CheckBlankWithAttachment(responseSettings) { PassNumber = 2 });
 
-        if (IsOverridAdmin && preProcessedBody.Trim().ToUpper().StartsWith("_SYN API DOCUMENTATION_"))
+        if (IsOverridAdmin && (preProcessedBody.Trim().ToUpper().StartsWith("_SYN API DOCUMENTATION_") || preProcessedBody.Trim().ToUpper().StartsWith("_SYN API_") || preProcessedBody.Trim().ToUpper().StartsWith("_SYN DOCUMENTATION_")))
         {
             rtnResponse = "Below is a list of keywords you can send to auto trigger the given email type response. Make sure to send an email with the Subject line of the text below. If you reply with multiple types it will only respond with a single type for the one with the highest priority." + Environment.NewLine + Environment.NewLine;
             rtnResponse += "_SYN RANDOM_ (This will return a random response)" + Environment.NewLine;
@@ -2222,6 +2222,16 @@ public class ResponseProcessing
         replacement.Add(GetRandomLocation(rand));
         placeholder.Add("|GetRandomProduct|");
         replacement.Add(GetRandomProduct(rand));
+        placeholder.Add("|GetRandomProduct1|");
+        replacement.Add(GetRandomProduct(rand));
+        placeholder.Add("|GetRandomProduct2|");
+        replacement.Add(GetRandomProduct(rand));
+        placeholder.Add("|GetRandomProduct3|");
+        replacement.Add(GetRandomProduct(rand));
+        placeholder.Add("|GetRandomProduct4|");
+        replacement.Add(GetRandomProduct(rand));
+        placeholder.Add("|GetRandomProduct5|");
+        replacement.Add(GetRandomProduct(rand));
         placeholder.Add("|GetRandomPaymentMethod|");
         replacement.Add(GetRandomPaymentMethod(rand));
         placeholder.Add("|GetRandomThought|");
@@ -2282,6 +2292,8 @@ public class ResponseProcessing
         replacement.Add(GetRandomCharacters(rand, 1000));
         placeholder.Add("|GetListOfAcquaintance|");
         replacement.Add(GetListOfAcquaintance(rand, 2));
+        placeholder.Add("|GetListOfProducts|");
+        replacement.Add(GetListOfProducts(rand, 3));
         placeholder.Add("|GetPaymentTypeFromMessage|");
         replacement.Add(paymentType);
         placeholder.Add("|Environment.NewLine|");
@@ -2943,6 +2955,20 @@ public class ResponseProcessing
         List<string> lst = settings.Products;
 
         return lst[rand.Next(0, lst.Count())];
+    }
+    public string GetListOfProducts(Random rand, int count)
+    {
+        string rtn = String.Empty;
+
+        for (int i = 0; i < count; i++)
+        {
+            if (i != 0)
+                rtn += ", ";
+
+            rtn += GetRandomProduct(rand);
+        }
+
+        return rtn;
     }
     public string GetRandomPaymentMethod(Random rand)
     {
