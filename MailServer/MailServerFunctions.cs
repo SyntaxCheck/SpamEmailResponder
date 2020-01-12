@@ -136,6 +136,7 @@ public class MailServerFunctions
             settings.QuestionsHowMuchMoneyDoIHave = new List<string>() { "I have $|GetRandomNumber10000|." };
             settings.QuestionsSendTransferReceipt = new List<string>() { "I have attached the receipt." };
             settings.QuestionsAlreadyToldYou = new List<string>() { "I have forgetten what you said earlier." };
+            settings.QuestionsTrustUs = new List<string>() { "How can I trust you?" };
 
             //Opening responses
             settings.ResponseOpeningAtmCard = new List<string>() { "I am glad to see progress with my ATM card, please send card numbers over email." };
@@ -161,6 +162,7 @@ public class MailServerFunctions
             settings.ResponseOpeningShipping = new List<string>() { "What is the problem with the shipment?" };
             settings.ResponseOpeningRefugee = new List<string>() { "I would love to help, I just need some more details." };
             settings.ResponseOpeningProductSupplier = new List<string>() { "Which product are you interested in?" };
+            settings.ResponseOpeningClickTheLink = new List<string>() { "I do not see a link." };
 
             //Continued responses
             settings.ResponseContinuedAtmCard = new List<string>() { "I understand what you are saying but can you just provide the card numbers?", "Thank you again for your patience, I think it would be easiest if you just provided the card numbers over email." };
@@ -188,6 +190,7 @@ public class MailServerFunctions
             settings.ResponseContinuedShipping = new List<string>() { "Okay, how can we resolve this issue?" };
             settings.ResponseContinuedRefugee = new List<string>() { "I have noted your message. I just need some more details." };
             settings.ResponseContinuedProductSupplier = new List<string>() { "Which product prompted you to message me?", "How many products are you looking for? My favorite is |GetRandomProduct|." };
+            settings.ResponseContinuedClickTheLink = new List<string>() { "I still do not see any link." };
 
             string json = new JavaScriptSerializer().Serialize(settings);
             File.WriteAllText(settingFileLocation, JsonHelper.FormatJson(json));

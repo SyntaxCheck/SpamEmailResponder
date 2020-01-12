@@ -16,7 +16,9 @@ public class CheckGenericAdvertisement : EmailTypeBase
     {
         if ((Settings.IsAdmin && preProcessedBody.Trim().ToUpper().StartsWith(AutoResponseKeyword)) ||
             preProcessedBody.Trim().ToUpper().Contains("CONSIDER TRADING WITH") ||
-            preProcessedBody.Trim().ToUpper().Contains("CREDIT CARD DEBT CLEARANCE"))
+            preProcessedBody.Trim().ToUpper().Contains("CREDIT CARD DEBT CLEARANCE") ||
+            preProcessedBody.Trim().ToUpper().Contains("USE THE DISCOUNT CODE") ||
+            preProcessedBody.Trim().ToUpper().Contains("DO NOT BUY ANY CBD PRODUCT UNTIL YOU WATCH THIS VIDEO"))
         {
             base.ParseResponse.IsMatch = true;
             base.ParseResponse.TotalHits++;

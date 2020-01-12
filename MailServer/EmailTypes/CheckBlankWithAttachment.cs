@@ -77,6 +77,11 @@ public class CheckBlankWithAttachment : EmailTypeBase
                 base.ParseResponse.IsMatch = true;
                 base.ParseResponse.TotalHits++;
             }
+            else if((preProcessedBody.Length - currentMessage.SubjectLine.Length) < 50 && currentMessage.NumberOfAttachments > 0 && preProcessedBody.Split(new char[] { ' ' }).Length <= 4)
+            {
+                base.ParseResponse.IsMatch = true;
+                base.ParseResponse.TotalHits++;
+            }
         }
 
         return base.ParseResponse;

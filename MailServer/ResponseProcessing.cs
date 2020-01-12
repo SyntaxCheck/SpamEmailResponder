@@ -46,7 +46,8 @@ public class ResponseProcessing
         Shipping = 30,
         Refugee = 31,
         AccountProblem = 32,
-        ProductSupplier = 33
+        ProductSupplier = 33,
+        ClickTheLink = 34
     };
 
     public ResponseProcessing(Settings settings)
@@ -240,27 +241,27 @@ public class ResponseProcessing
         {
             response += GetRandomQuestionsJokingAround(rand) + " ";
         }
-        if (preProcessedBody.Trim().ToUpper().Contains("LETS TALK ON THE PHONE") ||
-            preProcessedBody.Trim().ToUpper().Contains("LETS TALK OVER TEXT MESSAGE") ||
-            preProcessedBody.Trim().ToUpper().Contains("DONT FORGET TO TEXT ME") ||
-            preProcessedBody.Trim().ToUpper().Contains("DON,T FORGET TO TEXT ME") ||
-            preProcessedBody.Trim().ToUpper().Contains("PLEASE IF POSSIBLE CALL ME") ||
-            preProcessedBody.Trim().ToUpper().Contains("TEXT ME YOUR NUMBER") ||
-            preProcessedBody.Trim().ToUpper().Contains("TEXT THROUGH MY MOBILE") ||
-            preProcessedBody.Trim().ToUpper().Contains("TALK NEXT VIA PHONE") ||
-            preProcessedBody.Trim().ToUpper().Contains("TALK WITH YOU ON THE PHONE") ||
+        if (preProcessedBody.Trim().ToUpper().Contains("COME OVER IN FACE BOOK") ||
             preProcessedBody.Trim().ToUpper().Contains("CONVERSATION WITH YOU ON PHONE") ||
             preProcessedBody.Trim().ToUpper().Contains("CONVERSATION WITH YOU ON THE PHONE") ||
-            preProcessedBody.Trim().ToUpper().Contains("YOUR WHATSAPP NUMBER") ||
-            preProcessedBody.Trim().ToUpper().Contains("I HAVE CALLED") ||
-            preProcessedBody.Trim().ToUpper().Contains("TO CALL YOU") ||
-            preProcessedBody.Trim().ToUpper().Contains("LETS DEAL ON PHONE") ||
-            preProcessedBody.Trim().ToUpper().Contains("KINDLY TEXT OR CALL US") ||
-            preProcessedBody.Trim().ToUpper().Contains("YOU CAN TEXT ME ON MY PHONE") ||
+            preProcessedBody.Trim().ToUpper().Contains("DONT FORGET TO TEXT ME") ||
             preProcessedBody.Trim().ToUpper().Contains("GMAIL HANGOUT") ||
+            preProcessedBody.Trim().ToUpper().Contains("HANGOUT MESSENGER") ||
+            preProcessedBody.Trim().ToUpper().Contains("I HAVE CALLED") ||
+            preProcessedBody.Trim().ToUpper().Contains("KINDLY TEXT OR CALL US") ||
+            preProcessedBody.Trim().ToUpper().Contains("LETS DEAL ON PHONE") ||
+            preProcessedBody.Trim().ToUpper().Contains("LETS TALK ON THE PHONE") ||
+            preProcessedBody.Trim().ToUpper().Contains("LETS TALK OVER TEXT MESSAGE") ||
+            preProcessedBody.Trim().ToUpper().Contains("PLEASE IF POSSIBLE CALL ME") ||
             preProcessedBody.Trim().ToUpper().Contains("SEND ME SMS TEXT") ||
             preProcessedBody.Trim().ToUpper().Contains("SO WE CAN TALK BETTER") ||
-            preProcessedBody.Trim().ToUpper().Contains("COME OVER IN FACE BOOK"))
+            preProcessedBody.Trim().ToUpper().Contains("TALK NEXT VIA PHONE") ||
+            preProcessedBody.Trim().ToUpper().Contains("TALK WITH YOU ON THE PHONE") ||
+            preProcessedBody.Trim().ToUpper().Contains("TEXT ME YOUR NUMBER") ||
+            preProcessedBody.Trim().ToUpper().Contains("TEXT THROUGH MY MOBILE") ||
+            preProcessedBody.Trim().ToUpper().Contains("TO CALL YOU") ||
+            preProcessedBody.Trim().ToUpper().Contains("YOU CAN TEXT ME ON MY PHONE") ||
+            preProcessedBody.Trim().ToUpper().Contains("YOUR WHATSAPP NUMBER"))
         {
             response += GetRandomQuestionsChangeContactMethod(rand) + " ";
         }
@@ -274,6 +275,15 @@ public class ResponseProcessing
             preProcessedBody.Trim().ToUpper().Contains("ARE YOU READY TO MAKE THE PAYMENT") ||
             preProcessedBody.Trim().ToUpper().Contains("YOU SHOULD INFORM ME") ||
             preProcessedBody.Trim().ToUpper().Contains("NOW ARE YOU READY") ||
+            preProcessedBody.Trim().ToUpper().Contains("IF YOU ARE WILLING") ||
+            preProcessedBody.Trim().ToUpper().Contains("IF YOUR WILLING") ||
+            preProcessedBody.Trim().ToUpper().Contains("IF YOURE WILLING") ||
+            preProcessedBody.Trim().ToUpper().Contains("IF YOU WILLING") ||
+            preProcessedBody.Trim().ToUpper().Contains("IF YOU NOT READY") ||
+            preProcessedBody.Trim().ToUpper().Contains("IF YOU ARE NOT READY") ||
+            preProcessedBody.Trim().ToUpper().Contains("IF YOU'RE NOT READY") ||
+            preProcessedBody.Trim().ToUpper().Contains("IF YOURE NOT READY") ||
+            preProcessedBody.Trim().ToUpper().Contains("IF YOUR NOT READY") ||
             preProcessedBody.Trim().ToUpper().Contains("ARE YOU READY TO RECEIVE YOUR TRANSFER"))
         {
             response += GetRandomQuestionsAreYouReady(rand) + " ";
@@ -482,6 +492,10 @@ public class ResponseProcessing
             preProcessedBody.Trim().ToUpper().Contains("FILL OUT THE INCLUDED FORM") ||
             preProcessedBody.Trim().ToUpper().Contains("FILL OUT THE ATTACHED DOCUMENT") ||
             preProcessedBody.Trim().ToUpper().Contains("FILL OUT THE FORM") ||
+            preProcessedBody.Trim().ToUpper().Contains("FILL THE ATTACHED FORM") ||
+            preProcessedBody.Trim().ToUpper().Contains("FILL THE INCLUDED FORM") ||
+            preProcessedBody.Trim().ToUpper().Contains("FILL THE ATTACHED DOCUMENT") ||
+            preProcessedBody.Trim().ToUpper().Contains("FILL THE FORM") ||
             preProcessedBody.Trim().ToUpper().Contains("HERE IS THE APPLICATION FORM") ||
             preProcessedBody.Trim().ToUpper().Contains("I HAVE INCLUDED THE APPLICATION FORM") ||
             preProcessedBody.Trim().ToUpper().Contains("SEE THE ATTACHED APPLICATION FORM") ||
@@ -580,6 +594,7 @@ public class ResponseProcessing
             preProcessedBody.Trim().ToUpper().Contains("CONTACT MY BANK") ||
             preProcessedBody.Trim().ToUpper().Contains("CONTACT OUR BANK") ||
             preProcessedBody.Trim().ToUpper().Contains("CONTACTED THE BANK") ||
+            preProcessedBody.Trim().ToUpper().Contains("MAIL YOU RECEIVE FROM THE BANK") ||
             preProcessedBody.Trim().ToUpper().Contains("MESSAGE THE BANK") ||
             preProcessedBody.Trim().ToUpper().Contains("MESSAGED THE BANK") ||
             preProcessedBody.Trim().ToUpper().Contains("CONTACT WITH THE BANK") ||
@@ -819,31 +834,42 @@ public class ResponseProcessing
         {
             if (preProcessedBody.Trim().ToUpper().Contains("A LOT OF DELAY") ||
                 preProcessedBody.Trim().ToUpper().Contains("ALOT OF DELAY") ||
-                preProcessedBody.Trim().ToUpper().Contains("IGNORING MY QUESTION") ||
+                preProcessedBody.Trim().ToUpper().Contains("ARE YOU ABANDONING") ||
                 preProcessedBody.Trim().ToUpper().Contains("BUT NO RESPONSE") ||
+                preProcessedBody.Trim().ToUpper().Contains("DIDT RESPOND TO MY MAIL") ||
+                preProcessedBody.Trim().ToUpper().Contains("DIDNT RESPOND TO MY MAIL") ||
+                preProcessedBody.Trim().ToUpper().Contains("EXPECTING TO HEAR FROM YOU") ||
+                preProcessedBody.Trim().ToUpper().Contains("GET BACK TO US") ||
+                preProcessedBody.Trim().ToUpper().Contains("HAVE NOT HEARD FROM YOU") ||
+                preProcessedBody.Trim().ToUpper().Contains("HAVENT HEARD FROM YOU") ||
+                preProcessedBody.Trim().ToUpper().Contains("HAVEN'T HEARD FROM YOU") ||
+                preProcessedBody.Trim().ToUpper().Contains("IGNORING MY QUESTION") ||
+                preProcessedBody.Trim().ToUpper().Contains("IGNORING QUESTION") ||
                 preProcessedBody.Trim().ToUpper().Contains("NOT RESPONDING MY QUESTION") ||
                 preProcessedBody.Trim().ToUpper().Contains("NO RESPONDING MY QUESTION") ||
                 preProcessedBody.Trim().ToUpper().Contains("NOT RESPONDING QUESTION") ||
                 preProcessedBody.Trim().ToUpper().Contains("NO RESPONDING QUESTION") ||
                 preProcessedBody.Trim().ToUpper().Contains("NO GETTING BACK TO ME") ||
                 preProcessedBody.Trim().ToUpper().Contains("NOT GETTING BACK TO ME") ||
-                preProcessedBody.Trim().ToUpper().Contains("DIDT RESPOND TO MY MAIL") ||
-                preProcessedBody.Trim().ToUpper().Contains("GET BACK TO US") ||
                 preProcessedBody.Trim().ToUpper().Contains("WITHOUT RESPONDING TO MY MESSAGE") ||
-                preProcessedBody.Trim().ToUpper().Contains("DIDNT RESPOND TO MY MAIL") ||
-                preProcessedBody.Trim().ToUpper().Contains("YOU SHOULD COMPLY") ||
-                preProcessedBody.Trim().ToUpper().Contains("YOU STOP COMMUNICAT") ||
-                preProcessedBody.Trim().ToUpper().Contains("ARE YOU ABANDONING") ||
                 preProcessedBody.Trim().ToUpper().Contains("WAITING FOR YOUR RESPONSE") ||
                 preProcessedBody.Trim().ToUpper().Contains("WAITING FOR YOU TO REPLY") ||
                 preProcessedBody.Trim().ToUpper().Contains("WAITING YOUR REPLY") ||
-                preProcessedBody.Trim().ToUpper().Contains("IGNORING QUESTION"))
+                preProcessedBody.Trim().ToUpper().Contains("WORRIED TOWARDS YOUR SILENCE") ||
+                preProcessedBody.Trim().ToUpper().Contains("YOU SHOULD COMPLY") ||
+                preProcessedBody.Trim().ToUpper().Contains("YOU STOP COMMUNICAT"))
             {
                 response += GetRandomQuestionsNotAnswering(rand) + " ";
             }
         }
 
-        if (preProcessedBody.Trim().ToUpper().Contains("NOT LISTENING ME") ||
+        if (preProcessedBody.Trim().ToUpper().Contains("DO WHAT WE ASK") ||
+            preProcessedBody.Trim().ToUpper().Contains("DO WHAT WE INSTRUCT") ||
+            preProcessedBody.Trim().ToUpper().Contains("DO WHAT WE SAID") ||
+            preProcessedBody.Trim().ToUpper().Contains("DO WHAT WE SAY") ||
+            preProcessedBody.Trim().ToUpper().Contains("DO WHAT WE TELL") ||
+            preProcessedBody.Trim().ToUpper().Contains("DO WHAT WE TOLD") ||
+            preProcessedBody.Trim().ToUpper().Contains("NOT LISTENING ME") ||
             preProcessedBody.Trim().ToUpper().Contains("LISTEN TO ME") ||
             preProcessedBody.Trim().ToUpper().Contains("PAY ATTENTION TO ME") ||
             preProcessedBody.Trim().ToUpper().Contains("NEED TO FOLLOW INSTRUCTION") ||
@@ -862,6 +888,7 @@ public class ResponseProcessing
             preProcessedBody.Trim().ToUpper().Contains("NOT UNDERSTANDING MY") ||
             preProcessedBody.Trim().ToUpper().Contains("NOT UNDERSTANDING ME") ||
             preProcessedBody.Trim().ToUpper().Contains("NOT UNDERSTAND WHAT YOU") ||
+            preProcessedBody.Trim().ToUpper().Contains("IF YOU ARE CONFUSE") ||
             preProcessedBody.Trim().ToUpper().Contains("CONFUSED BY MY") ||
             preProcessedBody.Trim().ToUpper().Contains("WHAT ARE YOU REALLY SAYING") ||
             preProcessedBody.Trim().ToUpper().Contains("WHAT EVER IS YOUR COMPLAIN") ||
@@ -903,14 +930,24 @@ public class ResponseProcessing
             preProcessedBody.Trim().ToUpper().Contains("SAFE DO YOU WANT IT") ||
             preProcessedBody.Trim().ToUpper().Contains("YOU WILL NOT BETRAY") ||
             preProcessedBody.Trim().ToUpper().Contains("BETRAY THIS GREAT CONFID") ||
-            preProcessedBody.Trim().ToUpper().Contains("IT IS SECURED") ||
-            preProcessedBody.Trim().ToUpper().Contains("YES IS SECURED") ||
             preProcessedBody.Trim().ToUpper().Contains("MAKING IT A CERTIFIED TRANSACTION") ||
             preProcessedBody.Trim().ToUpper().Contains("TRANSACTION A GUARANTEE SUCCESS") ||
             preProcessedBody.Trim().ToUpper().Contains("TRANSACTION A GUARANTEED SUCCESS") ||
             preProcessedBody.Trim().ToUpper().Contains("CAN BE TRUSTED"))
         {
             response += GetRandomQuestionsTrust(rand) + " ";
+        }
+        if (preProcessedBody.Trim().ToUpper().Contains("IT IS SAFE") ||
+            preProcessedBody.Trim().ToUpper().Contains("IT IS SECURED") ||
+            preProcessedBody.Trim().ToUpper().Contains("IT SAFE BECAUSE") ||
+            preProcessedBody.Trim().ToUpper().Contains("TRUST ME") ||
+            preProcessedBody.Trim().ToUpper().Contains("TRUST US") ||
+            preProcessedBody.Trim().ToUpper().Contains("WE ARE NOT DEALING ILLEGAL") ||
+            preProcessedBody.Trim().ToUpper().Contains("WITH ME IS SAFE") ||
+            preProcessedBody.Trim().ToUpper().Contains("WITH US IS SAFE") ||
+            preProcessedBody.Trim().ToUpper().Contains("YES IS SECURED"))
+        {
+            response += GetRandomQuestionsTrustUs(rand) + " ";
         }
         if (preProcessedBody.Trim().ToUpper().Contains("WHAT IS YOUR NAME") ||
             preProcessedBody.Trim().ToUpper().Contains("WHAT IS YOUR FULL NAME") ||
@@ -1717,6 +1754,7 @@ public class ResponseProcessing
         EmailTypeParseLit.Add(new CheckJobOffer(responseSettings));
         EmailTypeParseLit.Add(new CheckInformationGathering(responseSettings));
         EmailTypeParseLit.Add(new CheckShipping(responseSettings));
+        EmailTypeParseLit.Add(new CheckClickTheLink(responseSettings));
         EmailTypeParseLit.Add(new CheckGenericAdvertisement(responseSettings));
         EmailTypeParseLit.Add(new CheckForeignLanguage(responseSettings));
         EmailTypeParseLit.Add(new CheckInformationGathering(responseSettings) { PassNumber = 2 });
@@ -2171,6 +2209,12 @@ public class ResponseProcessing
                 else
                     rtnResponse += GetRandomOpeningResponseForProductSupplier(rand, greeting, name, currentMessage, preProcessedBody);
                 break;
+            case EmailType.ClickTheLink:
+                if (pastMessages.Count() > 0 && pastMessages[pastMessages.Count() - 1].MessageType == currentMessage.MessageType)
+                    rtnResponse += GetRandomContinuedResponseForClickTheLink(rand, greeting, name, currentMessage, preProcessedBody);
+                else
+                    rtnResponse += GetRandomOpeningResponseForClickTheLink(rand, greeting, name, currentMessage, preProcessedBody);
+                break;
             case EmailType.MessageTooLong:
                 rtnResponse += GetRandomOpeningResponseLongMessageType(rand, greeting, name, currentMessage, preProcessedBody);
                 break;
@@ -2594,6 +2638,12 @@ public class ResponseProcessing
 
         return greetings + " " + name + ". " + directResponse + SettingPostProcessing(settings.ResponseOpeningProductSupplier[rand.Next(0, settings.ResponseOpeningProductSupplier.Count())], rand);
     }
+    private string GetRandomOpeningResponseForClickTheLink(Random rand, string greetings, string name, MailStorage currentMessage, string preProcessedBody)
+    {
+        string directResponse = HandleDirectQuestions(preProcessedBody, ref currentMessage, rand);
+
+        return greetings + " " + name + ". " + directResponse + SettingPostProcessing(settings.ResponseOpeningClickTheLink[rand.Next(0, settings.ResponseOpeningClickTheLink.Count())], rand);
+    }
     #endregion
 
     //Continued Responses
@@ -2794,6 +2844,12 @@ public class ResponseProcessing
         string directResponse = HandleDirectQuestions(preProcessedBody, ref currentMessage, rand);
 
         return greetings + " " + name + ". " + directResponse + SettingPostProcessing(settings.ResponseContinuedProductSupplier[rand.Next(0, settings.ResponseContinuedProductSupplier.Count())], rand);
+    }
+    private string GetRandomContinuedResponseForClickTheLink(Random rand, string greetings, string name, MailStorage currentMessage, string preProcessedBody)
+    {
+        string directResponse = HandleDirectQuestions(preProcessedBody, ref currentMessage, rand);
+
+        return greetings + " " + name + ". " + directResponse + SettingPostProcessing(settings.ResponseContinuedClickTheLink[rand.Next(0, settings.ResponseContinuedClickTheLink.Count())], rand);
     }
     #endregion
 
@@ -3319,6 +3375,12 @@ public class ResponseProcessing
     private string GetRandomQuestionsAlreadyToldYou(Random rand)
     {
         List<string> lst = settings.QuestionsAlreadyToldYou;
+
+        return lst[rand.Next(0, lst.Count())];
+    }
+    private string GetRandomQuestionsTrustUs(Random rand)
+    {
+        List<string> lst = settings.QuestionsTrustUs;
 
         return lst[rand.Next(0, lst.Count())];
     }

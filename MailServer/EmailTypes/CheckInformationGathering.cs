@@ -21,6 +21,8 @@ public class CheckInformationGathering : EmailTypeBase
                 preProcessedBody.Trim().ToUpper().Contains("ANY PROBLEM IN LIFE") ||
                 preProcessedBody.Trim().ToUpper().Contains("ARE YOU STILL INTERESTED") ||
                 preProcessedBody.Trim().ToUpper().Contains("BEEN TRYING TO REACH YOU") ||
+                preProcessedBody.Trim().ToUpper().Contains("BENEFCIAL PROPOSAL") ||
+                preProcessedBody.Trim().ToUpper().Contains("BUSINESS PROJECT") ||
                 preProcessedBody.Trim().ToUpper().Contains("BUSINESS PROPOSITION") ||
                 preProcessedBody.Trim().ToUpper().Contains("BUSINESS RELATIONSHIP") ||
                 preProcessedBody.Trim().ToUpper().Contains("CALL I DISCUSS WITH YOU") ||
@@ -28,6 +30,7 @@ public class CheckInformationGathering : EmailTypeBase
                 preProcessedBody.Trim().ToUpper().Contains("CAN I ASK YOU A FAVOR") ||
                 preProcessedBody.Trim().ToUpper().Contains("CAN I DISCUSS WITH YOU") ||
                 preProcessedBody.Trim().ToUpper().Contains("CAN WE TALK") ||
+                preProcessedBody.Trim().ToUpper().Contains("CARRY OUT A PROPOSAL") ||
                 preProcessedBody.Trim().ToUpper().Contains("CHARITY PROPOSAL FOR YOU") ||
                 preProcessedBody.Trim().ToUpper().Contains("COCA-COLA AWARD") ||
                 preProcessedBody.Trim().ToUpper().Contains("CONFIDENTIAL BRIEF") ||
@@ -49,11 +52,13 @@ public class CheckInformationGathering : EmailTypeBase
                 preProcessedBody.Trim().ToUpper().Contains("DISCUSS AN VERY IMPORTANT ISSUE") ||
                 preProcessedBody.Trim().ToUpper().Contains("DISCUSS IMPORTANT ISSUE") ||
                 preProcessedBody.Trim().ToUpper().Contains("DO YOU SPEAK ENGLISH") ||
+                preProcessedBody.Trim().ToUpper().Contains("EMAIL US FOR MORE INFO") ||
                 preProcessedBody.Trim().ToUpper().Contains("FOR MORE DETAIL") ||
                 preProcessedBody.Trim().ToUpper().Contains("FROM NOW AND ONWARD") ||
                 preProcessedBody.Trim().ToUpper().Contains("FROM NOW ONWARD") ||
                 preProcessedBody.Trim().ToUpper().Contains("GET BACK TO ME FOR MORE INFO") ||
                 preProcessedBody.Trim().ToUpper().Contains("GET BACK TO US FOR MORE INFO") ||
+                preProcessedBody.Trim().ToUpper().Contains("GET IN TOUCH WITH ME") ||
                 preProcessedBody.Trim().ToUpper().Contains("GIVE ME A CALL") ||
                 preProcessedBody.Trim().ToUpper().Contains("GIVE ME CALL") ||
                 preProcessedBody.Trim().ToUpper().Contains("HAS MY INTEREST") ||
@@ -70,6 +75,7 @@ public class CheckInformationGathering : EmailTypeBase
                 preProcessedBody.Trim().ToUpper().Contains("HW ARE YOU") ||
                 preProcessedBody.Trim().ToUpper().Contains("I AM HAVING A MEETING WITH MY CLIENT BANK") ||
                 preProcessedBody.Trim().ToUpper().Contains("I CAN GIVE YOU MORE DETAIL") ||
+                preProcessedBody.Trim().ToUpper().Contains("I CAN PROVIDE YOU THE DETAIL") ||
                 preProcessedBody.Trim().ToUpper().Contains("I HAVE A VERY LUCRATIVE DEAL") ||
                 preProcessedBody.Trim().ToUpper().Contains("I HAVE SPECIAL PROPOSAL") ||
                 preProcessedBody.Trim().ToUpper().Contains("I HAVE WAITED FOR YOU SO LONG") ||
@@ -105,6 +111,7 @@ public class CheckInformationGathering : EmailTypeBase
                 preProcessedBody.Trim().ToUpper().Contains("ORDERS FROM MR. PRESIDENT") ||
                 preProcessedBody.Trim().ToUpper().Contains("PERMISSION TO EMAIL YOU MY PROPOSAL") ||
                 preProcessedBody.Trim().ToUpper().Contains("PERSONAL DISCUSSION") ||
+                preProcessedBody.Trim().ToUpper().Contains("PLEASE CONTACT FOR FURTHER") ||
                 preProcessedBody.Trim().ToUpper().Contains("PLEASE CONTACT MY SON") ||
                 preProcessedBody.Trim().ToUpper().Contains("PLEASE HELP ME") ||
                 preProcessedBody.Trim().ToUpper().Contains("PLEASE WRITE ME") ||
@@ -118,6 +125,7 @@ public class CheckInformationGathering : EmailTypeBase
                 preProcessedBody.Trim().ToUpper().Contains("SOME THING IMPORTANT FOR YOU") ||
                 preProcessedBody.Trim().ToUpper().Contains("SOMETHING IMPORTANT FOR YOU") ||
                 preProcessedBody.Trim().ToUpper().Contains("SOMETHING URGENT") ||
+                preProcessedBody.Trim().ToUpper().Contains("SOMETHING VERY IMPORTANT") ||
                 preProcessedBody.Trim().ToUpper().Contains("SORRY TO INFORM U MY NEW") ||
                 preProcessedBody.Trim().ToUpper().Contains("SORRY TO INFORM YOU MY NEW") ||
                 preProcessedBody.Trim().ToUpper().Contains("SPARE SOME OF YOUR BUSY TIME") ||
@@ -129,6 +137,7 @@ public class CheckInformationGathering : EmailTypeBase
                 preProcessedBody.Trim().ToUpper().Contains("THATS WAS HILARIOUS") ||
                 preProcessedBody.Trim().ToUpper().Contains("THIS IS PURE BUSINESS") ||
                 preProcessedBody.Trim().ToUpper().Contains("THIS IS TO INFORM YOU THAT YOU HAVE BEEN PICKED") ||
+                preProcessedBody.Trim().ToUpper().Contains("TO DISCUSS WITH YOU") ||
                 preProcessedBody.Trim().ToUpper().Contains("UPDATED MY CONTACT INFO") ||
                 preProcessedBody.Trim().ToUpper().Contains("VERY IMPORTANT THING TO TELL YOU") ||
                 preProcessedBody.Trim().ToUpper().Contains("WE HAVE GOT SOME INFORMATION") ||
@@ -151,8 +160,8 @@ public class CheckInformationGathering : EmailTypeBase
         }
         else if (PassNumber == 2)
         {
-            List<string> firstWord = new List<string>() { "TALK ABOUT", "I WANT TO", "I HAVE A", "WOULD LOVE TO", "I WOULD LIKE" };
-            List<string> secondWord = new List<string>() { "DEAL", "PROPOSITION", "BUSINESS", "ISSUE", "CHAT", "CONVERSATION", "DISCUSS" };
+            List<string> firstWord = new List<string>() { "TALK ABOUT", "I WANT TO", "I HAVE A", "WOULD LOVE TO", "I WOULD LIKE", "INVITING YOU", "INTRODUCE YOU" };
+            List<string> secondWord = new List<string>() { "DEAL", "PROPOSITION", "PROJECT", "BUSINESS", "ISSUE", "CHAT", "CONVERSATION", "DISCUSS" };
 
             foreach (string s in firstWord)
             {

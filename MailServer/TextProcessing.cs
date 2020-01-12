@@ -964,6 +964,9 @@ public class TextProcessing
         newText = Regex.Replace(newText, "noward", "ONWARD", RegexOptions.IgnoreCase);
         newText = Regex.Replace(newText, " biz ", " BUSINESS ", RegexOptions.IgnoreCase);
         newText = Regex.Replace(newText, "w0n", "WON", RegexOptions.IgnoreCase);
+        newText = Regex.Replace(newText, "don,t", "DONT", RegexOptions.IgnoreCase);
+        newText = Regex.Replace(newText, " pls ", "PLEASE", RegexOptions.IgnoreCase);
+        newText = Regex.Replace(newText, "forder", "FURTHER", RegexOptions.IgnoreCase);
 
         return newText;
     }

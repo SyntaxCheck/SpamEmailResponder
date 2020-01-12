@@ -31,6 +31,7 @@ public class CheckSellingServices : EmailTypeBase
             preProcessedBody.Trim().ToUpper().Contains("LET US KNOW YOUR WEBSITE") ||
             preProcessedBody.Trim().ToUpper().Contains("FRESH TOOLS & UNLIMITED SENDERS") ||
             preProcessedBody.Trim().ToUpper().Contains("IDENTIFIED SEVERAL SEO") ||
+            preProcessedBody.Trim().ToUpper().Contains("MAILERSTORE.EU") ||
             preProcessedBody.Trim().ToUpper().Contains("I SELL TOOLS") ||
             preProcessedBody.Trim().ToUpper().Contains("I BUILD ANY KIND OF PAGE OR LINK OR SCRIPT") ||
             preProcessedBody.Trim().ToUpper().Contains("I SELL GOOD TOOLS") ||

@@ -45,6 +45,7 @@ public class CheckForeignLanguage : EmailTypeBase
             preProcessedBody.Trim().ToUpper().Contains("DSCH") ||
             preProcessedBody.Trim().ToUpper().Contains("EEUW") ||
             preProcessedBody.Trim().ToUpper().Contains("EL BANCO") ||
+            preProcessedBody.Trim().ToUpper().Contains("ES EN EL") ||
             preProcessedBody.Trim().ToUpper().Contains("ESTE LE") ||
             preProcessedBody.Trim().ToUpper().Contains("ET GROS") ||
             preProcessedBody.Trim().ToUpper().Contains("ETTÄ") ||
@@ -74,6 +75,7 @@ public class CheckForeignLanguage : EmailTypeBase
             preProcessedBody.Trim().ToUpper().Contains("OLÀ") ||
             preProcessedBody.Trim().ToUpper().Contains("ONS DAN EEN") ||
             preProcessedBody.Trim().ToUpper().Contains("OU ZE5 OU") ||
+            preProcessedBody.Trim().ToUpper().Contains(" PARA ") ||
             preProcessedBody.Trim().ToUpper().Contains("PARA TODAS") ||
             preProcessedBody.Trim().ToUpper().Contains("PARA TODO") ||
             preProcessedBody.Trim().ToUpper().Contains("POR ESTE") ||
@@ -89,6 +91,7 @@ public class CheckForeignLanguage : EmailTypeBase
             preProcessedBody.Trim().ToUpper().Contains("SALUT MON") ||
             preProcessedBody.Trim().ToUpper().Contains("SANNU") ||
             preProcessedBody.Trim().ToUpper().Contains("SE JOUE") ||
+            preProcessedBody.Trim().ToUpper().Contains("SE QUE") ||
             preProcessedBody.Trim().ToUpper().Contains("SIE IHR") ||
             preProcessedBody.Trim().ToUpper().Contains("SIE MIT") ||
             preProcessedBody.Trim().ToUpper().Contains("SOCIÉTÉS") ||

@@ -15,18 +15,19 @@ public class Settings
         questionsHowBigOfLoan, questionsMustPayBefore, questionsMeetUs, questionsFillOutForm, questionsGetBackToUs, questionsNeedBankDetails,
         questionsWhatTypeOfProof, questionsHowDoYouWantFundsReleased, questionsWeCantDoThat, questionsContactTheBank, questionsAreYouMember,
         questionsDidYouSeeOurMessage, questionsInvalidAddress, questionsTellUsWhatTheyAskedYouToDo, questionsTellUsAboutYourself, questionsContactThePerson,
-        questionsAutomatedProgram, questionsUseWalmartToPay, questionsHowMuchMoneyDoIHave, questionsSendTransferReceipt, questionsAlreadyToldYou;
+        questionsAutomatedProgram, questionsUseWalmartToPay, questionsHowMuchMoneyDoIHave, questionsSendTransferReceipt, questionsAlreadyToldYou,
+        questionsTrustUs;
     private List<string> responseOpeningBlankEmailWithAttachment, responseOpeningLottery, responseOpeningOilAndGas, responseOpeningOilAndGasQuestionList, responseOpeningIlluminati, 
         responseOpeningConsignmentBox, responseOpeningDeathOrDying, responseOpeningLoanOffer, responseOpeningMoneyStorage, responseOpeningAtmCard, responseOpeningPolice, 
         responseOpeningGenericPayment, responseOpeningInvestor, responseOpeningMoneyHack, responseOpeningJobOffer, responseOpeningSellingProducts, responseOpeningFreeMoney, 
         responseOpeningInformationGathering, responseOpeningPhishing, responseOpeningScamVictim, responseOpeningForeignLanguage, responseOpeningGenericAdvertisement, responseOpeningShipping,
-        responseOpeningRefugee, responseOpeningAccountProblem, responseOpeningProductSupplier;
+        responseOpeningRefugee, responseOpeningAccountProblem, responseOpeningProductSupplier, responseOpeningClickTheLink;
     private List<string> responseContinuedBlankEmailWithAttachment, responseContinuedLottery, responseContinuedOilAndGas, responseContinuedIlluminati, responseContinuedConsignmentBox, 
         responseContinuedDeathOrDying, responseContinuedLoanOffer, responseContinuedMoneyStorage, responseContinuedAtmCard, responseContinuedPolice, responseContinuedGenericPayment, 
         responseContinuedInvestor, responseContinuedMoneyHack, responseContinuedBuildTrust, responseContinuedInheritance, responseContinuedBeneficiary, responseContinuedJobOffer, 
         responseContinuedSellingProducts, responseContinuedFreeMoney, responseContinuedInformationGathering, responseContinuedPhishing, responseContinuedScamVictim,
         responseContinuedForeignLanguage, responseContinuedGenericAdvertisement, responseContinuedShipping, responseContinuedRefugee, responseContinuedAccountProblem,
-        responseContinuedProductSupplier;
+        responseContinuedProductSupplier, responseContinuedClickTheLink;
 
     #region Get/sets
     public string EmailAddress
@@ -484,6 +485,16 @@ public class Settings
         get { return responseContinuedProductSupplier; }
         set { responseContinuedProductSupplier = value; }
     }
+    public List<string> ResponseOpeningClickTheLink
+    {
+        get { return responseOpeningClickTheLink; }
+        set { responseOpeningClickTheLink = value; }
+    }
+    public List<string> ResponseContinuedClickTheLink
+    {
+        get { return responseContinuedClickTheLink; }
+        set { responseContinuedClickTheLink = value; }
+    }
     public List<string> QuestionsHowAreYou
     {
         get { return questionsHowAreYou; }
@@ -743,6 +754,11 @@ public class Settings
     {
         get { return questionsAlreadyToldYou; }
         set { questionsAlreadyToldYou = value; }
+    }
+    public List<string> QuestionsTrustUs
+    {
+        get { return questionsTrustUs; }
+        set { questionsTrustUs = value; }
     }
 
     public List<string> RandomThoughts

@@ -86,6 +86,7 @@
     <Compile Include="EmailTypes\CheckBeneficiary.cs" />
     <Compile Include="EmailTypes\CheckBlankWithAttachment.cs" />
     <Compile Include="EmailTypes\CheckBuildTrust.cs" />
+    <Compile Include="EmailTypes\CheckClickTheLink.cs" />
     <Compile Include="EmailTypes\CheckConsignmentBox.cs" />
     <Compile Include="EmailTypes\CheckDeathOrDying.cs" />
     <Compile Include="EmailTypes\CheckForeignLanguage.cs" />

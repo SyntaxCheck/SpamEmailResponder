@@ -58,6 +58,7 @@ public class CheckFreeMoney : EmailTypeBase
             preProcessedBody.Trim().ToUpper().Contains("DELIVERY OF YOUR MONEY") ||
             preProcessedBody.Trim().ToUpper().Contains("DELIVERY OF YOUR SUM") ||
             preProcessedBody.Trim().ToUpper().Contains("DELIVERY OF YOUR WEALTH") ||
+            preProcessedBody.Trim().ToUpper().Contains("DEPOSIT THE FUND") ||
             preProcessedBody.Trim().ToUpper().Contains("DON ATION") ||
             preProcessedBody.Trim().ToUpper().Contains("DONATE A HUGE AMOUNT") ||
             preProcessedBody.Trim().ToUpper().Contains("DONATE WHAT I HAVE TO YOU") ||
@@ -216,7 +217,7 @@ public class CheckFreeMoney : EmailTypeBase
         else if (PassNumber == 2)
         {
             List<string> moneyWords = new List<string>() { "FUND", "CASH", "CHECK", "SUM", "WEALTH" };
-            List<string> actionWords = new List<string>() { "RELEASE", "RECEIVE", "GIVEN", "PAID", "TRANSFER", "OFFER", "CLAIM", "COMPENSATE", "INVEST", "GRANT" };
+            List<string> actionWords = new List<string>() { "RELEASE", "RECEIVE", "GIVEN", "PAID", "TRANSFER", "OFFER", "CLAIM", "COMPENSATE", "INVEST", "GRANT", "DO YOU WANT" };
 
             foreach (string s in moneyWords)
             {

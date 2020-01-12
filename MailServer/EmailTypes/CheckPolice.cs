@@ -19,6 +19,7 @@ public class CheckPolice : EmailTypeBase
             preProcessedBody.Trim().ToUpper().Contains("CONVICTED TERRORIST") ||
             preProcessedBody.Trim().ToUpper().Contains("ENFORCEMENT OFFICER") ||
             preProcessedBody.Trim().ToUpper().Contains(" FBI ") ||
+            preProcessedBody.Trim().ToUpper().Contains("REPORTED YOUR MONEY LAUNDER") ||
             preProcessedBody.Trim().ToUpper().Contains("WANTED TERRORIST"))
         {
             base.ParseResponse.IsMatch = true;

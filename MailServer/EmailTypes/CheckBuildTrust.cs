@@ -78,6 +78,7 @@ public class CheckBuildTrust : EmailTypeBase
             preProcessedBody.Trim().ToUpper().Contains("MEANINGFUL RELATIONSHIP") ||
             preProcessedBody.Trim().ToUpper().Contains("MORE DETAIL ABOUT MYSELF") ||
             preProcessedBody.Trim().ToUpper().Contains("MORE DETAIL ABOUT YOU") ||
+            preProcessedBody.Trim().ToUpper().Contains("MORE STORIES") ||
             preProcessedBody.Trim().ToUpper().Contains("NEED YOUR ADVICE") ||
             preProcessedBody.Trim().ToUpper().Contains("OPEN UP TO ME") ||
             preProcessedBody.Trim().ToUpper().Contains("PLEASE EXPRESS YOURSELF TO ME") ||
@@ -89,13 +90,19 @@ public class CheckBuildTrust : EmailTypeBase
             preProcessedBody.Trim().ToUpper().Contains("REALLY WANT TO KNOW YOU") ||
             preProcessedBody.Trim().ToUpper().Contains("REALLY WANT TO GET TO KNOW YOU") ||
             preProcessedBody.Trim().ToUpper().Contains("SEARCHING FOR FRIENDSHIP") ||
+            preProcessedBody.Trim().ToUpper().Contains("SEEK YOUR ASSISTANCE") ||
+            preProcessedBody.Trim().ToUpper().Contains("SEEK YOUR FRIENDSHIP") ||
             preProcessedBody.Trim().ToUpper().Contains("SEEKING YOUR ASSISTANCE") ||
+            preProcessedBody.Trim().ToUpper().Contains("SEEKING YOUR FRIENDSHIP") ||
             preProcessedBody.Trim().ToUpper().Contains("SERIOUS RELATIONSHIP") ||
             preProcessedBody.Trim().ToUpper().Contains("SHARE PICTURE") ||
             preProcessedBody.Trim().ToUpper().Contains("SHARE MY PICTURE") ||
             preProcessedBody.Trim().ToUpper().Contains("SINGLE NEVER MARRIED") ||
             preProcessedBody.Trim().ToUpper().Contains("SINGLE LOOKING FOR") ||
             preProcessedBody.Trim().ToUpper().Contains("SOMEONE I CAN TRUST") ||
+            preProcessedBody.Trim().ToUpper().Contains("TELL ME ABOUT YOU") ||
+            preProcessedBody.Trim().ToUpper().Contains("TELL ME MORE ABOUT YOU") ||
+            preProcessedBody.Trim().ToUpper().Contains("TELL ME SOME MORE ABOUT YOU") ||
             preProcessedBody.Trim().ToUpper().Contains("TELL YOU MORE ABOUT MYSELF") ||
             preProcessedBody.Trim().ToUpper().Contains("THE FUND IS SAFE") ||
             preProcessedBody.Trim().ToUpper().Contains("THIS IS 100% SAFE") ||
@@ -104,6 +111,7 @@ public class CheckBuildTrust : EmailTypeBase
             preProcessedBody.Trim().ToUpper().Contains("WE CAN LEARN MORE ABOUT EACH OTHER") ||
             preProcessedBody.Trim().ToUpper().Contains("VENTURE OF TRUST") ||
             preProcessedBody.Trim().ToUpper().Contains("YOU SHOULD KEEP ME UPDATE") ||
+            preProcessedBody.Trim().ToUpper().Contains("YOU VERY ATTRACTIVE") ||
             preProcessedBody.Trim().ToUpper().Contains("YOUR GOOD FRIEND") ||
             (preProcessedBody.Trim().ToUpper().Contains("TRUST") && preProcessedBody.Trim().ToUpper().Contains("FRIENDSHIP")) ||
             (preProcessedBody.Trim().ToUpper().Contains("I AM WOMAN OF") && preProcessedBody.Trim().ToUpper().Contains("YEARS OLD FROM")))

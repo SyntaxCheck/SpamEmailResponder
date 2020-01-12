@@ -49,6 +49,7 @@ public class CheckDeathOrDying : EmailTypeBase
             preProcessedBody.Trim().ToUpper().Contains("MOTHER DIED") ||
             preProcessedBody.Trim().ToUpper().Contains("MY CANCER") ||
             preProcessedBody.Trim().ToUpper().Contains("OFFER WITH REGARDS TO MY LATE CLIENT") ||
+            preProcessedBody.Trim().ToUpper().Contains("SICK AND DIEING") ||
             preProcessedBody.Trim().ToUpper().Contains("SON DIED") ||
             preProcessedBody.Trim().ToUpper().Contains("SUFFERING FROM CANCER") ||
             preProcessedBody.Trim().ToUpper().Contains("TERMINAL CANCER") ||
@@ -68,8 +69,8 @@ public class CheckDeathOrDying : EmailTypeBase
         }
         else
         {
-            List<string> deathWords = new List<string>() { "DIE", "DEATH", "DYING", "KILL", "MURDER", "" };
-            List<string> secodaryWord = new List<string>() { "CANCER", "ILLNESS", "LEAVING BEHIND", "LEAVE BEHIND", "DIAGNO", "TREATMENT", "SURGERY", "SUFFERING", "TERMINAL", "ILLHEALTH" };
+            List<string> deathWords = new List<string>() { "DIE", "DEATH", "DYING", "DIEING", "KILL", "MURDER", "SICK" };
+            List<string> secodaryWord = new List<string>() { "CANCER", "ILLNESS", "LEAVING BEHIND", "LEAVE BEHIND", "DIAGNO", "TREATMENT", "SURGERY", "SUFFERING", "TERMINAL", "ILLHEALTH", "HOSPITAL" };
 
             foreach (string s in deathWords)
             {
