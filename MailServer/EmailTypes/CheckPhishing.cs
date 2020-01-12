@@ -30,6 +30,7 @@ public class CheckPhishing : EmailTypeBase
             preProcessedBody.Trim().ToUpper().Contains("FIX MY ACCOUNT") ||
             preProcessedBody.Trim().ToUpper().Contains("GOOGLE MANAGEMENT") ||
             preProcessedBody.Trim().ToUpper().Contains("ISSUE WITH YOUR PAYPAL") ||
+            preProcessedBody.Trim().ToUpper().Contains("JP MORGAN CHASE BANK NEW YORK") ||
             preProcessedBody.Trim().ToUpper().Contains("LEFT THE FOLLOWING ITEM") ||
             preProcessedBody.Trim().ToUpper().Contains("LINK BELOW TO RESOLVE YOUR ACCOUNT") ||
             preProcessedBody.Trim().ToUpper().Contains("MAILBOX HAS BEEN PROGRAMMED TO SHUT DOWN") ||
@@ -57,6 +58,7 @@ public class CheckPhishing : EmailTypeBase
             preProcessedBody.Trim().ToUpper().Contains("WE SUGGEST YOU SIGN IN WITH YOUR EMAIL") ||
             preProcessedBody.Trim().ToUpper().Contains("WE SUGGEST YOU SIGNIN WITH YOUR E-MAIL") ||
             preProcessedBody.Trim().ToUpper().Contains("WE SUGGEST YOU SIGNIN WITH YOUR EMAIL") ||
+            preProcessedBody.Trim().ToUpper().Contains("WELLS FARGO TECHNICAL DEPARTMENT") ||
             preProcessedBody.Trim().ToUpper().Contains("YOU CAN SIGN IN ALIBABA") ||
             preProcessedBody.Trim().ToUpper().Contains("SITE UNDER MAINTENANCE") ||
             preProcessedBody.Trim().ToUpper().Contains("SITE IS UNDER MAINTENANCE") ||

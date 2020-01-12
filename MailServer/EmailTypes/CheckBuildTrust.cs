@@ -37,10 +37,13 @@ public class CheckBuildTrust : EmailTypeBase
             preProcessedBody.Trim().ToUpper().Contains("GET TO KNOW EACH OTHER") ||
             preProcessedBody.Trim().ToUpper().Contains("GET TO KNOW EACHOTHER") ||
             preProcessedBody.Trim().ToUpper().Contains("GET TO KNOW YOU") ||
+            preProcessedBody.Trim().ToUpper().Contains("GOOD PARTNER") ||
             preProcessedBody.Trim().ToUpper().Contains("HAVE GOOD RELATIONSHIP WITH YOU") ||
             preProcessedBody.Trim().ToUpper().Contains("HEAR MORE ABOUT YOU") ||
             preProcessedBody.Trim().ToUpper().Contains("HERE MORE ABOUT YOU") ||
             preProcessedBody.Trim().ToUpper().Contains("HOPE FOR FRIENDS") ||
+            preProcessedBody.Trim().ToUpper().Contains("I AM A SINGLE GIRL") ||
+            preProcessedBody.Trim().ToUpper().Contains("I AM A SINGLE WOMAN") ||
             preProcessedBody.Trim().ToUpper().Contains("I AM A SINGLE YOUNG LADY") ||
             preProcessedBody.Trim().ToUpper().Contains("I NEED YOUR RELATIONSHIP") ||
             preProcessedBody.Trim().ToUpper().Contains("I LIKE TO HAVE MANY FRIEND") ||
@@ -59,11 +62,18 @@ public class CheckBuildTrust : EmailTypeBase
             preProcessedBody.Trim().ToUpper().Contains("I WISH TO TELL YOU ABOUT") ||
             preProcessedBody.Trim().ToUpper().Contains("I WOULD LIKE TO KNOW YOU") ||
             preProcessedBody.Trim().ToUpper().Contains("IF YOU CAN TRUST") ||
+            preProcessedBody.Trim().ToUpper().Contains("INTERESTED IN KNOWING YOU") ||
+            preProcessedBody.Trim().ToUpper().Contains("INTERESTED TO KNOW YOU") ||
+            preProcessedBody.Trim().ToUpper().Contains("INTERESTED TO GET TO KNOW") ||
+            preProcessedBody.Trim().ToUpper().Contains("IS THIS EMAIL PRIVATE") ||
+            preProcessedBody.Trim().ToUpper().Contains("KISS AND CUDDLE") ||
             preProcessedBody.Trim().ToUpper().Contains("KNOW YOU BETTER") ||
             preProcessedBody.Trim().ToUpper().Contains("LIKE TO KNOW YOU MORE") ||
             preProcessedBody.Trim().ToUpper().Contains("LONG TERM RELATIONSHIP") ||
             preProcessedBody.Trim().ToUpper().Contains("LONGTERM RELATIONSHIP") ||
             preProcessedBody.Trim().ToUpper().Contains("LOOKING FOR YOUR FRIENDSH") ||
+            preProcessedBody.Trim().ToUpper().Contains("LOOKING UP FOR MY GIRLFRIEND") ||
+            preProcessedBody.Trim().ToUpper().Contains("LOVE RELATIONSHIP") ||
             preProcessedBody.Trim().ToUpper().Contains("MAN WITH GOOD SENSE OF HUMOR") ||
             preProcessedBody.Trim().ToUpper().Contains("MEANINGFUL RELATIONSHIP") ||
             preProcessedBody.Trim().ToUpper().Contains("MORE DETAIL ABOUT MYSELF") ||
@@ -78,8 +88,11 @@ public class CheckBuildTrust : EmailTypeBase
             preProcessedBody.Trim().ToUpper().Contains("REALLY LOVE TO GET TO KNOW YOU") ||
             preProcessedBody.Trim().ToUpper().Contains("REALLY WANT TO KNOW YOU") ||
             preProcessedBody.Trim().ToUpper().Contains("REALLY WANT TO GET TO KNOW YOU") ||
+            preProcessedBody.Trim().ToUpper().Contains("SEARCHING FOR FRIENDSHIP") ||
             preProcessedBody.Trim().ToUpper().Contains("SEEKING YOUR ASSISTANCE") ||
             preProcessedBody.Trim().ToUpper().Contains("SERIOUS RELATIONSHIP") ||
+            preProcessedBody.Trim().ToUpper().Contains("SHARE PICTURE") ||
+            preProcessedBody.Trim().ToUpper().Contains("SHARE MY PICTURE") ||
             preProcessedBody.Trim().ToUpper().Contains("SINGLE NEVER MARRIED") ||
             preProcessedBody.Trim().ToUpper().Contains("SINGLE LOOKING FOR") ||
             preProcessedBody.Trim().ToUpper().Contains("SOMEONE I CAN TRUST") ||
@@ -88,8 +101,10 @@ public class CheckBuildTrust : EmailTypeBase
             preProcessedBody.Trim().ToUpper().Contains("THIS IS 100% SAFE") ||
             preProcessedBody.Trim().ToUpper().Contains("UNTIL YOU RESPOND BACK") ||
             preProcessedBody.Trim().ToUpper().Contains("WHAT ABOUT YOU?") ||
+            preProcessedBody.Trim().ToUpper().Contains("WE CAN LEARN MORE ABOUT EACH OTHER") ||
             preProcessedBody.Trim().ToUpper().Contains("VENTURE OF TRUST") ||
             preProcessedBody.Trim().ToUpper().Contains("YOU SHOULD KEEP ME UPDATE") ||
+            preProcessedBody.Trim().ToUpper().Contains("YOUR GOOD FRIEND") ||
             (preProcessedBody.Trim().ToUpper().Contains("TRUST") && preProcessedBody.Trim().ToUpper().Contains("FRIENDSHIP")) ||
             (preProcessedBody.Trim().ToUpper().Contains("I AM WOMAN OF") && preProcessedBody.Trim().ToUpper().Contains("YEARS OLD FROM")))
         {

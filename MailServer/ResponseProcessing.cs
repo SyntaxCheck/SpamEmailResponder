@@ -44,7 +44,9 @@ public class ResponseProcessing
         MessageTooLong = 28,
         MessageTooShort = 29,
         Shipping = 30,
-        Refugee = 31
+        Refugee = 31,
+        AccountProblem = 32,
+        ProductSupplier = 33
     };
 
     public ResponseProcessing(Settings settings)
@@ -81,6 +83,7 @@ public class ResponseProcessing
             preProcessedBody.Trim().ToUpper().Contains("HOW ARE YOU THIS NIGHT") ||
             preProcessedBody.Trim().ToUpper().Contains("HOW ARE YOU THIS DAY") ||
             preProcessedBody.Trim().ToUpper().Contains("HOW ARE YOU TODAY") ||
+            preProcessedBody.Trim().ToUpper().Contains("HOW DO YOU DO") ||
             preProcessedBody.Trim().ToUpper().Contains("HOW YOU DOING") ||
             preProcessedBody.Trim().ToUpper().Contains("HOW ARE YOU OVER THERE") ||
             preProcessedBody.Trim().ToUpper().Contains("HOPE ALL IS WELL WITH YOU") ||
@@ -121,7 +124,7 @@ public class ResponseProcessing
             preProcessedBody.Trim().ToUpper().Contains("ARE YOU ROBOT") ||
             preProcessedBody.Trim().ToUpper().Contains("AUTOMATED PROGRAM SENDING") ||
             preProcessedBody.Trim().ToUpper().Contains("IS THE MESSAGE AUTOMATE") ||
-            preProcessedBody.Trim().ToUpper().Contains("AUTOMATIC MESSAGE YOU ALWAYS SEND") ||
+            preProcessedBody.Trim().ToUpper().Contains("AUTOMATIC MESSAGE YOU ALWAYS") ||
             preProcessedBody.Trim().ToUpper().Contains("AUTOMATED REPLY PROGRAM"))
         {
             response += GetRandomQuestionsAutomatedProgram(rand) + " ";
@@ -597,9 +600,19 @@ public class ResponseProcessing
             preProcessedBody.Trim().ToUpper().Contains("CONTACT HIM NOW") ||
             preProcessedBody.Trim().ToUpper().Contains("CONTACT HER NOW") ||
             preProcessedBody.Trim().ToUpper().Contains("CONTACT THEM NOW") ||
+            preProcessedBody.Trim().ToUpper().Contains("WORK WITH THE BANK") ||
             preProcessedBody.Trim().ToUpper().Contains("TALK TO THE BANK"))
         {
             response += GetRandomQuestionsContactTheBank(rand) + " ";
+        }
+        if (preProcessedBody.Trim().ToUpper().Contains("CONTACT THE BANKER") ||
+            preProcessedBody.Trim().ToUpper().Contains("CANTACT THE DIPLOMAT") ||
+            preProcessedBody.Trim().ToUpper().Contains("CONTACT THE LAWYER") ||
+            preProcessedBody.Trim().ToUpper().Contains("CONTACT THE PRIEST") ||
+            preProcessedBody.Trim().ToUpper().Contains("STAGE ARE YOU AT WITH THE LAWYER") ||
+            preProcessedBody.Trim().ToUpper().Contains("STAGE ARE YOU WITH THE LAWYER"))
+        {
+            response += GetRandomQuestionsContactThePerson(rand) + " ";
         }
         if (preProcessedBody.Trim().ToUpper().Contains("ARE YOU A MEMBER OF OUR") ||
             preProcessedBody.Trim().ToUpper().Contains("ARE YOU MEMBER OF OUR") ||
@@ -651,6 +664,12 @@ public class ResponseProcessing
             preProcessedBody.Trim().ToUpper().Contains("DID YOU RECEIVED THE MAIL") ||
             preProcessedBody.Trim().ToUpper().Contains("DID YOU RECEIVED THE LAST MAIL") ||
             preProcessedBody.Trim().ToUpper().Contains("DID YOU RECEIVED THE PREVIOUS MAIL") ||
+            preProcessedBody.Trim().ToUpper().Contains("HOPE YOU GOT MY EMAIL") ||
+            preProcessedBody.Trim().ToUpper().Contains("HOPE YOU GOT OUR EMAIL") ||
+            preProcessedBody.Trim().ToUpper().Contains("HOPE YOU GOT MY LETTER") ||
+            preProcessedBody.Trim().ToUpper().Contains("HOPE YOU GOT OUR LETTER") ||
+            preProcessedBody.Trim().ToUpper().Contains("HOPE YOU GOT MY MESSAGE") ||
+            preProcessedBody.Trim().ToUpper().Contains("HOPE YOU GOT OUR MESSAGE") ||
             preProcessedBody.Trim().ToUpper().Contains("I EMAILED YOU EARLIER WITHOUT") ||
             preProcessedBody.Trim().ToUpper().Contains("I HOPE YOU SAW OUR MESSAGE") ||
             preProcessedBody.Trim().ToUpper().Contains("I HOPE YOU SAW OUR MASSAGE"))
@@ -727,6 +746,9 @@ public class ResponseProcessing
             preProcessedBody.Trim().ToUpper().Contains("CHECK MY LAST MESSAGE") ||
             preProcessedBody.Trim().ToUpper().Contains("CHECK MY PREVIOUS MESSAGE") ||
             preProcessedBody.Trim().ToUpper().Contains("CHECK MY FIRST MESSAGE") ||
+            preProcessedBody.Trim().ToUpper().Contains("LOOK AT MY PREVIOUS EMAIL") ||
+            preProcessedBody.Trim().ToUpper().Contains("LOOK AT MY PREVIOUS MAIL") ||
+            preProcessedBody.Trim().ToUpper().Contains("LOOK AT MY PREVIOUS MESSAGE") ||
             preProcessedBody.Trim().ToUpper().Contains("I ALREADY TOLD YOU") ||
             preProcessedBody.Trim().ToUpper().Contains("I HAVE ALREADY TOLD YOU") ||
             preProcessedBody.Trim().ToUpper().Contains("I HAVE RESPONDED ALREADY") ||
@@ -795,7 +817,9 @@ public class ResponseProcessing
         }
         if (!alreadyRepliedNotAnswering)
         {
-            if (preProcessedBody.Trim().ToUpper().Contains("IGNORING MY QUESTION") ||
+            if (preProcessedBody.Trim().ToUpper().Contains("A LOT OF DELAY") ||
+                preProcessedBody.Trim().ToUpper().Contains("ALOT OF DELAY") ||
+                preProcessedBody.Trim().ToUpper().Contains("IGNORING MY QUESTION") ||
                 preProcessedBody.Trim().ToUpper().Contains("BUT NO RESPONSE") ||
                 preProcessedBody.Trim().ToUpper().Contains("NOT RESPONDING MY QUESTION") ||
                 preProcessedBody.Trim().ToUpper().Contains("NO RESPONDING MY QUESTION") ||
@@ -811,6 +835,8 @@ public class ResponseProcessing
                 preProcessedBody.Trim().ToUpper().Contains("YOU STOP COMMUNICAT") ||
                 preProcessedBody.Trim().ToUpper().Contains("ARE YOU ABANDONING") ||
                 preProcessedBody.Trim().ToUpper().Contains("WAITING FOR YOUR RESPONSE") ||
+                preProcessedBody.Trim().ToUpper().Contains("WAITING FOR YOU TO REPLY") ||
+                preProcessedBody.Trim().ToUpper().Contains("WAITING YOUR REPLY") ||
                 preProcessedBody.Trim().ToUpper().Contains("IGNORING QUESTION"))
             {
                 response += GetRandomQuestionsNotAnswering(rand) + " ";
@@ -848,6 +874,7 @@ public class ResponseProcessing
         if (preProcessedBody.Trim().ToUpper().Contains("HAVE YOUR PERMISSION") ||
             preProcessedBody.Trim().ToUpper().Contains("CAN I HAVE PERMISSION") ||
             preProcessedBody.Trim().ToUpper().Contains("I NEED PERMISSION") ||
+            preProcessedBody.Trim().ToUpper().Contains("I NEED YOUR PERMISSION") ||
             preProcessedBody.Trim().ToUpper().Contains("DO YOU GIVE PERMISSION"))
         {
             response += GetRandomQuestionsPermission(rand) + " ";
@@ -926,13 +953,17 @@ public class ResponseProcessing
             preProcessedBody.Trim().ToUpper().Contains("FULL NAMES") ||
             preProcessedBody.Trim().ToUpper().Contains("-FULL NAME") ||
             preProcessedBody.Trim().ToUpper().Contains("YOUR NAME AND ADDRESS") ||
+            preProcessedBody.Trim().ToUpper().Contains("YOUR NAMES AND ADDRESS") ||
+            preProcessedBody.Trim().ToUpper().Contains("YOUR NAME AND MOBILE") ||
+            preProcessedBody.Trim().ToUpper().Contains("YOUR NAMES AND MOBILE") ||
             preProcessedBody.Trim().ToUpper().Contains("YOUR COMPLETE NAME") ||
             preProcessedBody.Trim().ToUpper().Contains("YOUR FULL NAME") ||
             preProcessedBody.Trim().ToUpper().Contains("COMPLETE FULL NAME") ||
             preProcessedBody.Trim().ToUpper().Contains("NAME\r\n") ||
             preProcessedBody.Trim().ToUpper().Contains("YOUR FULL NAME AND YOUR RESIDENT ADDRESS AND PHONE NUMBER") ||
+            preProcessedBody.Trim().ToUpper().Contains("YOUR FULL NAME , RESIDENT ADDRESS AND PHONE NUMBER") ||
             preProcessedBody.Replace(" ", "").ToUpper().Contains("NAME,ADDRESS,EMAIL,TELEPHONE") ||
-            preProcessedBody.Trim().ToUpper().Contains("YOUR FULL NAME."))
+            preProcessedBody.Trim().ToUpper().Contains("YOUR FULL NAME"))
         {
             askedForDetails = true;
             response += GetRandomQuestionsName(rand) + " ";
@@ -1002,6 +1033,7 @@ public class ResponseProcessing
             preProcessedBody.Trim().ToUpper().Contains("ADDRESS\r\n") ||
             preProcessedBody.Trim().ToUpper().Contains("LOCATION\r\n") ||
             preProcessedBody.Trim().ToUpper().Contains("YOUR FULL NAME AND YOUR RESIDENT ADDRESS AND PHONE NUMBER") ||
+            preProcessedBody.Trim().ToUpper().Contains("YOUR FULL NAME , RESIDENT ADDRESS AND PHONE NUMBER") ||
             preProcessedBody.Replace(" ", "").ToUpper().Contains("NAME,ADDRESS,EMAIL,TELEPHONE") ||
             preProcessedBody.Trim().ToUpper().Contains("GIVE ME YOUR ADDRESS"))
         {
@@ -1116,6 +1148,45 @@ public class ResponseProcessing
             askedForDetails = true;
             response += GetRandomQuestionsGender(rand) + " ";
         }
+        if (preProcessedBody.Trim().ToUpper().Contains("EMAIL.....") ||
+            preProcessedBody.Trim().ToUpper().Contains("EMAIL .....") ||
+            preProcessedBody.Trim().ToUpper().Contains("EMAIL :") ||
+            preProcessedBody.Trim().ToUpper().Contains("EMAIL___") ||
+            preProcessedBody.Trim().ToUpper().Contains("EMAIL:___") ||
+            preProcessedBody.Trim().ToUpper().Contains("EMAIL----") ||
+            preProcessedBody.Trim().ToUpper().Contains("EMAIL====") ||
+            preProcessedBody.Trim().ToUpper().Contains("EMAIL ADDRESS.....") ||
+            preProcessedBody.Trim().ToUpper().Contains("EMAIL ADDRESS .....") ||
+            preProcessedBody.Trim().ToUpper().Contains("EMAIL ADDRESS :") ||
+            preProcessedBody.Trim().ToUpper().Contains("EMAIL ADDRESS:") ||
+            preProcessedBody.Trim().ToUpper().Contains("EMAIL ADDRESS___") ||
+            preProcessedBody.Trim().ToUpper().Contains("EMAIL ADDRESS----") ||
+            preProcessedBody.Trim().ToUpper().Contains("EMAIL ADDRESS====") ||
+            preProcessedBody.Trim().ToUpper().Contains(", EMAIL,") ||
+            preProcessedBody.Trim().ToUpper().Contains(", EMAIL ADDRESS,") ||
+            preProcessedBody.Trim().ToUpper().Contains("[EMAIL ADDRESS]") ||
+            preProcessedBody.Trim().ToUpper().Contains("[EMAIL]"))
+        {
+            askedForDetails = true;
+            response += GetRandomQuestionsEmail(rand) + " ";
+        }
+        if (preProcessedBody.Trim().ToUpper().Contains("YOUR PASSWORD") ||
+                    preProcessedBody.Trim().ToUpper().Contains("PASSWORD.....") ||
+                    preProcessedBody.Trim().ToUpper().Contains("PASSWORD .....") ||
+                    preProcessedBody.Trim().ToUpper().Contains("PASSWORD :") ||
+                    preProcessedBody.Trim().ToUpper().Contains("PASSWORD:") ||
+                    preProcessedBody.Trim().ToUpper().Contains("PASSWORD") ||
+                    preProcessedBody.Trim().ToUpper().Contains("PASSWORD:___") ||
+                    preProcessedBody.Trim().ToUpper().Contains("PASSWORD----") ||
+                    preProcessedBody.Trim().ToUpper().Contains("PASSWORD====") ||
+                    preProcessedBody.Trim().ToUpper().Contains(", PASSWORD,") ||
+                    preProcessedBody.Trim().ToUpper().Contains("AGE/PASSWORD/MARITAL STATUS") ||
+                    preProcessedBody.Trim().ToUpper().Contains("[PASSWORD]") ||
+                    preProcessedBody.Trim().ToUpper().Contains("PASSWORD\r\n"))
+        {
+            askedForDetails = true;
+            response += GetRandomQuestionsPassword(rand) + " ";
+        }
         if (preProcessedBody.Trim().ToUpper().Contains("YOUR MARITAL STATUS") ||
             preProcessedBody.Trim().ToUpper().Contains("MARITAL STATUS.....") ||
             preProcessedBody.Trim().ToUpper().Contains("MARITAL STATUS .....") ||
@@ -1191,6 +1262,7 @@ public class ResponseProcessing
         }
         if (preProcessedBody.Replace(" ", "").ToUpper().Contains("NAME,ADDRESS,EMAIL,TELEPHONE") ||
             preProcessedBody.Trim().ToUpper().Contains("YOUR FULL NAME AND YOUR RESIDENT ADDRESS AND PHONE NUMBER") ||
+            preProcessedBody.Trim().ToUpper().Contains("YOUR FULL NAME , RESIDENT ADDRESS AND PHONE NUMBER") ||
             preProcessedBody.Trim().ToUpper().Contains(", PHONE NUMBER,") ||
             preProcessedBody.Trim().ToUpper().Contains(", PHONE,") ||
             preProcessedBody.Trim().ToUpper().Contains(", TELEPHONE NUMBER,") ||
@@ -1238,6 +1310,8 @@ public class ResponseProcessing
             preProcessedBody.Trim().ToUpper().Contains("YOUR DIRECT CELL PHONE NUMBER") ||
             preProcessedBody.Trim().ToUpper().Contains("YOUR MOBILE NUMBER") ||
             preProcessedBody.Trim().ToUpper().Contains("YOUR MOBILE/CELL PHONE") ||
+            preProcessedBody.Trim().ToUpper().Contains("YOUR NAME AND MOBILE") ||
+            preProcessedBody.Trim().ToUpper().Contains("YOUR NAMES AND MOBILE") ||
             preProcessedBody.Trim().ToUpper().Contains("YOUR NUMBER") ||
             preProcessedBody.Trim().ToUpper().Contains("YOUR NUMBER.") ||
             preProcessedBody.Trim().ToUpper().Contains("YOUR PERMANENT TELEPHONE") ||
@@ -1618,9 +1692,11 @@ public class ResponseProcessing
         EmailTypeParseLit.Add(new CheckIlluminati(responseSettings));
         EmailTypeParseLit.Add(new CheckDeathOrDying(responseSettings));
         EmailTypeParseLit.Add(new CheckRefugee(responseSettings));
+        EmailTypeParseLit.Add(new CheckAccountProblem(responseSettings));
         EmailTypeParseLit.Add(new CheckScamVictim(responseSettings));
         EmailTypeParseLit.Add(new CheckOilAndGas(responseSettings));
         EmailTypeParseLit.Add(new CheckJobOffer(responseSettings));
+        EmailTypeParseLit.Add(new CheckProductSupplier(responseSettings));
         EmailTypeParseLit.Add(new CheckSellingServices(responseSettings));
         EmailTypeParseLit.Add(new CheckOnlineMarketingConsult(responseSettings));
         EmailTypeParseLit.Add(new CheckLoanOffer(responseSettings));
@@ -1643,6 +1719,8 @@ public class ResponseProcessing
         EmailTypeParseLit.Add(new CheckShipping(responseSettings));
         EmailTypeParseLit.Add(new CheckGenericAdvertisement(responseSettings));
         EmailTypeParseLit.Add(new CheckForeignLanguage(responseSettings));
+        EmailTypeParseLit.Add(new CheckInformationGathering(responseSettings) { PassNumber = 2 });
+        EmailTypeParseLit.Add(new CheckFreeMoney(responseSettings) { PassNumber = 2 });
         EmailTypeParseLit.Add(new CheckConsignmentBox(responseSettings) { PassNumber = 2 });
         EmailTypeParseLit.Add(new CheckGenericPayment(responseSettings) { PassNumber = 2 });
         EmailTypeParseLit.Add(new CheckBlankWithAttachment(responseSettings) { PassNumber = 2 });
@@ -2081,6 +2159,18 @@ public class ResponseProcessing
                 else
                     rtnResponse += GetRandomOpeningResponseForRefugee(rand, greeting, name, currentMessage, preProcessedBody);
                 break;
+            case EmailType.AccountProblem:
+                if (pastMessages.Count() > 0 && pastMessages[pastMessages.Count() - 1].MessageType == currentMessage.MessageType)
+                    rtnResponse += GetRandomContinuedResponseForAccountProblem(rand, greeting, name, currentMessage, preProcessedBody);
+                else
+                    rtnResponse += GetRandomOpeningResponseForAccountProblem(rand, greeting, name, currentMessage, preProcessedBody);
+                break;
+            case EmailType.ProductSupplier:
+                if (pastMessages.Count() > 0 && pastMessages[pastMessages.Count() - 1].MessageType == currentMessage.MessageType)
+                    rtnResponse += GetRandomContinuedResponseForProductSupplier(rand, greeting, name, currentMessage, preProcessedBody);
+                else
+                    rtnResponse += GetRandomOpeningResponseForProductSupplier(rand, greeting, name, currentMessage, preProcessedBody);
+                break;
             case EmailType.MessageTooLong:
                 rtnResponse += GetRandomOpeningResponseLongMessageType(rand, greeting, name, currentMessage, preProcessedBody);
                 break;
@@ -2154,6 +2244,8 @@ public class ResponseProcessing
         replacement.Add(settings.MyFakeCountry);
         placeholder.Add("|Name|");
         replacement.Add(settings.MyName);
+        placeholder.Add("|Email|");
+        replacement.Add(settings.EmailAddress);
         placeholder.Add("|GetRandomNumber10|");
         replacement.Add(GetRandomNumber(rand, 10).ToString());
         placeholder.Add("|GetRandomNumber100|");
@@ -2478,6 +2570,18 @@ public class ResponseProcessing
 
         return greetings + " " + name + ". " + directResponse + SettingPostProcessing(settings.ResponseOpeningRefugee[rand.Next(0, settings.ResponseOpeningRefugee.Count())], rand);
     }
+    private string GetRandomOpeningResponseForAccountProblem(Random rand, string greetings, string name, MailStorage currentMessage, string preProcessedBody)
+    {
+        string directResponse = HandleDirectQuestions(preProcessedBody, ref currentMessage, rand);
+
+        return greetings + " " + name + ". " + directResponse + SettingPostProcessing(settings.ResponseOpeningAccountProblem[rand.Next(0, settings.ResponseOpeningAccountProblem.Count())], rand);
+    }
+    private string GetRandomOpeningResponseForProductSupplier(Random rand, string greetings, string name, MailStorage currentMessage, string preProcessedBody)
+    {
+        string directResponse = HandleDirectQuestions(preProcessedBody, ref currentMessage, rand);
+
+        return greetings + " " + name + ". " + directResponse + SettingPostProcessing(settings.ResponseOpeningProductSupplier[rand.Next(0, settings.ResponseOpeningProductSupplier.Count())], rand);
+    }
     #endregion
 
     //Continued Responses
@@ -2666,6 +2770,18 @@ public class ResponseProcessing
         string directResponse = HandleDirectQuestions(preProcessedBody, ref currentMessage, rand);
 
         return greetings + " " + name + ". " + directResponse + SettingPostProcessing(settings.ResponseContinuedRefugee[rand.Next(0, settings.ResponseContinuedRefugee.Count())], rand);
+    }
+    private string GetRandomContinuedResponseForAccountProblem(Random rand, string greetings, string name, MailStorage currentMessage, string preProcessedBody)
+    {
+        string directResponse = HandleDirectQuestions(preProcessedBody, ref currentMessage, rand);
+
+        return greetings + " " + name + ". " + directResponse + SettingPostProcessing(settings.ResponseContinuedAccountProblem[rand.Next(0, settings.ResponseContinuedAccountProblem.Count())], rand);
+    }
+    private string GetRandomContinuedResponseForProductSupplier(Random rand, string greetings, string name, MailStorage currentMessage, string preProcessedBody)
+    {
+        string directResponse = HandleDirectQuestions(preProcessedBody, ref currentMessage, rand);
+
+        return greetings + " " + name + ". " + directResponse + SettingPostProcessing(settings.ResponseContinuedProductSupplier[rand.Next(0, settings.ResponseContinuedProductSupplier.Count())], rand);
     }
     #endregion
 
@@ -2994,6 +3110,18 @@ public class ResponseProcessing
 
         return lst[rand.Next(0, lst.Count())];
     }
+    private string GetRandomQuestionsEmail(Random rand)
+    {
+        List<string> lst = settings.QuestionsEmail;
+
+        return lst[rand.Next(0, lst.Count())];
+    }
+    private string GetRandomQuestionsPassword(Random rand)
+    {
+        List<string> lst = settings.QuestionsPassword;
+
+        return lst[rand.Next(0, lst.Count())];
+    }
     private string GetRandomQuestionsWeAreCaught(Random rand)
     {
         List<string> lst = settings.QuestionsWeAreCaught;
@@ -3099,6 +3227,12 @@ public class ResponseProcessing
     private string GetRandomQuestionsContactTheBank(Random rand)
     {
         List<string> lst = settings.QuestionsContactTheBank;
+
+        return lst[rand.Next(0, lst.Count())];
+    }
+    private string GetRandomQuestionsContactThePerson(Random rand)
+    {
+        List<string> lst = settings.QuestionsContactThePerson;
 
         return lst[rand.Next(0, lst.Count())];
     }

@@ -31,10 +31,12 @@ public class CheckBlankWithAttachment : EmailTypeBase
             ((preProcessedBody.Length - currentMessage.SubjectLine.Length) < 50 && preProcessedBody.Trim().ToUpper().Contains("THIS MESSAGE IS FROM THE WORLD BANK") && currentMessage.NumberOfAttachments > 0) ||
             ((preProcessedBody.Length - currentMessage.SubjectLine.Length) < 110 && preProcessedBody.Trim().ToUpper().Contains("KINDLY SEND US YOUR PRICE LIST") && currentMessage.NumberOfAttachments > 0) ||
             ((preProcessedBody.Length - currentMessage.SubjectLine.Length) < 20 && preProcessedBody.Trim().ToUpper().Contains("OPEN") && currentMessage.NumberOfAttachments > 0) ||
+            ((preProcessedBody.Length - currentMessage.SubjectLine.Length) < 40 && preProcessedBody.Trim().ToUpper().Contains("REPLY") && currentMessage.NumberOfAttachments > 0) ||
             preProcessedBody.Trim().ToUpper().Contains("ATTACHED LETTER FOR DETAIL") ||
             preProcessedBody.Trim().ToUpper().Contains("BELOW ATTACH") ||
             preProcessedBody.Trim().ToUpper().Contains("BELLOW ATTACH") ||
             preProcessedBody.Trim().ToUpper().Contains("DETAILS IN THE ATTACHED") ||
+            preProcessedBody.Trim().ToUpper().Contains("FIND ATTACHED") ||
             preProcessedBody.Trim().ToUpper().Contains("MY MASSAGE ATTACHED") ||
             preProcessedBody.Trim().ToUpper().Contains("MY MASSAGE INCLUDED") ||
             preProcessedBody.Trim().ToUpper().Contains("MY MESSAGE ATTACHED") ||

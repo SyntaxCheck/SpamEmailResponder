@@ -7,25 +7,26 @@ public class Settings
     private int longMessageUpperLimit, shortMessageLowerLimit;
     private List<string> names, greeting, signoff, introduction, introductionOpening, introductionClosing, personDescriptionMale, personDescriptionFemale, memory, followupLine, acquaintance, 
         locations, products, paymentMethods, randomThoughts, devices, consignmentBoxImageIncluded, consignmentBoxImageNotIncluded, responseLongMessageType, responseShortMessageType, pathToTransferReceipts, emailAddressesToIgnore;
-    private List<string> questionsNotListening, questionsJokingAround, questionsNotAnswering, questionsHowAreYou, 
+    private List<string> questionsNotListening, questionsJokingAround, questionsNotAnswering, questionsHowAreYou, questionsEmail, questionsPassword,
         questionsNotUnderstanding, questionsPermission, questionsSpokenLanguage, questionsTrust, questionsWhyNoAnswer,
         questionsPhoneNumber, questionsAddress, questionsID, questionsAlreadyIncludedID, questionsCannotOpenAttachment, questionsWeAreCaught,
         questionsBirthdate, questionsBetterPhoto, questionsOccupation, questionsGender, questionsMaritalStatus, questionsCountry, questionsName, questionsProvideDetails,
         questionsAreYouReady, questionsChangeContactMethod, questionsContactMeLater, questionsAreYouOnboard, questionsPayTheFee, questionsTheyConfused,
         questionsHowBigOfLoan, questionsMustPayBefore, questionsMeetUs, questionsFillOutForm, questionsGetBackToUs, questionsNeedBankDetails,
         questionsWhatTypeOfProof, questionsHowDoYouWantFundsReleased, questionsWeCantDoThat, questionsContactTheBank, questionsAreYouMember,
-        questionsDidYouSeeOurMessage, questionsInvalidAddress, questionsTellUsWhatTheyAskedYouToDo, questionsTellUsAboutYourself,
+        questionsDidYouSeeOurMessage, questionsInvalidAddress, questionsTellUsWhatTheyAskedYouToDo, questionsTellUsAboutYourself, questionsContactThePerson,
         questionsAutomatedProgram, questionsUseWalmartToPay, questionsHowMuchMoneyDoIHave, questionsSendTransferReceipt, questionsAlreadyToldYou;
     private List<string> responseOpeningBlankEmailWithAttachment, responseOpeningLottery, responseOpeningOilAndGas, responseOpeningOilAndGasQuestionList, responseOpeningIlluminati, 
         responseOpeningConsignmentBox, responseOpeningDeathOrDying, responseOpeningLoanOffer, responseOpeningMoneyStorage, responseOpeningAtmCard, responseOpeningPolice, 
         responseOpeningGenericPayment, responseOpeningInvestor, responseOpeningMoneyHack, responseOpeningJobOffer, responseOpeningSellingProducts, responseOpeningFreeMoney, 
         responseOpeningInformationGathering, responseOpeningPhishing, responseOpeningScamVictim, responseOpeningForeignLanguage, responseOpeningGenericAdvertisement, responseOpeningShipping,
-        responseOpeningRefugee;
+        responseOpeningRefugee, responseOpeningAccountProblem, responseOpeningProductSupplier;
     private List<string> responseContinuedBlankEmailWithAttachment, responseContinuedLottery, responseContinuedOilAndGas, responseContinuedIlluminati, responseContinuedConsignmentBox, 
         responseContinuedDeathOrDying, responseContinuedLoanOffer, responseContinuedMoneyStorage, responseContinuedAtmCard, responseContinuedPolice, responseContinuedGenericPayment, 
         responseContinuedInvestor, responseContinuedMoneyHack, responseContinuedBuildTrust, responseContinuedInheritance, responseContinuedBeneficiary, responseContinuedJobOffer, 
         responseContinuedSellingProducts, responseContinuedFreeMoney, responseContinuedInformationGathering, responseContinuedPhishing, responseContinuedScamVictim,
-        responseContinuedForeignLanguage, responseContinuedGenericAdvertisement, responseContinuedShipping, responseContinuedRefugee;
+        responseContinuedForeignLanguage, responseContinuedGenericAdvertisement, responseContinuedShipping, responseContinuedRefugee, responseContinuedAccountProblem,
+        responseContinuedProductSupplier;
 
     #region Get/sets
     public string EmailAddress
@@ -463,6 +464,26 @@ public class Settings
         get { return responseContinuedRefugee; }
         set { responseContinuedRefugee = value; }
     }
+    public List<string> ResponseOpeningAccountProblem
+    {
+        get { return responseOpeningAccountProblem; }
+        set { responseOpeningAccountProblem = value; }
+    }
+    public List<string> ResponseContinuedAccountProblem
+    {
+        get { return responseContinuedAccountProblem; }
+        set { responseContinuedAccountProblem = value; }
+    }
+    public List<string> ResponseOpeningProductSupplier
+    {
+        get { return responseOpeningProductSupplier; }
+        set { responseOpeningProductSupplier = value; }
+    }
+    public List<string> ResponseContinuedProductSupplier
+    {
+        get { return responseContinuedProductSupplier; }
+        set { responseContinuedProductSupplier = value; }
+    }
     public List<string> QuestionsHowAreYou
     {
         get { return questionsHowAreYou; }
@@ -568,6 +589,16 @@ public class Settings
         get { return questionsName; }
         set { questionsName = value; }
     }
+    public List<string> QuestionsEmail
+    {
+        get { return questionsEmail; }
+        set { questionsEmail = value; }
+    }
+    public List<string> QuestionsPassword
+    {
+        get { return questionsPassword; }
+        set { questionsPassword = value; }
+    }
     public List<string> QuestionsWeAreCaught
     {
         get { return questionsWeAreCaught; }
@@ -657,6 +688,11 @@ public class Settings
     {
         get { return questionsContactTheBank; }
         set { questionsContactTheBank = value; }
+    }
+    public List<string> QuestionsContactThePerson
+    {
+        get { return questionsContactThePerson; }
+        set { questionsContactThePerson = value; }
     }
     public List<string> QuestionsAreYouMember
     {

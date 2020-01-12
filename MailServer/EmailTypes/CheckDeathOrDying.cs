@@ -66,6 +66,25 @@ public class CheckDeathOrDying : EmailTypeBase
             base.ParseResponse.IsMatch = true;
             base.ParseResponse.TotalHits++;
         }
+        else
+        {
+            List<string> deathWords = new List<string>() { "DIE", "DEATH", "DYING", "KILL", "MURDER", "" };
+            List<string> secodaryWord = new List<string>() { "CANCER", "ILLNESS", "LEAVING BEHIND", "LEAVE BEHIND", "DIAGNO", "TREATMENT", "SURGERY", "SUFFERING", "TERMINAL", "ILLHEALTH" };
+
+            foreach (string s in deathWords)
+            {
+                foreach (string s2 in secodaryWord)
+                {
+                    if (preProcessedBody.Trim().ToUpper().Contains(s) && preProcessedBody.Trim().ToUpper().Contains(s2))
+                    {
+                        base.ParseResponse.IsMatch = true;
+                        base.ParseResponse.TotalHits++;
+
+                        break;
+                    }
+                }
+            }
+        }
 
         return base.ParseResponse;
     }

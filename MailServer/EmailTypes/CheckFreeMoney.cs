@@ -14,7 +14,9 @@ public class CheckFreeMoney : EmailTypeBase
 
     public override TypeParseResponse TryTypeParse(LoggerInfo loggerInfo, ref MailStorage currentMessage, List<MailStorage> pastMessages, string preProcessedBody)
     {
-        if ((Settings.IsAdmin && preProcessedBody.Trim().ToUpper().StartsWith(AutoResponseKeyword)) ||
+        if (PassNumber <= 1)
+        {
+            if ((Settings.IsAdmin && preProcessedBody.Trim().ToUpper().StartsWith(AutoResponseKeyword)) ||
             preProcessedBody.Trim().ToUpper().Contains("ABANDONED FUND") ||
             preProcessedBody.Trim().ToUpper().Contains("ABANDON FUND") ||
             preProcessedBody.Trim().ToUpper().Contains("AMOUNT OF GRANT") ||
@@ -72,6 +74,7 @@ public class CheckFreeMoney : EmailTypeBase
             preProcessedBody.Trim().ToUpper().Contains("FUND BELONGING TO MY DECEASED CLIENT") ||
             preProcessedBody.Trim().ToUpper().Contains("FUND IN A CASHIER CHECK") ||
             preProcessedBody.Trim().ToUpper().Contains("FUND IN A CASHIER CHEQUE") ||
+            preProcessedBody.Trim().ToUpper().Contains("FUND IS BEING RELEASED TO YOU") ||
             preProcessedBody.Trim().ToUpper().Contains("FUND THE SUM OF") ||
             preProcessedBody.Trim().ToUpper().Contains("FUND TRANSFER") ||
             preProcessedBody.Trim().ToUpper().Contains("FUNDS HAS BEEN ORDERED") ||
@@ -198,15 +201,36 @@ public class CheckFreeMoney : EmailTypeBase
             preProcessedBody.Trim().ToUpper().Contains("YOUR FUNDS WILL BE PAID") ||
             preProcessedBody.Trim().ToUpper().Contains("YOUR PACKAGE WORTH") ||
             preProcessedBody.Trim().ToUpper().Contains("YOUR SHARE/COMPENSATION") ||
+            preProcessedBody.Trim().ToUpper().Contains("YOUR SHARECOMPENSATION") ||
             preProcessedBody.Trim().ToUpper().Contains("YOUR WIRE TRANSFER") ||
             (preProcessedBody.Trim().ToUpper().Contains("FUND") && preProcessedBody.Trim().ToUpper().Contains("URGENT DELIVERY")) ||
             (preProcessedBody.Trim().ToUpper().Contains("ASSIGNED TO BE DELIVERED") && preProcessedBody.Trim().ToUpper().Contains("$")) ||
             (preProcessedBody.Trim().ToUpper().Contains("FUND") && preProcessedBody.Trim().ToUpper().Contains("UNCLAIMED") && preProcessedBody.Trim().ToUpper().Contains("DEPOSITED")) ||
             (preProcessedBody.Trim().ToUpper().Contains("OF THIS MONEY") && preProcessedBody.Trim().ToUpper().Contains("OFFER YOU")) ||
             (preProcessedBody.Trim().ToUpper().Contains("DONATE $") && preProcessedBody.Trim().ToUpper().Contains("TO YOU")))
+            {
+                base.ParseResponse.IsMatch = true;
+                base.ParseResponse.TotalHits++;
+            }
+        }
+        else if (PassNumber == 2)
         {
-            base.ParseResponse.IsMatch = true;
-            base.ParseResponse.TotalHits++;
+            List<string> moneyWords = new List<string>() { "FUND", "CASH", "CHECK", "SUM", "WEALTH" };
+            List<string> actionWords = new List<string>() { "RELEASE", "RECEIVE", "GIVEN", "PAID", "TRANSFER", "OFFER", "CLAIM", "COMPENSATE", "INVEST", "GRANT" };
+
+            foreach (string s in moneyWords)
+            {
+                foreach (string s2 in actionWords)
+                {
+                    if (preProcessedBody.Trim().ToUpper().Contains(s) && preProcessedBody.Trim().ToUpper().Contains(s2))
+                    {
+                        base.ParseResponse.IsMatch = true;
+                        base.ParseResponse.TotalHits++;
+
+                        break;
+                    }
+                }
+            }
         }
 
         return base.ParseResponse;

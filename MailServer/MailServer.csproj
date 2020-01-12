@@ -81,6 +81,7 @@
   <ItemGroup>
     <Compile Include="Crypto.cs" />
     <Compile Include="DateTimeConversion.cs" />
+    <Compile Include="EmailTypes\CheckAccountProblem.cs" />
     <Compile Include="EmailTypes\CheckAtmCard.cs" />
     <Compile Include="EmailTypes\CheckBeneficiary.cs" />
     <Compile Include="EmailTypes\CheckBlankWithAttachment.cs" />
@@ -106,6 +107,7 @@
     <Compile Include="EmailTypes\CheckOnlineMarketingConsult.cs" />
     <Compile Include="EmailTypes\CheckPhishing.cs" />
     <Compile Include="EmailTypes\CheckPolice.cs" />
+    <Compile Include="EmailTypes\CheckProductSupplier.cs" />
     <Compile Include="EmailTypes\CheckRefugee.cs" />
     <Compile Include="EmailTypes\CheckScamVictim.cs" />
     <Compile Include="EmailTypes\CheckSellingProducts.cs" />

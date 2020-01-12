@@ -36,6 +36,7 @@ public class CheckForeignLanguage : EmailTypeBase
             preProcessedBody.Trim().ToUpper().Contains("CHARGÉ") ||
             preProcessedBody.Trim().ToUpper().Contains("CIAO") ||
             preProcessedBody.Trim().ToUpper().Contains("CRÉDIT") ||
+            preProcessedBody.Trim().ToUpper().Contains("CURSO") ||
             preProcessedBody.Trim().ToUpper().Contains("DASS SIE") ||
             preProcessedBody.Trim().ToUpper().Contains("DE LUTTER") ||
             preProcessedBody.Trim().ToUpper().Contains("DE VOS RÊVES") ||
@@ -56,6 +57,7 @@ public class CheckForeignLanguage : EmailTypeBase
             preProcessedBody.Trim().ToUpper().Contains("HOLA") ||
             preProcessedBody.Trim().ToUpper().Contains("ICH BIN") ||
             preProcessedBody.Trim().ToUpper().Contains("IEUW") ||
+            preProcessedBody.Trim().ToUpper().Contains("INI TURUT") ||
             preProcessedBody.Trim().ToUpper().Contains("JAMBO") ||
             preProcessedBody.Trim().ToUpper().Contains("JE ME") ||
             preProcessedBody.Trim().ToUpper().Contains("KONBAN WA") ||
@@ -73,6 +75,7 @@ public class CheckForeignLanguage : EmailTypeBase
             preProcessedBody.Trim().ToUpper().Contains("ONS DAN EEN") ||
             preProcessedBody.Trim().ToUpper().Contains("OU ZE5 OU") ||
             preProcessedBody.Trim().ToUpper().Contains("PARA TODAS") ||
+            preProcessedBody.Trim().ToUpper().Contains("PARA TODO") ||
             preProcessedBody.Trim().ToUpper().Contains("POR ESTE") ||
             preProcessedBody.Trim().ToUpper().Contains("POR FAVOR") ||
             preProcessedBody.Trim().ToUpper().Contains("PREGA DI") ||
@@ -92,12 +95,14 @@ public class CheckForeignLanguage : EmailTypeBase
             preProcessedBody.Trim().ToUpper().Contains("STUUR ONS") ||
             preProcessedBody.Trim().ToUpper().Contains("SZIA") ||
             preProcessedBody.Trim().ToUpper().Contains("TERVEISIÄ") ||
+            preProcessedBody.Trim().ToUpper().Contains("TRAZ") ||
             preProcessedBody.Trim().ToUpper().Contains("TSCH") ||
             preProcessedBody.Trim().ToUpper().Contains("UNO DE ") ||
             preProcessedBody.Trim().ToUpper().Contains("UN HOMME") ||
             preProcessedBody.Trim().ToUpper().Contains("WENN JA") ||
             preProcessedBody.Trim().ToUpper().Contains("WERDEN") ||
             preProcessedBody.Trim().ToUpper().Contains("WIE IST DEINE") ||
+            preProcessedBody.Trim().ToUpper().Contains("WURDE") ||
             preProcessedBody.Trim().ToUpper().Contains("VOTRE") ||
             preProcessedBody.Trim().ToUpper().Contains("ZDRAS-TVUY-TE") ||
             !TextProcessing.IsEnglish(preProcessedBody.Trim()))

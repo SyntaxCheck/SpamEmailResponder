@@ -17,6 +17,7 @@ public class CheckBeneficiary : EmailTypeBase
         if ((Settings.IsAdmin && preProcessedBody.Trim().ToUpper().StartsWith(AutoResponseKeyword)) ||
             preProcessedBody.Trim().ToUpper().Contains("BENEFICIARY") ||
             preProcessedBody.Trim().ToUpper().Contains("ESTATE OF YOUR DECEASED") ||
+            preProcessedBody.Trim().ToUpper().Contains("I HAVE WILLED") ||
             preProcessedBody.Trim().ToUpper().Contains("NEXT OF KIN"))
         {
             base.ParseResponse.IsMatch = true;

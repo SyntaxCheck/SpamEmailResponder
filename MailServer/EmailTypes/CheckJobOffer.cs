@@ -24,6 +24,8 @@ public class CheckJobOffer : EmailTypeBase
                 preProcessedBody.Trim().ToUpper().Contains("EMAIL US YOUR RESUME") ||
                 preProcessedBody.Trim().ToUpper().Contains("EMAIL US YOUR UPDATED RESUME") ||
                 preProcessedBody.Trim().ToUpper().Contains("FULL TIME JOB") ||
+                preProcessedBody.Trim().ToUpper().Contains("HIRE YOU SERVICE") ||
+                preProcessedBody.Trim().ToUpper().Contains("HIRE YOUR SERVICE") ||
                 preProcessedBody.Trim().ToUpper().Contains("INTERESTED TO WORK AT") ||
                 preProcessedBody.Trim().ToUpper().Contains("INTERESTED TO WORK FOR") ||
                 preProcessedBody.Trim().ToUpper().Contains("INTERESTED TO WORK IN") ||

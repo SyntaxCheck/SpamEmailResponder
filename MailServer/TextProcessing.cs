@@ -122,7 +122,7 @@ public class TextProcessing
         {
             message = message.Substring(0, pos);
         }
-        
+
         pos = message.ToUpper().IndexOf("This email has been checked for viruses by Avast".ToUpper());
         if (pos > 0)
         {
@@ -178,6 +178,14 @@ public class TextProcessing
         int pos = 0;
 
         compare = "-----ORIGINAL MESSAGE-----" + Environment.NewLine;
+        if (text.ToUpper().Contains(compare))
+        {
+            pos = text.ToUpper().IndexOf(compare);
+            if (pos > 0)
+                text = text.Substring(0, pos);
+        }
+
+        compare = "---------- Původní e-mail ----------".ToUpper() + Environment.NewLine;
         if (text.ToUpper().Contains(compare))
         {
             pos = text.ToUpper().IndexOf(compare);
@@ -519,7 +527,7 @@ public class TextProcessing
     public static string AttemptToFindPersonName(string body)
     {
         string rtn = String.Empty;
-        string regards = "Regards;Yours Faithfully;Yours Truely;Best,;Yours in Services;My Best,;My best to you;All best,;All the best;Best wishes;Bests,;Best Regards;Rgds;Warm Regards;Warmest Regards;Warmly,;Take care;Looking forward,;Rushing,;In haste,;Be well,;Peace,;Yours Truly;Very truely yours;Sincerely;Sincerely yours;See you around;With love,;Lots of love,;Warm wishes,;Take care;Remain Blessed;Many thanks,;Thanks,;Your beloved sister;God Bless,;Yours;God bless you;Thanks for Your Co-operation.;Thanks for Your Cooperation.;";
+        string regards = "Regards;Yours Faithfully;Yours Truely;Best,;Yours in Services;My Best,;My best to you;All best,;All the best;Best wishes;Bests,;Best Regards;Rgds;Warm Regards;Warmest Regards;Warmly,;Take care;Looking forward,;Rushing,;In haste,;Be well,;Peace,;Yours Truly;Very truely yours;Sincerely;Sincerely yours;See you around;With love,;Lots of love,;Warm wishes,;Take care;Remain Blessed;Many thanks,;Thanks,;Your beloved sister;God Bless,;Yours;God bless you;Thanks for Your Co-operation.;Thanks for Your Cooperation.;Thanks and remain bless.";
 
         //Get rid of all extra line breaks for the parsing
         while (body.Contains(Environment.NewLine + Environment.NewLine))
@@ -915,7 +923,7 @@ public class TextProcessing
             email = email.Replace("<", "").Replace(">", "").Replace("\"", " ").Trim();
 
             if (!email.Contains('@') || !email.Contains('.') || email.Trim().Contains(' ') || email.Trim().Contains('?') ||
-                email.Trim().ToUpper() == settings.EmailAddress.Trim().ToUpper() || email.Trim().Contains('/') ||
+                email.Trim().ToUpper() == settings.EmailAddress.Trim().ToUpper() || email.Trim().Contains('/') || email.Trim().Contains('%') ||
                 email.Trim().Contains('\\') || email.Trim().Contains("...") || email.Trim().Contains('*'))
                 return false;
 
@@ -954,6 +962,8 @@ public class TextProcessing
         newText = Regex.Replace(newText, "sanding", "SENDING", RegexOptions.IgnoreCase);
         newText = Regex.Replace(newText, "yuo", "YOU", RegexOptions.IgnoreCase);
         newText = Regex.Replace(newText, "noward", "ONWARD", RegexOptions.IgnoreCase);
+        newText = Regex.Replace(newText, " biz ", " BUSINESS ", RegexOptions.IgnoreCase);
+        newText = Regex.Replace(newText, "w0n", "WON", RegexOptions.IgnoreCase);
 
         return newText;
     }

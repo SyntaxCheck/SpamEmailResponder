@@ -33,8 +33,10 @@ public class CheckInvestor : EmailTypeBase
             preProcessedBody.Trim().ToUpper().Contains("CONFIDENTIAL DEAL") ||
             preProcessedBody.Trim().ToUpper().Contains("FUND YOU BUSINESS") ||
             preProcessedBody.Trim().ToUpper().Contains("FUND YOUR BUSINESS") ||
+            preProcessedBody.Trim().ToUpper().Contains("FUND YOUR PROJECT") ||
             preProcessedBody.Trim().ToUpper().Contains("FUNDING YOU BUSINESS") ||
             preProcessedBody.Trim().ToUpper().Contains("FUNDING YOUR BUSINESS") ||
+            preProcessedBody.Trim().ToUpper().Contains("FUNDING YOUR PROJECT") ||
             preProcessedBody.Trim().ToUpper().Contains("HAS A PROJECT FOR YOU") ||
             preProcessedBody.Trim().ToUpper().Contains("HAVE A DEAL FOR YOU") ||
             preProcessedBody.Trim().ToUpper().Contains("HAVE A PROJECT FOR YOU") ||

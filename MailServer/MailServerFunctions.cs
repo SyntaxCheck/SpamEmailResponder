@@ -105,6 +105,8 @@ public class MailServerFunctions
             settings.QuestionsMaritalStatus = new List<string>() { "I am |MaritalStatus|" };
             settings.QuestionsCountry = new List<string>() { "I live in |Country|" };
             settings.QuestionsName = new List<string>() { "My name is |Name|" };
+            settings.QuestionsEmail = new List<string>() { "My email is |Email|" };
+            settings.QuestionsPassword = new List<string>() { "Why do you need my password?" };
             settings.QuestionsWeAreCaught = new List<string>() { "I am not sure what you mean." };
             settings.QuestionsProvideDetails = new List<string>() { "What information do you need?" };
             settings.QuestionsAreYouReady = new List<string>() { "I am ready." };
@@ -123,6 +125,7 @@ public class MailServerFunctions
             settings.QuestionsHowDoYouWantFundsReleased = new List<string>() { "Please pay me with |GetRandomPaymentMethod|." };
             settings.QuestionsWeCantDoThat = new List<string>() { "Explain to me why you can't do that?" };
             settings.QuestionsContactTheBank = new List<string>() { "I tried to contact the bank about this but they are confused.", "Could you send me the bank contact information?" };
+            settings.QuestionsContactThePerson = new List<string>() { "I do not know who that is." };
             settings.QuestionsAreYouMember = new List<string>() { "I want to be a member." };
             settings.QuestionsDidYouSeeOurMessage = new List<string>() { "I did not see it." };
             settings.QuestionsInvalidAddress = new List<string>() { "My house is new and it does not show up on some places.", "I recently built my house so the address might not showup." };
@@ -157,6 +160,7 @@ public class MailServerFunctions
             settings.ResponseOpeningGenericAdvertisement = new List<string>() { "I am very interested. Can you tell me why I would go with you over your competitor?", "Can you tell me more about it?" };
             settings.ResponseOpeningShipping = new List<string>() { "What is the problem with the shipment?" };
             settings.ResponseOpeningRefugee = new List<string>() { "I would love to help, I just need some more details." };
+            settings.ResponseOpeningProductSupplier = new List<string>() { "Which product are you interested in?" };
 
             //Continued responses
             settings.ResponseContinuedAtmCard = new List<string>() { "I understand what you are saying but can you just provide the card numbers?", "Thank you again for your patience, I think it would be easiest if you just provided the card numbers over email." };
@@ -183,6 +187,7 @@ public class MailServerFunctions
             settings.ResponseContinuedGenericAdvertisement = new List<string>() { "I would be happy to hear any additional information you have.", "Interesting, do you have more information?" };
             settings.ResponseContinuedShipping = new List<string>() { "Okay, how can we resolve this issue?" };
             settings.ResponseContinuedRefugee = new List<string>() { "I have noted your message. I just need some more details." };
+            settings.ResponseContinuedProductSupplier = new List<string>() { "Which product prompted you to message me?", "How many products are you looking for? My favorite is |GetRandomProduct|." };
 
             string json = new JavaScriptSerializer().Serialize(settings);
             File.WriteAllText(settingFileLocation, JsonHelper.FormatJson(json));

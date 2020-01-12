@@ -27,12 +27,16 @@ public class CheckSellingServices : EmailTypeBase
             preProcessedBody.Trim().ToUpper().Contains("SEO PACKAGE") ||
             preProcessedBody.Trim().ToUpper().Contains("SEO PARAMETER") ||
             preProcessedBody.Trim().ToUpper().Contains("DO YOU WANT YOUR WEBSITE TO BE RANKED") ||
+            preProcessedBody.Trim().ToUpper().Contains("ONLINE MARKETING MANAGER") ||
             preProcessedBody.Trim().ToUpper().Contains("LET US KNOW YOUR WEBSITE") ||
+            preProcessedBody.Trim().ToUpper().Contains("FRESH TOOLS & UNLIMITED SENDERS") ||
             preProcessedBody.Trim().ToUpper().Contains("IDENTIFIED SEVERAL SEO") ||
             preProcessedBody.Trim().ToUpper().Contains("I SELL TOOLS") ||
             preProcessedBody.Trim().ToUpper().Contains("I BUILD ANY KIND OF PAGE OR LINK OR SCRIPT") ||
             preProcessedBody.Trim().ToUpper().Contains("I SELL GOOD TOOLS") ||
+            preProcessedBody.Trim().ToUpper().Contains("I WAS GOING THROUGH YOUR WEBSITE") ||
             preProcessedBody.Trim().ToUpper().Contains("VISIBILITY ON THE SEARCH ENGINE") ||
+            preProcessedBody.Trim().ToUpper().Contains("TALENTED WEB DEVELOPER") ||
             preProcessedBody.Trim().ToUpper().Contains("DEVELOPMENT FIRM"))
         {
             base.ParseResponse.IsMatch = true;
